@@ -1,15 +1,5 @@
 /* ========== FOOTER SOCIAL ICONS ========== */
 
-/* Bluesky icon color override - applies custom brand color to Bluesky SVG paths */
-.footer-social .social-icon.bluesky svg path {
-  transition: fill 0.18s;
-}
-.footer-social .social-icon.bluesky svg path {
-  fill: #3291EC; /* Bluesky brand blue */
-}
-.footer-social .social-icon.bluesky:hover svg path {
-  fill: #1D9BF0; /* Slightly brighter on hover */
-}
 .footer-social {
   display: flex;
   flex-direction: row;
@@ -31,6 +21,12 @@
   margin-right: 0.1rem;
   box-shadow: none;
 }
+.footer-social .social-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  transition: fill 0.18s;
+}
 .footer-social .social-icon:hover {
   background: var(--accent);
   color: #fff;
@@ -45,6 +41,10 @@
     height: 2rem;
     margin-left: 0.05rem;
     margin-right: 0.05rem;
+  }
+  .footer-social .social-icon svg {
+    width: 16px;
+    height: 16px;
   }
 }
 
@@ -73,6 +73,8 @@ a { text-decoration-thickness: .1rem; text-underline-offset: .2rem; } /* Consist
   --link: #603FEF;       /* Link color (purple) */
   --nav-sep: #e5e7eb;    /* Navigation separator lines */
   --shadow: 0 1px 1px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06); /* Subtle shadows for cards */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif; /* System-first sans stack */
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Mono", "Menlo", "Consolas", "Liberation Mono", monospace; /* Crisp mono stack */
 }
 
 /* Default to user's OS preference for dark mode
@@ -124,27 +126,9 @@ a { text-decoration-thickness: .1rem; text-underline-offset: .2rem; } /* Consist
   }
 }
 
-/* Icons switch based on theme - show appropriate icon for current theme state
-   Light mode = show moon (click to get dark)
-   Dark mode = show sun (click to get light) */
-.icon-sun { display: none; }  /* Hide sun in light mode */
-.icon-moon { display: inline; } /* Show moon in light mode */
-@media (prefers-color-scheme: dark) {
-  .icon-sun { display: inline; }  /* Show sun in dark mode */
-  .icon-moon { display: none; }   /* Hide moon in dark mode */
-}
-/* When toggle is checked, flip the icons */
-:root:has(#theme-toggle:checked) .icon-sun { display: inline; }
-:root:has(#theme-toggle:checked) .icon-moon { display: none; }
-/* When OS prefers dark AND toggle is checked (light mode override), show moon */
-@media (prefers-color-scheme: dark) {
-  :root:has(#theme-toggle:checked) .icon-sun { display: none; }
-  :root:has(#theme-toggle:checked) .icon-moon { display: inline; }
-}
-
 /* ========== LAYOUT ========== */
 body {
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   background: var(--bg);
   color: var(--text);
   line-height: 1.65;
@@ -163,16 +147,32 @@ body {
 
 .brand { display: flex; align-items: center; gap: .9rem; }
 .brand .logo svg { fill: var(--text); opacity: .9; }
-.site-title { font-weight: 800; font-size: 1.45rem; color: var(--text); text-decoration: none; }
-.site-subtitle { font-size: .9rem; opacity: .7; margin-top: .125rem; }
+.site-title {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--text);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+}
+.site-subtitle {
+  font-size: .78rem;
+  opacity: .7;
+  margin-top: .2rem;
+  text-transform: uppercase;
+  letter-spacing: .28em;
+}
 
 .site-nav a {
   position: relative;
   color: var(--text);
   text-decoration: none;
-  margin: 0 .35rem;
+  margin: 0 .45rem;
   padding: .4rem .45rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .22em;
+  font-size: .78rem;
 }
 /* Adjacent sibling selector - adds vertical separator between nav links
    Uses ::before pseudo-element positioned absolutely */
@@ -186,17 +186,131 @@ body {
   background: var(--nav-sep);
 }
 .site-nav a:hover { color: var(--accent); }
-
-/* Header actions (search and theme toggle buttons) */
-.actions { display: flex; align-items: center; gap: .25rem; }
-.icon-btn {
-  background: transparent; border: 0; padding: .5rem; border-radius: .6rem;
-  display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
-  transition: background .2s ease;
+/* Current page indicator - added by JavaScript via aria-current attribute */
+.site-nav a[aria-current="page"] {
+  color: var(--accent);
+  font-weight: 800;
 }
-.icon-btn:hover { background: var(--surface-2); }
+
+/* Header action (theme toggle button) */
+.actions { display: flex; align-items: center; gap: .35rem; }
 /* Hide the actual checkbox - we style the label instead for CSS-only toggle */
 #theme-toggle { position: absolute; opacity: 0; pointer-events: none; }
+
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: .2rem;
+}
+
+.theme-toggle__track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 3.4rem;
+  height: 1.7rem;
+  padding: 0 .35rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--surface-2), var(--surface-1));
+  border: 1px solid var(--muted);
+  box-shadow: inset 0 1px 3px rgba(15,18,22,0.16);
+  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
+  color: var(--text);
+}
+
+.theme-toggle__thumb {
+  position: absolute;
+  top: .18rem;
+  left: .35rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 999px;
+  background: var(--surface-1);
+  box-shadow: 0 3px 8px rgba(15,18,22,0.25);
+  transition: transform .3s ease, background .3s ease, box-shadow .3s ease;
+}
+
+.theme-toggle__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--text);
+  opacity: .5;
+  transition: opacity .3s ease, transform .3s ease;
+  user-select: none;
+}
+
+.theme-toggle__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.theme-toggle__icon--sun {
+  opacity: .95;
+  transform: translateY(-1px) scale(1.05);
+}
+
+.theme-toggle__icon--moon {
+  transform: translateY(1px);
+}
+
+:root:has(#theme-toggle:checked) .theme-toggle__thumb {
+  transform: translateX(1.3rem);
+}
+
+:root:has(#theme-toggle:checked) .theme-toggle__icon--sun {
+  opacity: .5;
+  transform: translateY(-1px);
+}
+
+:root:has(#theme-toggle:checked) .theme-toggle__icon--moon {
+  opacity: .95;
+  transform: translateY(1px) scale(1.05);
+}
+
+:root:has(#theme-toggle:checked) .theme-toggle__track {
+  box-shadow: inset 0 1px 3px rgba(15,18,22,0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(:has(#theme-toggle:checked)) .theme-toggle__thumb {
+    transform: translateX(1.3rem);
+  }
+
+  :root:not(:has(#theme-toggle:checked)) .theme-toggle__icon--sun {
+    opacity: .5;
+    transform: translateY(-1px);
+  }
+
+  :root:not(:has(#theme-toggle:checked)) .theme-toggle__icon--moon {
+    opacity: .95;
+    transform: translateY(1px) scale(1.05);
+  }
+
+  :root:not(:has(#theme-toggle:checked)) .theme-toggle__track {
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.35);
+  }
+
+  :root:has(#theme-toggle:checked) .theme-toggle__thumb {
+    transform: translateX(0);
+  }
+
+  :root:has(#theme-toggle:checked) .theme-toggle__icon--sun {
+    opacity: .95;
+    transform: translateY(-1px) scale(1.05);
+  }
+
+  :root:has(#theme-toggle:checked) .theme-toggle__icon--moon {
+    opacity: .5;
+    transform: translateY(1px);
+  }
+}
 
 .site-main { max-width: 900px; margin: 0 auto; padding: 1rem; }
 
@@ -208,7 +322,13 @@ body {
   margin: 1rem 0 .2rem;
   font-weight: 900;
 }
-.hero-subtitle { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; color: var(--accent); }
+.hero-subtitle {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
 
 .intro { margin: 1rem 0 2rem; max-width: 75ch; }
 .intro p { margin: .25rem 0; }
@@ -231,10 +351,13 @@ body {
 .intro-copy { max-width: 60ch; }
 
 .projects-group { margin: 2.5rem 0; }
-.projects-group > h2 { 
-  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 1.5rem; font-weight: 700; margin: 0 0 1rem;
+.projects-group > h2 {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
   color: var(--accent-2);
+  letter-spacing: .04em;
 }
 .projects-group > h2 a { color: inherit; text-decoration: none; }
 .projects-group > h2 a:hover { text-decoration: underline; }
@@ -292,10 +415,13 @@ body {
   border: 1px dashed var(--muted);
   border-radius: .5rem;
   height: 84px;
-  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-weight: 600;
-  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: .9;
+  letter-spacing: .08em;
 }
 .card h3 { margin: .15rem 0 .3rem; font-size: 1.05rem; }
 .card p { margin: 0; opacity: .8; }
@@ -311,11 +437,18 @@ body {
   font-size: clamp(1.8rem, 3vw, 2.2rem);
   margin: .5rem 0 1rem;
   font-weight: 700;
+  text-transform: uppercase;
   letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 .prose { max-width: 75ch; }
 .prose p { margin: .75rem 0; }
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}
 
 .simple-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .6rem; padding-left: 0; list-style: none; }
 .simple-grid a { display:block; padding:.75rem .9rem; border:1px solid var(--muted); border-radius:.6rem; text-decoration:none; color:inherit; background: var(--surface-1); }
@@ -329,6 +462,24 @@ body {
   display: flex; justify-content: space-between; align-items: center;
   gap: 1rem; max-width: 1100px; margin: 4rem auto 2rem; padding: 0 1rem;
   opacity: .85; font-size: .95rem;
+  flex-wrap: wrap;
 }
 .site-footer a { color: inherit; text-decoration: none; margin: 0 .35rem; }
 .site-footer a:hover { color: var(--accent); }
+
+.footer-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  flex-wrap: wrap;
+  text-transform: uppercase;
+  letter-spacing: .22em;
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+.footer-divider {
+  color: var(--muted);
+  font-size: .9em;
+  margin: 0 .1rem;
+}
