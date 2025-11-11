@@ -143,35 +143,6 @@ The site now uses vanilla JavaScript (`/assets/js/includes.js`) to load shared h
      alt="Michael Sinanian">
 ```
 
-### Cloudflare Analytics
-Add Cloudflare Web Analytics (privacy-friendly, no cookies) to track page views.
-
-## Browser Compatibility
-
-**Tested and working**:
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-**CSS features used**:
-- CSS Grid (all modern browsers)
-- CSS Custom Properties (IE not supported, but acceptable)
-- `:has()` selector for theme toggle (Safari 15.4+, Chrome 105+, Firefox 103+)
-
-**Fallback behavior**: On older browsers that don't support `:has()`, theme toggle won't work, but site remains fully functional in default theme.
-
-## SEO & Metadata
-
-Each page includes:
-- `<title>` tag
-- Meta description
-- Viewport meta tag for mobile
-- Semantic HTML (h1, nav, main, footer)
-- Proper heading hierarchy
-
-**To improve**: Add Open Graph and Twitter Card meta tags for better social sharing.
-
 ## Accessibility Features
 
 - Semantic HTML5 elements
@@ -182,18 +153,11 @@ Each page includes:
 - Alt text on all images
 - Responsive design works at all viewport sizes
 
-## Contributing
-
-This is a personal website, but if you spot issues:
-1. Check the issue is actually a bug (not just personal preference)
-2. For broken links, typos, or accessibility issues: please report
-3. For design suggestions: these are subjective, probably won't change
-
 ## License
 
 Content is © 2025 Michael Sinanian. All rights reserved.
 
-Code structure and CSS may be used as reference or adapted for your own projects.
+Code structure and CSS may be used as reference or adapted for other projects.
 
 ---
 
