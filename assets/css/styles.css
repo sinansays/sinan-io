@@ -1,0 +1,333 @@
+/* ========== FOOTER SOCIAL ICONS ========== */
+
+/* Bluesky icon color override - applies custom brand color to Bluesky SVG paths */
+.footer-social .social-icon.bluesky svg path {
+  transition: fill 0.18s;
+}
+.footer-social .social-icon.bluesky svg path {
+  fill: #3291EC; /* Bluesky brand blue */
+}
+.footer-social .social-icon.bluesky:hover svg path {
+  fill: #1D9BF0; /* Slightly brighter on hover */
+}
+.footer-social {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+.footer-social .social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--accent);
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  margin-left: 0.1rem;
+  margin-right: 0.1rem;
+  box-shadow: none;
+}
+.footer-social .social-icon:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(52,121,247,0.10);
+}
+@media (max-width: 640px) {
+  .footer-social {
+    gap: 0.2rem;
+  }
+  .footer-social .social-icon {
+    width: 2rem;
+    height: 2rem;
+    margin-left: 0.05rem;
+    margin-right: 0.05rem;
+  }
+}
+
+/* ========== CSS RESET (subset) ========== */
+/* Minimal reset for consistent cross-browser rendering */
+* { box-sizing: border-box; } /* Include padding/border in width calculations */
+html, body { margin: 0; padding: 0; }
+img, svg { display: block; max-width: 100%; } /* Prevent images from overflowing containers */
+a { text-decoration-thickness: .1rem; text-underline-offset: .2rem; } /* Consistent link underlines */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } /* Visible focus indicators for keyboard nav */
+/* Skip link for accessibility - hidden off-screen until focused */
+.skip-link { position: absolute; left: -9999px; top: auto; }
+.skip-link:focus { left: 12px; top: 12px; background: var(--surface-2); padding: .5rem .75rem; border-radius: .5rem; }
+
+/* ========== THEME ========== */
+/* CSS custom properties for theme system - all colors defined as variables
+   for easy theme switching. Light mode is the default. */
+:root {
+  --bg: #ffffff;         /* Page background */
+  --text: #1f2937;       /* Body text color */
+  --muted: #e5e7eb;      /* Borders, subtle UI elements */
+  --surface-1: #ffffff;  /* Card backgrounds, primary surfaces */
+  --surface-2: #f3f4f6;  /* Hover states, secondary surfaces */
+  --accent: #3479F7;     /* Primary blue for light mode (R:52 G:121 B:247) - links, highlights */
+  --accent-2: #3479F7;   /* Secondary accent (currently same as primary) */
+  --link: #603FEF;       /* Link color (purple) */
+  --nav-sep: #e5e7eb;    /* Navigation separator lines */
+  --shadow: 0 1px 1px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06); /* Subtle shadows for cards */
+}
+
+/* Default to user's OS preference for dark mode
+   If user's OS is set to dark mode, use these colors by default */
+@media (prefers-color-scheme: dark) {
+  :root{
+    --bg:#0f1216;        /* Dark background */
+    --text:#e5e7eb;      /* Light text */
+    --muted:#27303a;     /* Darker borders */
+    --surface-1:#14181d; /* Slightly lighter than background */
+    --surface-2:#1a1f25; /* Even lighter for hover states */
+  --accent:#51ABF2;      /* Lighter blue for dark mode (R:81 G:171 B:242) - better contrast */
+  --accent-2:#51ABF2;
+  --link:#b026ff;        /* Brighter purple for dark backgrounds */
+    --nav-sep:#2a323c;
+    --shadow: 0 1px 1px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35); /* More pronounced shadows */
+  }
+}
+
+/* CSS-only theme toggle using :has() selector
+   When #theme-toggle checkbox is checked, flip all theme variables
+   If OS preference is light, checking the box gives you dark mode
+   If OS preference is dark, checking the box gives you light mode (see below)
+   NOTE: :has() requires modern browsers (Safari 15.4+, Chrome 105+, Firefox 103+) */
+:root:has(#theme-toggle:checked) {
+  --bg:#0f1216;
+  --text:#e5e7eb;
+  --muted:#27303a;
+  --surface-1:#14181d;
+  --surface-2:#1a1f25;
+  --accent:#51ABF2;
+  --accent-2:#51ABF2;
+  --link:#b026ff;
+  --nav-sep:#2a323c;
+  --shadow: 0 1px 1px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+}
+@media (prefers-color-scheme: dark) {
+  :root:has(#theme-toggle:checked) {
+    --bg: #ffffff;
+    --text: #1f2937;
+    --muted: #e5e7eb;
+    --surface-1: #ffffff;
+    --surface-2: #f3f4f6;
+  --accent: #3479F7;
+  --accent-2: #3479F7;
+  --link: #603FEF;
+    --nav-sep: #e5e7eb;
+    --shadow: 0 1px 1px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  }
+}
+
+/* Icons switch based on theme - show appropriate icon for current theme state
+   Light mode = show moon (click to get dark)
+   Dark mode = show sun (click to get light) */
+.icon-sun { display: none; }  /* Hide sun in light mode */
+.icon-moon { display: inline; } /* Show moon in light mode */
+@media (prefers-color-scheme: dark) {
+  .icon-sun { display: inline; }  /* Show sun in dark mode */
+  .icon-moon { display: none; }   /* Hide moon in dark mode */
+}
+/* When toggle is checked, flip the icons */
+:root:has(#theme-toggle:checked) .icon-sun { display: inline; }
+:root:has(#theme-toggle:checked) .icon-moon { display: none; }
+/* When OS prefers dark AND toggle is checked (light mode override), show moon */
+@media (prefers-color-scheme: dark) {
+  :root:has(#theme-toggle:checked) .icon-sun { display: none; }
+  :root:has(#theme-toggle:checked) .icon-moon { display: inline; }
+}
+
+/* ========== LAYOUT ========== */
+body {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+}
+
+/* ========== HEADER ========== */
+.site-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto; /* Brand takes available space, nav and actions are auto-sized */
+  align-items: center;
+  gap: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem;
+}
+
+.brand { display: flex; align-items: center; gap: .9rem; }
+.brand .logo svg { fill: var(--text); opacity: .9; }
+.site-title { font-weight: 800; font-size: 1.45rem; color: var(--text); text-decoration: none; }
+.site-subtitle { font-size: .9rem; opacity: .7; margin-top: .125rem; }
+
+.site-nav a {
+  position: relative;
+  color: var(--text);
+  text-decoration: none;
+  margin: 0 .35rem;
+  padding: .4rem .45rem;
+  font-weight: 600;
+}
+/* Adjacent sibling selector - adds vertical separator between nav links
+   Uses ::before pseudo-element positioned absolutely */
+.site-nav a + a::before {
+  content: "";
+  position: absolute;
+  left: -0.35rem;
+  top: 25%;        /* Start 1/4 down */
+  height: 50%;     /* Take up middle 50% of height */
+  width: 1px;
+  background: var(--nav-sep);
+}
+.site-nav a:hover { color: var(--accent); }
+
+/* Header actions (search and theme toggle buttons) */
+.actions { display: flex; align-items: center; gap: .25rem; }
+.icon-btn {
+  background: transparent; border: 0; padding: .5rem; border-radius: .6rem;
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: background .2s ease;
+}
+.icon-btn:hover { background: var(--surface-2); }
+/* Hide the actual checkbox - we style the label instead for CSS-only toggle */
+#theme-toggle { position: absolute; opacity: 0; pointer-events: none; }
+
+.site-main { max-width: 900px; margin: 0 auto; padding: 1rem; }
+
+.hero { margin-top: 1rem; }
+.hero-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  margin: 1rem 0 .2rem;
+  font-weight: 900;
+}
+.hero-subtitle { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; color: var(--accent); }
+
+.intro { margin: 1rem 0 2rem; max-width: 75ch; }
+.intro p { margin: .25rem 0; }
+
+/* Intro with profile thumbnail - used on homepage */
+.intro-with-thumb { display: flex; align-items: center; gap: 1rem; }
+.profile-link { display: block; flex: 0 0 auto; text-decoration: none; } /* Don't grow or shrink */
+.profile-thumb {
+  display: block;
+  width: 220px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 26px; /* Heavily rounded rectangle (not fully circular) */
+  border: 1px solid var(--muted);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+/* Subtle lift effect on hover */
+.profile-link:hover .profile-thumb { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
+.intro-copy { max-width: 60ch; }
+
+.projects-group { margin: 2.5rem 0; }
+.projects-group > h2 { 
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.5rem; font-weight: 700; margin: 0 0 1rem;
+  color: var(--accent-2);
+}
+.projects-group > h2 a { color: inherit; text-decoration: none; }
+.projects-group > h2 a:hover { text-decoration: underline; }
+
+/* Flexible card grid - use with .grid-2, .grid-3, or .grid-4 modifiers */
+.card-grid { display: grid; gap: 1rem; }
+/* minmax(0,1fr) prevents overflow issues with long content */
+.grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+
+/* ========== RESPONSIVE BREAKPOINTS ========== */
+
+/* Tablet breakpoint - 980px and below */
+@media (max-width: 980px) {
+  /* Stack nav below brand and actions on tablet */
+  .site-header { grid-template-columns: 1fr auto; grid-template-areas: "brand actions" "nav nav"; }
+  .brand { grid-area: brand; }
+  .site-nav { grid-area: nav; display: flex; flex-wrap: wrap; }
+  .actions { grid-area: actions; }
+  /* Reduce grid columns on tablet */
+  .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+/* Mobile breakpoint - 640px and below */
+@media (max-width: 640px) {
+  /* All grids become single column on mobile */
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  /* Stack intro content vertically */
+  .intro-with-thumb { flex-direction: column; align-items: flex-start; }
+  .profile-thumb { width: 160px; border-radius: 18px; } /* Smaller profile pic on mobile */
+}
+
+/* ========== CARD COMPONENTS ========== */
+
+/* Project card - two column layout (thumbnail + content) */
+.card {
+  display: grid;
+  grid-template-columns: 120px 1fr; /* Fixed width thumbnail, flexible content */
+  gap: .75rem;
+  background: var(--surface-1);
+  border: 1px solid var(--muted);
+  border-radius: .75rem;
+  padding: .75rem;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow);
+  transition: transform .1s ease, box-shadow .1s ease, border-color .1s ease;
+}
+/* Subtle lift and accent border on hover */
+.card:hover { transform: translateY(-1px); border-color: var(--accent); }
+.card .thumb {
+  background: var(--surface-2);
+  border: 1px dashed var(--muted);
+  border-radius: .5rem;
+  height: 84px;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  opacity: .9;
+}
+.card h3 { margin: .15rem 0 .3rem; font-size: 1.05rem; }
+.card p { margin: 0; opacity: .8; }
+
+.card-list { display: grid; gap: .5rem; }
+.row-link {
+  display: block; padding: .65rem .8rem; border: 1px solid var(--muted); border-radius: .6rem;
+  background: var(--surface-1); color: inherit; text-decoration: none;
+}
+.row-link:hover { border-color: var(--accent); }
+
+.page-header h1 {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  margin: .5rem 0 1rem;
+  font-weight: 800;
+}
+
+.prose { max-width: 75ch; }
+.prose p { margin: .75rem 0; }
+
+.simple-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .6rem; padding-left: 0; list-style: none; }
+.simple-grid a { display:block; padding:.75rem .9rem; border:1px solid var(--muted); border-radius:.6rem; text-decoration:none; color:inherit; background: var(--surface-1); }
+.simple-grid a:hover { border-color: var(--accent); }
+
+.post-list { list-style: none; padding: 0; }
+.post-list li { display: grid; grid-template-columns: 130px 1fr; gap: .5rem; padding: .35rem 0; border-bottom: 1px dashed var(--muted); }
+.post-list time { color: var(--link); opacity: .7; }
+
+.site-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 1rem; max-width: 1100px; margin: 4rem auto 2rem; padding: 0 1rem;
+  opacity: .85; font-size: .95rem;
+}
+.site-footer a { color: inherit; text-decoration: none; margin: 0 .35rem; }
+.site-footer a:hover { color: var(--accent); }
