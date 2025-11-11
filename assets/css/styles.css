@@ -76,6 +76,7 @@ a:visited { color: var(--accent); }
   --accent: #3479F7;     /* Primary blue for light mode (R:52 G:121 B:247) - links, highlights */
   --accent-2: #3479F7;   /* Secondary accent (currently same as primary) */
   --link: #603FEF;       /* Link color (purple) */
+  --brand-title: #1f2937; /* Site title color for light theme */
   --nav-sep: #e5e7eb;    /* Navigation separator lines */
   --shadow: 0 1px 1px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06); /* Subtle shadows for cards */
   --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif; /* System-first sans stack */
@@ -91,9 +92,10 @@ a:visited { color: var(--accent); }
     --muted:#27303a;     /* Darker borders */
     --surface-1:#14181d; /* Slightly lighter than background */
     --surface-2:#1a1f25; /* Even lighter for hover states */
-  --accent:#51ABF2;      /* Lighter blue for dark mode (R:81 G:171 B:242) - better contrast */
-  --accent-2:#51ABF2;
-  --link:#b026ff;        /* Brighter purple for dark backgrounds */
+    --accent:#51ABF2;      /* Lighter blue for dark mode (R:81 G:171 B:242) - better contrast */
+    --accent-2:#51ABF2;
+    --link:#b026ff;        /* Brighter purple for dark backgrounds */
+    --brand-title:#ffffff; /* Site title color for dark theme */
     --nav-sep:#2a323c;
     --shadow: 0 1px 1px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35); /* More pronounced shadows */
   }
@@ -113,6 +115,7 @@ a:visited { color: var(--accent); }
   --accent:#51ABF2;
   --accent-2:#51ABF2;
   --link:#b026ff;
+  --brand-title:#ffffff;
   --nav-sep:#2a323c;
   --shadow: 0 1px 1px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
 }
@@ -123,9 +126,10 @@ a:visited { color: var(--accent); }
     --muted: #e5e7eb;
     --surface-1: #ffffff;
     --surface-2: #f3f4f6;
-  --accent: #3479F7;
-  --accent-2: #3479F7;
-  --link: #603FEF;
+    --accent: #3479F7;
+    --accent-2: #3479F7;
+    --link: #603FEF;
+    --brand-title: #1f2937;
     --nav-sep: #e5e7eb;
     --shadow: 0 1px 1px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
   }
@@ -160,12 +164,12 @@ body {
 .site-title {
   font-weight: 800;
   font-size: 1.5rem;
-  color: #ffffff;
+  color: var(--brand-title);
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: .18em;
 }
-.site-title:visited { color: #ffffff; }
+.site-title:visited { color: var(--brand-title); }
 .site-subtitle {
   font-size: .78rem;
   opacity: .7;
