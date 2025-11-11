@@ -1,0 +1,50 @@
+<!-- Brand: Logo and site title -->
+<div class="brand">
+  <a href="/" class="logo" aria-label="Home">
+    <!-- Decorative SVG logo (aria-hidden because link provides semantic meaning) -->
+    <svg width="34" height="34" viewBox="0 0 24 24" role="img" aria-hidden="true">
+      <path d="M12 2l2.5 4.5H9.5L12 2zm0 20l-2.5-4.5h5L12 22zM2 12l4.5-2.5v5L2 12zm20 0l-4.5 2.5v-5L22 12z" />
+    </svg>
+  </a>
+  <div class="title">
+    <a href="/" class="site-title">Michael Sinanian</a>
+    <div class="site-subtitle">AI Product Leader &amp; Educator</div>
+  </div>
+</div>
+<!-- Primary navigation -->
+<nav class="site-nav" aria-label="Primary">
+  <a href="/">Home</a>
+  <a href="/about.html">About</a>
+  <a href="/posts/">Posts</a>
+  <a href="/projects/">Projects</a>
+  <a href="/contact.html">Contact</a>
+</nav>
+<!-- Header action: theme toggle -->
+<div class="actions">
+  <!-- CSS-only theme toggle: checkbox controls theme via :has() selector in CSS -->
+  <input id="theme-toggle" type="checkbox" aria-label="Toggle theme (light/dark)" />
+  <label class="theme-toggle" for="theme-toggle" title="Toggle theme">
+    <span class="theme-toggle__track" aria-hidden="true">
+      <!-- Lucide Sun and Moon icons (MIT License) -->
+      <span class="theme-toggle__icon theme-toggle__icon--sun" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2"></path>
+          <path d="M12 20v2"></path>
+          <path d="M4.93 4.93l1.41 1.41"></path>
+          <path d="M17.66 17.66l1.41 1.41"></path>
+          <path d="M2 12h2"></path>
+          <path d="M20 12h2"></path>
+          <path d="M6.34 17.66l-1.41 1.41"></path>
+          <path d="M17.66 6.34l1.41-1.41"></path>
+        </svg>
+      </span>
+      <span class="theme-toggle__icon theme-toggle__icon--moon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </span>
+      <span class="theme-toggle__thumb" aria-hidden="true"></span>
+    </span>
+  </label>
+</div>
