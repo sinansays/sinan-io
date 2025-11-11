@@ -53,7 +53,12 @@
 * { box-sizing: border-box; } /* Include padding/border in width calculations */
 html, body { margin: 0; padding: 0; }
 img, svg { display: block; max-width: 100%; } /* Prevent images from overflowing containers */
-a { text-decoration-thickness: .1rem; text-underline-offset: .2rem; } /* Consistent link underlines */
+a {
+  color: var(--accent);
+  text-decoration-thickness: .1rem;
+  text-underline-offset: .2rem;
+} /* Consistent link underlines */
+a:visited { color: var(--accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } /* Visible focus indicators for keyboard nav */
 /* Skip link for accessibility - hidden off-screen until focused */
 .skip-link { position: absolute; left: -9999px; top: auto; }
@@ -179,6 +184,7 @@ body {
   letter-spacing: .22em;
   font-size: .78rem;
 }
+.site-nav a:visited { color: var(--text); }
 /* Adjacent sibling selector - adds vertical separator between nav links
    Uses ::before pseudo-element positioned absolutely */
 .site-nav a + a::before {
@@ -367,6 +373,12 @@ body {
 .projects-group > h2 a { color: inherit; text-decoration: none; }
 .projects-group > h2 a:hover { text-decoration: underline; }
 
+.section-description {
+  margin: 0 0 1.5rem;
+  color: var(--text);
+  opacity: 0.82;
+}
+
 /* Flexible card grid - use with .grid-2, .grid-3, or .grid-4 modifiers */
 .card-grid { display: grid; gap: 1rem; }
 /* minmax(0,1fr) prevents overflow issues with long content */
@@ -395,6 +407,31 @@ body {
   /* Stack intro content vertically */
   .intro-with-thumb { flex-direction: column; align-items: flex-start; }
   .profile-thumb { width: 160px; border-radius: 18px; } /* Smaller profile pic on mobile */
+  .site-header {
+    justify-items: center;
+    text-align: center;
+  }
+  .brand {
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+  }
+  .site-nav {
+    justify-content: center;
+    width: 100%;
+  }
+  .actions { justify-self: center; }
+  .site-footer {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .footer-meta {
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+  }
 }
 
 /* ========== CARD COMPONENTS ========== */
@@ -473,6 +510,7 @@ code, pre, kbd, samp {
   flex-wrap: wrap;
 }
 .site-footer a { color: inherit; text-decoration: none; margin: 0 .35rem; }
+.site-footer a:visited { color: inherit; }
 .site-footer a:hover { color: var(--accent); }
 
 .footer-meta {
