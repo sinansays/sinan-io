@@ -499,6 +499,32 @@ body {
 .prose { max-width: 75ch; }
 .prose p { margin: .75rem 0; }
 
+/* Project media helpers keep imagery proportional and breathing with copy */
+.project-media { margin: 2.25rem 0; }
+.project-media img {
+  width: 100%;
+  border-radius: .75rem;
+  box-shadow: var(--shadow);
+}
+.project-media figcaption {
+  margin-top: .65rem;
+  font-size: .95rem;
+  color: var(--text);
+  opacity: .75;
+}
+
+.project-media-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin: 2.25rem 0;
+}
+
+.project-media-grid .project-media { margin: 0; }
+
+@media (min-width: 768px) {
+  .project-media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 code, pre, kbd, samp {
   font-family: var(--font-mono);
   font-variant-ligatures: none;
