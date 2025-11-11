@@ -146,7 +146,12 @@ body {
 }
 
 .brand { display: flex; align-items: center; gap: .9rem; }
-.brand .logo svg { fill: var(--text); opacity: .9; }
+.brand .logo img {
+  display: block;
+  width: clamp(3.75rem, 6vw, 4.5rem);
+  height: clamp(3.75rem, 6vw, 4.5rem);
+  object-fit: contain;
+}
 .site-title {
   font-weight: 800;
   font-size: 1.5rem;
@@ -411,17 +416,20 @@ body {
 /* Subtle lift and accent border on hover */
 .card:hover { transform: translateY(-1px); border-color: var(--accent); }
 .card .thumb {
-  background: var(--surface-2);
-  border: 1px dashed var(--muted);
-  border-radius: .5rem;
-  height: 84px;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: .9;
-  letter-spacing: .08em;
+  border-radius: .6rem;
+  width: 100%;
+  max-width: 120px;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+.card .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.card-body {
+  min-width: 0;
 }
 .card h3 { margin: .15rem 0 .3rem; font-size: 1.05rem; }
 .card p { margin: 0; opacity: .8; }
