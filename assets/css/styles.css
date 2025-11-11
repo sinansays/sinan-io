@@ -160,11 +160,12 @@ body {
 .site-title {
   font-weight: 800;
   font-size: 1.5rem;
-  color: var(--text);
+  color: #ffffff;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: .18em;
 }
+.site-title:visited { color: #ffffff; }
 .site-subtitle {
   font-size: .78rem;
   opacity: .7;
@@ -371,6 +372,7 @@ body {
   letter-spacing: .04em;
 }
 .projects-group > h2 a { color: inherit; text-decoration: none; }
+.projects-group > h2 a:visited { color: inherit; }
 .projects-group > h2 a:hover { text-decoration: underline; }
 
 .section-description {
@@ -405,8 +407,9 @@ body {
   /* All grids become single column on mobile */
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   /* Stack intro content vertically */
-  .intro-with-thumb { flex-direction: column; align-items: flex-start; }
-  .profile-thumb { width: 160px; border-radius: 18px; } /* Smaller profile pic on mobile */
+  .intro-with-thumb { flex-direction: column; align-items: center; }
+  .profile-link { margin: 0 auto; }
+  .profile-thumb { width: min(70vw, 240px); border-radius: 18px; }
   .site-header {
     justify-items: center;
     text-align: center;
@@ -450,6 +453,7 @@ body {
   box-shadow: var(--shadow);
   transition: transform .1s ease, box-shadow .1s ease, border-color .1s ease;
 }
+.card:visited { color: inherit; }
 /* Subtle lift and accent border on hover */
 .card:hover { transform: translateY(-1px); border-color: var(--accent); }
 .card .thumb {
@@ -476,6 +480,7 @@ body {
   display: block; padding: .65rem .8rem; border: 1px solid var(--muted); border-radius: .6rem;
   background: var(--surface-1); color: inherit; text-decoration: none;
 }
+.row-link:visited { color: inherit; }
 .row-link:hover { border-color: var(--accent); }
 
 .page-header h1 {
@@ -497,11 +502,13 @@ code, pre, kbd, samp {
 
 .simple-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .6rem; padding-left: 0; list-style: none; }
 .simple-grid a { display:block; padding:.75rem .9rem; border:1px solid var(--muted); border-radius:.6rem; text-decoration:none; color:inherit; background: var(--surface-1); }
+.simple-grid a:visited { color: inherit; }
 .simple-grid a:hover { border-color: var(--accent); }
 
 .post-list { list-style: none; padding: 0; }
 .post-list li { display: grid; grid-template-columns: 130px 1fr; gap: .5rem; padding: .35rem 0; border-bottom: 1px dashed var(--muted); }
 .post-list time { color: var(--link); opacity: .7; }
+.post-list a:visited { color: inherit; }
 
 .site-footer {
   display: flex; justify-content: space-between; align-items: center;
