@@ -1,11 +1,11 @@
 [
   {
-    "title": "UCLA Extension",
+    "title": "UCLA 'AI for PM'",
     "tag": "Teaching",
     "dates": "9/2024 — Present",
     "start": "2024-09",
     "end": null,
-    "url": null
+    "url": "/projects/ucla-ai-for-pm.html"
   },
   {
     "title": "GenCog",
@@ -81,7 +81,7 @@
   },
   {
     "title": "US GDP Analysis Using ML",
-    "tag": "Project",
+    "tag": "Data Project",
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
@@ -89,7 +89,7 @@
   },
   {
     "title": "Crime & Demolitions in Detroit",
-    "tag": "Project",
+    "tag": "Data Project",
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
@@ -97,7 +97,7 @@
   },
   {
     "title": "UMSI Site Redesign Concept",
-    "tag": "Project",
+    "tag": "UX Project",
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
@@ -105,7 +105,7 @@
   },
   {
     "title": "Chëw Personal Informatics Prototype",
-    "tag": "Project",
+    "tag": "UX Project",
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
@@ -113,15 +113,15 @@
   },
   {
     "title": "Laws of Accelerating Change InfoViz",
-    "tag": "Project",
+    "tag": "UX Project",
     "dates": "11/2016",
     "start": "2016-11",
     "end": "2016-11",
     "url": "/projects/laws-of-accelerating-change.html"
   },
   {
-    "title": "Airline Security Delays Data Analysis",
-    "tag": "Project",
+    "title": "Airline Security Delays Analysis",
+    "tag": "Data Project",
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
@@ -169,7 +169,7 @@
   },
   {
     "title": "VentureBeat",
-    "tag": "Journalism",
+    "tag": "Tech Journalism",
     "dates": "1/2010 — 5/2013",
     "start": "2010-01",
     "end": "2013-05",
