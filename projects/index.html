@@ -101,11 +101,27 @@
         titleElement.textContent = entry.title;
         header.appendChild(titleElement);
 
+        const tagElements = [];
+
         if (entry.tag) {
           const tag = document.createElement('span');
-          tag.className = 'timeline-tag';
+          tag.className = 'timeline-tag timeline-tag--category';
           tag.textContent = entry.tag;
-          header.appendChild(tag);
+          tagElements.push(tag);
+        }
+
+        if (entry.location) {
+          const locationTag = document.createElement('span');
+          locationTag.className = 'timeline-tag timeline-tag--location';
+          locationTag.textContent = entry.location;
+          tagElements.push(locationTag);
+        }
+
+        if (tagElements.length > 0) {
+          const tagsWrapper = document.createElement('div');
+          tagsWrapper.className = 'timeline-tags';
+          tagElements.forEach(tag => tagsWrapper.appendChild(tag));
+          header.appendChild(tagsWrapper);
         }
 
         item.appendChild(header);
