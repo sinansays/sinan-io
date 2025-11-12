@@ -716,6 +716,76 @@ a.timeline-title:hover {
   background: var(--surface-2);
 }
 
+.timeline-filters {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.timeline-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timeline-filter-heading {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.timeline-filter-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.timeline-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--muted);
+  background: var(--surface-1);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.timeline-filter-chip:hover,
+.timeline-filter-chip:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+  outline: none;
+}
+
+.timeline-filter-chip.is-active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.timeline-filter-chip.is-active:hover,
+.timeline-filter-chip.is-active:focus-visible {
+  color: var(--bg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+[data-hidden="true"] {
+  display: none !important;
+}
+
+.timeline-empty::before {
+  display: none;
+}
+
 @media (max-width: 720px) {
   .timeline-section {
     margin-top: 2.5rem;
@@ -736,6 +806,10 @@ a.timeline-title:hover {
     width: 0.65rem;
     height: 0.65rem;
   }
+
+  .timeline-filters {
+    gap: 1rem;
+  }
 }
 
 @media (max-width: 540px) {
@@ -750,5 +824,10 @@ a.timeline-title:hover {
 
   .timeline-item::before {
     display: none;
+  }
+
+  .timeline-filter-chip {
+    width: 100%;
+    justify-content: center;
   }
 }
