@@ -44,6 +44,119 @@
   <li><a href="/projects/prior.html">Prior Projects</a></li>
 </ul>
 
+<section class="timeline-section">
+  <div class="prose timeline-intro">
+    <h2>Timeline</h2>
+    <p>Explore a chronological view of product leadership, research, consulting, and legal work across companies, clients, and personal initiatives.</p>
+  </div>
+  <ol class="timeline-list" id="timeline-list">
+    <li class="timeline-item timeline-loading">
+      <span class="timeline-title">Loading timeline…</span>
+    </li>
+  </ol>
+  <noscript>
+    <div class="prose timeline-noscript">
+      <p>This interactive timeline requires JavaScript. You can browse the full history in the <a href="/projects/projects-manifest.json">projects manifest</a>.</p>
+    </div>
+  </noscript>
+</section>
+
+<script>
+(function() {
+  'use strict';
+
+  const timelineList = document.getElementById('timeline-list');
+  if (!timelineList) {
+    return;
+  }
+
+  const manifestUrl = '/projects/projects-manifest.json';
+
+  fetch(manifestUrl)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to load timeline data');
+      }
+      return response.json();
+    })
+    .then(entries => {
+      const items = Array.isArray(entries) ? entries.slice() : [];
+
+      items.sort((a, b) => parseStart(b.start) - parseStart(a.start));
+
+      timelineList.innerHTML = '';
+
+      items.forEach(entry => {
+        const item = document.createElement('li');
+        item.className = 'timeline-item';
+
+        const header = document.createElement('div');
+        header.className = 'timeline-row';
+
+        const titleElement = entry.url ? document.createElement('a') : document.createElement('span');
+        titleElement.className = 'timeline-title';
+        if (entry.url) {
+          titleElement.href = entry.url;
+        }
+        titleElement.textContent = entry.title;
+        header.appendChild(titleElement);
+
+        if (entry.tag) {
+          const tag = document.createElement('span');
+          tag.className = 'timeline-tag';
+          tag.textContent = entry.tag;
+          header.appendChild(tag);
+        }
+
+        item.appendChild(header);
+
+        if (entry.dates) {
+          const dates = document.createElement('div');
+          dates.className = 'timeline-dates';
+          dates.textContent = entry.dates;
+          item.appendChild(dates);
+        }
+
+        timelineList.appendChild(item);
+      });
+    })
+    .catch(error => {
+      console.error('Error loading timeline:', error);
+      timelineList.innerHTML = '';
+      const item = document.createElement('li');
+      item.className = 'timeline-item timeline-error';
+
+      const title = document.createElement('span');
+      title.className = 'timeline-title';
+      title.textContent = 'Timeline unavailable';
+      item.appendChild(title);
+
+      const message = document.createElement('div');
+      message.className = 'timeline-dates';
+      message.textContent = 'Unable to load project history at this time.';
+      item.appendChild(message);
+
+      timelineList.appendChild(item);
+    });
+
+  function parseStart(value) {
+    if (!value || typeof value !== 'string') {
+      return 0;
+    }
+
+    const parts = value.split('-');
+    const year = Number.parseInt(parts[0], 10);
+    const month = parts[1] ? Number.parseInt(parts[1], 10) - 1 : 0;
+
+    if (Number.isNaN(year) || Number.isNaN(month)) {
+      return 0;
+    }
+
+    return new Date(year, month, 1).getTime();
+  }
+})();
+</script>
+
   </main>
   <footer class="site-footer" id="site-footer">
     <noscript>

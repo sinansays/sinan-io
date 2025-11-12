@@ -1,0 +1,194 @@
+[
+  {
+    "title": "UCLA Extension",
+    "tag": "Teaching",
+    "dates": "9/2024 — Present",
+    "start": "2024-09",
+    "end": null,
+    "url": null
+  },
+  {
+    "title": "GenCog",
+    "tag": "Consulting",
+    "dates": "5/2023 — Present",
+    "start": "2023-05",
+    "end": null,
+    "url": "/projects/gencog.html"
+  },
+  {
+    "title": "Revenue.io",
+    "tag": "PM",
+    "dates": "8/2023 — 7/2024",
+    "start": "2023-08",
+    "end": "2024-07",
+    "url": "/projects/revenue-io.html"
+  },
+  {
+    "title": "Personal AI",
+    "tag": "PM",
+    "dates": "5/2023 — 8/2023",
+    "start": "2023-05",
+    "end": "2023-08",
+    "url": "/projects/personal-ai.html"
+  },
+  {
+    "title": "LynxDx",
+    "tag": "PM",
+    "dates": "10/2020 — 3/2023",
+    "start": "2020-10",
+    "end": "2023-03",
+    "url": "/projects/lynxdx.html"
+  },
+  {
+    "title": "Dealpath",
+    "tag": "PM",
+    "dates": "11/2018 — 2/2021",
+    "start": "2018-11",
+    "end": "2021-02",
+    "url": "/projects/dealpath.html"
+  },
+  {
+    "title": "Belkin",
+    "tag": "UXR",
+    "dates": "8/2017 — 10/2018",
+    "start": "2017-08",
+    "end": "2018-10",
+    "url": "/projects/belkin.html"
+  },
+  {
+    "title": "Linksys",
+    "tag": "UXR",
+    "dates": "8/2017 — 10/2018",
+    "start": "2017-08",
+    "end": "2018-10",
+    "url": "/projects/linksys.html"
+  },
+  {
+    "title": "Wemo",
+    "tag": "UXR",
+    "dates": "8/2017 — 10/2018",
+    "start": "2017-08",
+    "end": "2018-10",
+    "url": "/projects/wemo.html"
+  },
+  {
+    "title": "Gyroscope",
+    "tag": "PM",
+    "dates": "5/2016 — 7/2016",
+    "start": "2016-05",
+    "end": "2016-07",
+    "url": "/projects/gyroscope-growth.html"
+  },
+  {
+    "title": "US GDP Analysis Using ML",
+    "tag": "Project",
+    "dates": "12/2016",
+    "start": "2016-12",
+    "end": "2016-12",
+    "url": "/projects/us-gdp-analysis.html"
+  },
+  {
+    "title": "Crime & Demolitions in Detroit",
+    "tag": "Project",
+    "dates": "12/2016",
+    "start": "2016-12",
+    "end": "2016-12",
+    "url": "/projects/detroit-crime-demolitions.html"
+  },
+  {
+    "title": "UMSI Site Redesign Concept",
+    "tag": "Project",
+    "dates": "12/2016",
+    "start": "2016-12",
+    "end": "2016-12",
+    "url": "/projects/umsi-site-redesign.html"
+  },
+  {
+    "title": "Chëw Personal Informatics Prototype",
+    "tag": "Project",
+    "dates": "12/2016",
+    "start": "2016-12",
+    "end": "2016-12",
+    "url": "/projects/chew.html"
+  },
+  {
+    "title": "Laws of Accelerating Change InfoViz",
+    "tag": "Project",
+    "dates": "11/2016",
+    "start": "2016-11",
+    "end": "2016-11",
+    "url": "/projects/laws-of-accelerating-change.html"
+  },
+  {
+    "title": "Airline Security Delays Data Analysis",
+    "tag": "Project",
+    "dates": "12/2016",
+    "start": "2016-12",
+    "end": "2016-12",
+    "url": "/projects/airline-security-delays.html"
+  },
+  {
+    "title": "Thomson Reuters Onvio Usability Evaluation",
+    "tag": "Client",
+    "dates": "4/2016",
+    "start": "2016-04",
+    "end": "2016-04",
+    "url": "/projects/onvio-usability.html"
+  },
+  {
+    "title": "UM High-Performance Computing Project",
+    "tag": "Client",
+    "dates": "4/2016",
+    "start": "2016-04",
+    "end": "2016-04",
+    "url": "/projects/um-high-performance-computing.html"
+  },
+  {
+    "title": "UM Law School Entrepreneurship Clinic",
+    "tag": "Legal",
+    "dates": "8/2015 — 5/2016",
+    "start": "2015-08",
+    "end": "2016-05",
+    "url": "/projects/um-law-entrepreneurship-clinic.html"
+  },
+  {
+    "title": "Electronic Frontier Foundation",
+    "tag": "Legal",
+    "dates": "5/2015 — 8/2015",
+    "start": "2015-05",
+    "end": "2015-08",
+    "url": null
+  },
+  {
+    "title": "US District Court Central District of California",
+    "tag": "Legal",
+    "dates": "5/2014 — 8/2014",
+    "start": "2014-05",
+    "end": "2014-08",
+    "url": null
+  },
+  {
+    "title": "VentureBeat",
+    "tag": "Journalism",
+    "dates": "1/2010 — 5/2013",
+    "start": "2010-01",
+    "end": "2013-05",
+    "url": null
+  },
+  {
+    "title": "Monsoon Company",
+    "tag": "Intern",
+    "dates": "1/2009 — 3/2009",
+    "start": "2009-01",
+    "end": "2009-03",
+    "url": null
+  },
+  {
+    "title": "Helen Wills Neuroscience Institute at UC Berkeley",
+    "tag": "Research",
+    "dates": "6/2008 — 9/2008",
+    "start": "2008-06",
+    "end": "2008-09",
+    "url": null
+  }
+]
