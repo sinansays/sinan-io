@@ -686,6 +686,13 @@ a.timeline-title:hover {
   text-transform: uppercase;
 }
 
+.timeline-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 .timeline-dates {
   margin-top: 0.35rem;
   font-size: 0.95rem;
