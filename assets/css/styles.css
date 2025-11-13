@@ -716,6 +716,86 @@ a.timeline-title:hover {
   background: var(--surface-2);
 }
 
+.timeline-filters {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.timeline-filter-group {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.85rem;
+  row-gap: 0.25rem;
+}
+
+.timeline-filter-heading {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.timeline-filter-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.timeline-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--muted);
+  background: var(--surface-1);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 500;
+  flex: 0 0 auto;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.timeline-filter-chip:hover,
+.timeline-filter-chip:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+  outline: none;
+}
+
+.timeline-filter-chip.is-active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.timeline-filter-chip.is-active:hover,
+.timeline-filter-chip.is-active:focus-visible {
+  color: var(--bg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+[data-hidden="true"] {
+  display: none !important;
+}
+
+.timeline-empty::before {
+  display: none;
+}
+
 @media (max-width: 720px) {
   .timeline-section {
     margin-top: 2.5rem;
@@ -736,6 +816,18 @@ a.timeline-title:hover {
     width: 0.65rem;
     height: 0.65rem;
   }
+
+  .timeline-filters {
+    gap: 0.85rem;
+  }
+
+  .timeline-filter-group {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-filter-heading {
+    white-space: normal;
+  }
 }
 
 @media (max-width: 540px) {
@@ -750,5 +842,16 @@ a.timeline-title:hover {
 
   .timeline-item::before {
     display: none;
+  }
+
+  .timeline-filter-chip-list {
+    justify-content: flex-start;
+  }
+
+  .timeline-filter-chip {
+    flex: 1 1 calc(50% - 0.3rem);
+    max-width: calc(50% - 0.3rem);
+    justify-content: center;
+    font-size: 0.78rem;
   }
 }
