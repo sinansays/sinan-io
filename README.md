@@ -54,6 +54,7 @@ The site uses three main page templates:
 - The `/projects/projects-manifest.json` file now includes normalized `role`, `domain`, and `location` metadata for every entry. `role` and `domain` are stored as arrays of enums so chips can express multi-faceted work (e.g., consulting + teaching across AI PM and legal-tech).
 - The Projects timeline on `/projects/index.html` renders filter chips grouped by Role, Domain, and Location. Chips toggle with OR logic within a group and AND logic across groups, updating visibility via `[data-hidden="true"] { display: none; }` (no re-fetching).
 - Timeline ordering prioritizes ongoing engagements, then most recent end dates, then most recent start dates to ensure current work remains surfaced above completed projects.
+- Filter chips share a line with their headings on wide screens and collapse into two-up, truncated pills on narrow viewports so filters remain compact and scannable regardless of device width.
 
 ### Card Layouts
 Projects are displayed using card grids with different column counts:

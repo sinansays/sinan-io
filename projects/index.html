@@ -237,6 +237,7 @@
         chip.dataset.filterType = type;
         chip.dataset.filterValue = value;
         chip.textContent = value;
+        chip.title = value;
         chip.setAttribute('aria-pressed', 'false');
         list.appendChild(chip);
       });
