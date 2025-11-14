@@ -7,7 +7,7 @@
     "start": "2024-09",
     "end": null,
     "role": ["Teaching"],
-    "domain": ["AI PM"],
+    "domain": ["Gen AI"],
     "url": "/projects/ucla-ai-for-pm.html"
   },
   {
@@ -17,8 +17,8 @@
     "dates": "5/2023 — Present",
     "start": "2023-05",
     "end": null,
-    "role": ["Consulting"],
-    "domain": ["AI PM", "Platforms & SaaS", "Legal-tech"],
+    "role": ["Consulting", "PM"],
+    "domain": ["Gen AI", "Platforms & SaaS", "Legal-tech"],
     "url": "/projects/gencog.html"
   },
   {
@@ -29,7 +29,7 @@
     "start": "2023-08",
     "end": "2024-07",
     "role": ["PM"],
-    "domain": ["AI PM", "Platforms & SaaS"],
+    "domain": ["Gen AI", "Platforms & SaaS"],
     "url": "/projects/revenue-io.html"
   },
   {
@@ -40,7 +40,7 @@
     "start": "2023-05",
     "end": "2023-08",
     "role": ["Consulting", "PM"],
-    "domain": ["AI PM", "Platforms & SaaS"],
+    "domain": ["Gen AI", "Consumer"],
     "url": "/projects/personal-ai.html"
   },
   {
@@ -72,8 +72,8 @@
     "dates": "8/2017 — 10/2018",
     "start": "2017-08",
     "end": "2018-10",
-    "role": ["UXR"],
-    "domain": ["Consumer Smart Home & IoT"],
+    "role": ["UX Research"],
+    "domain": ["Consumer", "Smart Home & IoT"],
     "url": "/projects/belkin.html"
   },
   {
@@ -83,8 +83,8 @@
     "dates": "8/2017 — 10/2018",
     "start": "2017-08",
     "end": "2018-10",
-    "role": ["UXR"],
-    "domain": ["Consumer Smart Home & IoT"],
+    "role": ["UX Research"],
+    "domain": ["Consumer", "Smart Home & IoT"],
     "url": "/projects/linksys.html"
   },
   {
@@ -94,8 +94,8 @@
     "dates": "8/2017 — 10/2018",
     "start": "2017-08",
     "end": "2018-10",
-    "role": ["UXR"],
-    "domain": ["Consumer Smart Home & IoT"],
+    "role": ["UX Research"],
+    "domain": ["Consumer", "Smart Home & IoT"],
     "url": "/projects/wemo.html"
   },
   {
@@ -106,7 +106,7 @@
     "start": "2016-05",
     "end": "2016-07",
     "role": ["PM"],
-    "domain": ["Consumer"],
+    "domain": ["Consumer", "Health-tech"],
     "url": "/projects/gyroscope-growth.html"
   },
   {
@@ -116,8 +116,8 @@
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
-    "role": null,
-    "domain": ["AI PM", "Platforms & SaaS"],
+    "role": ["Data Science"],
+    "domain": null,
     "url": "/projects/us-gdp-analysis.html"
   },
   {
@@ -127,8 +127,8 @@
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
-    "role": null,
-    "domain": ["AI PM", "Platforms & SaaS"],
+    "role": ["Data Science"],
+    "domain": null,
     "url": "/projects/detroit-crime-demolitions.html"
   },
   {
@@ -138,7 +138,7 @@
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
-    "role": ["UXR"],
+    "role": ["UX Design"],
     "domain": ["Platforms & SaaS"],
     "url": "/projects/umsi-site-redesign.html"
   },
@@ -149,8 +149,8 @@
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
-    "role": ["UXR"],
-    "domain": ["Health-tech", "Consumer Smart Home & IoT"],
+    "role": ["UX Research", "UX Design"],
+    "domain": ["Health-tech", "Consumer"],
     "url": "/projects/chew.html"
   },
   {
@@ -160,8 +160,8 @@
     "dates": "11/2016",
     "start": "2016-11",
     "end": "2016-11",
-    "role": ["UXR"],
-    "domain": ["AI PM", "Platforms & SaaS"],
+    "role": ["UX Design"],
+    "domain": null,
     "url": "/projects/laws-of-accelerating-change.html"
   },
   {
@@ -171,8 +171,8 @@
     "dates": "12/2016",
     "start": "2016-12",
     "end": "2016-12",
-    "role": ["Consulting"],
-    "domain": ["AI PM"],
+    "role": ["Data Science"],
+    "domain": null,
     "url": "/projects/airline-security-delays.html"
   },
   {
@@ -183,7 +183,7 @@
     "start": "2016-04",
     "end": "2016-04",
     "role": ["Consulting", "UXR"],
-    "domain": ["Platforms & SaaS", "Legal-tech"],
+    "domain": ["Platforms & SaaS"],
     "url": "/projects/onvio-usability.html"
   },
   {
@@ -193,7 +193,7 @@
     "dates": "4/2016",
     "start": "2016-04",
     "end": "2016-04",
-    "role": ["Consulting", "UXR"],
+    "role": ["Consulting", "UX Research"],
     "domain": ["Platforms & SaaS"],
     "url": "/projects/um-high-performance-computing.html"
   },
@@ -204,7 +204,7 @@
     "dates": "8/2015 — 5/2016",
     "start": "2015-08",
     "end": "2016-05",
-    "role": null,
+    "role": ["Legal"],
     "domain": ["Legal-tech"],
     "url": "/projects/um-law-entrepreneurship-clinic.html"
   },
@@ -215,7 +215,7 @@
     "dates": "5/2015 — 8/2015",
     "start": "2015-05",
     "end": "2015-08",
-    "role": ["Consulting"],
+    "role": ["Legal"],
     "domain": ["Legal-tech"],
     "url": null
   },
@@ -226,7 +226,7 @@
     "dates": "5/2014 — 8/2014",
     "start": "2014-05",
     "end": "2014-08",
-    "role": null,
+    "role": ["Legal"],
     "domain": ["Legal-tech"],
     "url": null
   },
