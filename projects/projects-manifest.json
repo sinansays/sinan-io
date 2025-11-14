@@ -188,7 +188,7 @@
   },
   {
     "title": "Thomson Reuters Onvio Usability Evaluation",
-    "tag": "Client",
+    "tag": null,
     "location": "DTW",
     "dates": "4/2016",
     "start": "2016-04",
@@ -198,8 +198,8 @@
     "url": "/projects/onvio-usability.html"
   },
   {
-    "title": "UM High-Performance Computing Project",
-    "tag": "Client",
+    "title": "UM ARC-TS Flux High-Performance Computing Project",
+    "tag": null,
     "location": "DTW",
     "dates": "4/2016",
     "start": "2016-04",
