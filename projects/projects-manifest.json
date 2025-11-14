@@ -114,9 +114,9 @@
     "tag": null,
     "location": "DTW",
     "dates": "3/2017",
-    "start": "3/2017",
-    "end": "3/2017",
-    "role": ["Research"],
+    "start": "2017-03",
+    "end": "2017-03",
+    "role": ["Legal", "Research"],
     "domain": ["Legal-tech"],
     "url": "/projects/autonomous-vehicles-law-policy.html"
   },
