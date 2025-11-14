@@ -40,7 +40,7 @@
     "start": "2023-05",
     "end": "2023-08",
     "role": ["Consulting", "PM"],
-    "domain": ["Gen AI", "Consumer"],
+    "domain": ["Gen AI", "Consumer", "Startups"],
     "url": "/projects/personal-ai.html"
   },
   {
@@ -106,7 +106,7 @@
     "start": "2016-05",
     "end": "2016-07",
     "role": ["PM"],
-    "domain": ["Consumer", "Health-tech"],
+    "domain": ["Consumer", "Health-tech", "Startups"],
     "url": "/projects/gyroscope-growth.html"
   },
   {
@@ -216,7 +216,7 @@
     "start": "2015-08",
     "end": "2016-05",
     "role": ["Legal"],
-    "domain": ["Legal-tech"],
+    "domain": ["Startups", "Legal-tech"],
     "url": "/projects/um-law-entrepreneurship-clinic.html"
   },
   {
@@ -239,7 +239,7 @@
     "end": "2014-08",
     "role": ["Legal"],
     "domain": ["Legal-tech"],
-    "url": null
+    "url": "https://www.cacd.uscourts.gov/"
   },
   {
     "title": "VentureBeat",
@@ -249,7 +249,7 @@
     "start": "2010-01",
     "end": "2013-05",
     "role": null,
-    "domain": ["Platforms & SaaS"],
+    "domain": ["Startups"],
     "url": "https://www.google.com/search?q=site%3Aventurebeat.com+michael+sinan"
   },
   {
@@ -260,7 +260,7 @@
     "start": "2009-01",
     "end": "2009-03",
     "role": ["PM"],
-    "domain": ["Platforms & SaaS"],
+    "domain": ["Platforms & SaaS", "Startups"],
     "url": null
   },
   {
