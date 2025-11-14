@@ -799,6 +799,7 @@ a.timeline-title:hover {
   white-space: nowrap;
 }
 
+.chip-list,
 .timeline-filter-chip-list {
   display: flex;
   flex-wrap: wrap;
@@ -806,6 +807,13 @@ a.timeline-title:hover {
   min-width: 0;
 }
 
+.chip-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+}
+
+.chip,
 .timeline-filter-chip {
   display: inline-flex;
   align-items: center;
@@ -819,12 +827,19 @@ a.timeline-title:hover {
   font-size: 0.82rem;
   font-weight: 500;
   flex: 0 0 auto;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+}
+
+.chip {
+  cursor: default;
+}
+
+.timeline-filter-chip {
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .timeline-filter-chip:hover,
