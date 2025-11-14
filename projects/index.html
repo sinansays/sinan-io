@@ -79,19 +79,26 @@
     location: new Set()
   };
   const FILTER_META = {
-    role: { label: 'Role', order: ['PM', 'UXR', 'Consulting', 'Teaching'] },
-    domain: { label: 'Domain', order: ['AI PM', 'Platforms & SaaS', 'Consumer Smart Home & IoT', 'Health-tech', 'Legal-tech'] },
-    location: { label: 'Location', order: ['SFO', 'LAX', 'DTW', 'Remote'] }
-  };
-  const DEFAULT_EXPANDED = {
-    role: false,
-    domain: false,
-    location: true
+    role: {
+      label: 'Role',
+      order: ['PM', 'UXR', 'Consulting', 'Teaching'],
+      allLabel: 'All roles'
+    },
+    domain: {
+      label: 'Domain',
+      order: ['AI PM', 'Platforms & SaaS', 'Consumer Smart Home & IoT', 'Health-tech', 'Legal-tech'],
+      allLabel: 'All domains'
+    },
+    location: {
+      label: 'Location',
+      order: ['SFO', 'LAX', 'DTW', 'Remote']
+    }
   };
   let emptyStateItem = null;
 
   if (filterContainer) {
     filterContainer.addEventListener('click', handleFilterClick);
+    filterContainer.addEventListener('change', handleFilterChange);
   }
 
   fetch(manifestUrl)
@@ -171,22 +178,6 @@
     });
 
   function handleFilterClick(event) {
-    const toggle = event.target.closest('.timeline-filter-toggle');
-    if (toggle && filterContainer?.contains(toggle)) {
-      const controlsId = toggle.getAttribute('aria-controls');
-      if (!controlsId) {
-        return;
-      }
-      const targetList = document.getElementById(controlsId);
-      if (!targetList) {
-        return;
-      }
-      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', String(!isExpanded));
-      targetList.hidden = isExpanded;
-      return;
-    }
-
     const target = event.target.closest('button.timeline-filter-chip');
     if (!target || !filterContainer?.contains(target)) {
       return;
@@ -206,6 +197,28 @@
       filterSet.add(filterValue);
       target.classList.add('is-active');
       target.setAttribute('aria-pressed', 'true');
+    }
+
+    updateVisibility();
+  }
+
+  function handleFilterChange(event) {
+    const select = event.target.closest('.timeline-filter-select');
+    if (!select || !filterContainer?.contains(select)) {
+      return;
+    }
+
+    const { filterType } = select.dataset;
+    if (!filterType || !currentFilters[filterType]) {
+      return;
+    }
+
+    const filterSet = currentFilters[filterType];
+    filterSet.clear();
+
+    const value = select.value.trim();
+    if (value) {
+      filterSet.add(value);
     }
 
     updateVisibility();
@@ -252,34 +265,43 @@
       const group = document.createElement('div');
       group.className = 'timeline-filter-group';
 
-      const listId = `timeline-filter-${type}`;
-      const isExpanded = Boolean(DEFAULT_EXPANDED[type]);
+      if (type === 'role' || type === 'domain') {
+        const selectId = `timeline-filter-${type}-select`;
+        const label = document.createElement('label');
+        label.className = 'timeline-filter-select-label';
+        label.setAttribute('for', selectId);
+        label.textContent = FILTER_META[type].label;
+        group.appendChild(label);
 
-      const toggle = document.createElement('button');
-      toggle.type = 'button';
-      toggle.className = 'timeline-filter-toggle';
-      toggle.setAttribute('aria-expanded', String(isExpanded));
-      toggle.setAttribute('aria-controls', listId);
+        const select = document.createElement('select');
+        select.id = selectId;
+        select.className = 'timeline-filter-select';
+        select.dataset.filterType = type;
 
-      const heading = document.createElement('span');
+        const allOption = document.createElement('option');
+        allOption.value = '';
+        allOption.textContent = FILTER_META[type].allLabel || `All ${FILTER_META[type].label}s`;
+        select.appendChild(allOption);
+
+        values.forEach(value => {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        });
+
+        group.appendChild(select);
+        fragment.appendChild(group);
+        return;
+      }
+
+      const heading = document.createElement('p');
       heading.className = 'timeline-filter-heading';
       heading.textContent = FILTER_META[type].label;
-      toggle.appendChild(heading);
-
-      const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      icon.setAttribute('class', 'timeline-filter-toggle-icon');
-      icon.setAttribute('viewBox', '0 0 16 16');
-      icon.setAttribute('role', 'presentation');
-      icon.setAttribute('aria-hidden', 'true');
-      icon.innerHTML = '<path d="M4.47 6.97a.75.75 0 0 1 1.06-1.06L8 8.38l2.47-2.47a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3Z" />';
-      toggle.appendChild(icon);
-
-      group.appendChild(toggle);
+      group.appendChild(heading);
 
       const list = document.createElement('div');
       list.className = 'timeline-filter-chip-list';
-      list.id = listId;
-      list.hidden = !isExpanded;
 
       values.forEach(value => {
         const chip = document.createElement('button');
