@@ -110,6 +110,17 @@
     "url": "/projects/gyroscope-growth.html"
   },
   {
+    "title": "Autonomous Vehicles Research Paper",
+    "tag": null,
+    "location": "DTW",
+    "dates": "3/2017",
+    "start": "3/2017",
+    "end": "3/2017",
+    "role": ["Research"],
+    "domain": ["Legal-tech"],
+    "url": "/projects/autonomous-vehicles-law-policy.html"
+  },
+  {
     "title": "US GDP Analysis Using ML",
     "tag": "Data Project",
     "location": "DTW",
@@ -182,7 +193,7 @@
     "dates": "4/2016",
     "start": "2016-04",
     "end": "2016-04",
-    "role": ["Consulting", "UXR"],
+    "role": ["Consulting", "UX Research"],
     "domain": ["Platforms & SaaS"],
     "url": "/projects/onvio-usability.html"
   },
@@ -259,7 +270,7 @@
     "dates": "6/2008 — 9/2008",
     "start": "2008-06",
     "end": "2008-09",
-    "role": null,
+    "role": ["Research"],
     "domain": ["Health-tech"],
     "url": null
   }
