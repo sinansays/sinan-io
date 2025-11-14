@@ -79,14 +79,26 @@
     location: new Set()
   };
   const FILTER_META = {
-    role: { label: 'Role', order: ['PM', 'UXR', 'Consulting', 'Teaching'] },
-    domain: { label: 'Domain', order: ['AI PM', 'Platforms & SaaS', 'Consumer Smart Home & IoT', 'Health-tech', 'Legal-tech'] },
-    location: { label: 'Location', order: ['SFO', 'LAX', 'DTW', 'Remote'] }
+    role: {
+      label: 'Role',
+      order: ['PM', 'UXR', 'Consulting', 'Teaching'],
+      allLabel: 'All roles'
+    },
+    domain: {
+      label: 'Domain',
+      order: ['Gen AI', 'Consumer', 'Platforms & SaaS', 'Smart Home & IoT'],
+      allLabel: 'All domains'
+    },
+    location: {
+      label: 'Location',
+      order: ['SFO', 'LAX', 'DTW', 'Remote']
+    }
   };
   let emptyStateItem = null;
 
   if (filterContainer) {
     filterContainer.addEventListener('click', handleFilterClick);
+    filterContainer.addEventListener('change', handleFilterChange);
   }
 
   fetch(manifestUrl)
@@ -190,6 +202,28 @@
     updateVisibility();
   }
 
+  function handleFilterChange(event) {
+    const select = event.target.closest('.timeline-filter-select');
+    if (!select || !filterContainer?.contains(select)) {
+      return;
+    }
+
+    const { filterType } = select.dataset;
+    if (!filterType || !currentFilters[filterType]) {
+      return;
+    }
+
+    const filterSet = currentFilters[filterType];
+    filterSet.clear();
+
+    const value = select.value.trim();
+    if (value) {
+      filterSet.add(value);
+    }
+
+    updateVisibility();
+  }
+
   function renderFilters(items) {
     if (!filterContainer) {
       return;
@@ -211,6 +245,8 @@
 
     filterContainer.innerHTML = '';
     let hasChips = false;
+    let labelInserted = false;
+    const fragment = document.createDocumentFragment();
 
     Object.keys(FILTER_META).forEach(type => {
       const values = sortValues(availableValues[type], FILTER_META[type].order);
@@ -219,10 +255,47 @@
       }
 
       hasChips = true;
+      if (!labelInserted) {
+        const label = document.createElement('p');
+        label.className = 'timeline-filter-label';
+        label.textContent = 'Filter By:';
+        fragment.appendChild(label);
+        labelInserted = true;
+      }
       const group = document.createElement('div');
       group.className = 'timeline-filter-group';
 
-      const heading = document.createElement('h3');
+      if (type === 'role' || type === 'domain') {
+        const selectId = `timeline-filter-${type}-select`;
+        const label = document.createElement('label');
+        label.className = 'timeline-filter-select-label';
+        label.setAttribute('for', selectId);
+        label.textContent = FILTER_META[type].label;
+        group.appendChild(label);
+
+        const select = document.createElement('select');
+        select.id = selectId;
+        select.className = 'timeline-filter-select';
+        select.dataset.filterType = type;
+
+        const allOption = document.createElement('option');
+        allOption.value = '';
+        allOption.textContent = FILTER_META[type].allLabel || `All ${FILTER_META[type].label}s`;
+        select.appendChild(allOption);
+
+        values.forEach(value => {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        });
+
+        group.appendChild(select);
+        fragment.appendChild(group);
+        return;
+      }
+
+      const heading = document.createElement('p');
       heading.className = 'timeline-filter-heading';
       heading.textContent = FILTER_META[type].label;
       group.appendChild(heading);
@@ -243,9 +316,10 @@
       });
 
       group.appendChild(list);
-      filterContainer.appendChild(group);
+      fragment.appendChild(group);
     });
 
+    filterContainer.appendChild(fragment);
     filterContainer.hidden = !hasChips;
   }
 
