@@ -794,7 +794,8 @@ a.timeline-title:hover {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--text);
+  color: color-mix(in srgb, var(--text) 85%, var(--bg));
   margin: 0;
   white-space: nowrap;
 }
