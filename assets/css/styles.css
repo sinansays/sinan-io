@@ -486,6 +486,16 @@ body {
   min-height: 750px;
   border-radius: .5rem;
 }
+
+.card.card-static {
+  box-shadow: none;
+  transition: none;
+}
+
+.card.card-static:hover {
+  transform: none;
+  border-color: var(--muted);
+}
 .card h3 { margin: .15rem 0 .3rem; font-size: 1.05rem; }
 .card p { margin: 0; opacity: .8; }
 
