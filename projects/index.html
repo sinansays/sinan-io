@@ -83,6 +83,11 @@
     domain: { label: 'Domain', order: ['AI PM', 'Platforms & SaaS', 'Consumer Smart Home & IoT', 'Health-tech', 'Legal-tech'] },
     location: { label: 'Location', order: ['SFO', 'LAX', 'DTW', 'Remote'] }
   };
+  const DEFAULT_EXPANDED = {
+    role: false,
+    domain: false,
+    location: true
+  };
   let emptyStateItem = null;
 
   if (filterContainer) {
@@ -166,6 +171,22 @@
     });
 
   function handleFilterClick(event) {
+    const toggle = event.target.closest('.timeline-filter-toggle');
+    if (toggle && filterContainer?.contains(toggle)) {
+      const controlsId = toggle.getAttribute('aria-controls');
+      if (!controlsId) {
+        return;
+      }
+      const targetList = document.getElementById(controlsId);
+      if (!targetList) {
+        return;
+      }
+      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isExpanded));
+      targetList.hidden = isExpanded;
+      return;
+    }
+
     const target = event.target.closest('button.timeline-filter-chip');
     if (!target || !filterContainer?.contains(target)) {
       return;
@@ -211,6 +232,8 @@
 
     filterContainer.innerHTML = '';
     let hasChips = false;
+    let labelInserted = false;
+    const fragment = document.createDocumentFragment();
 
     Object.keys(FILTER_META).forEach(type => {
       const values = sortValues(availableValues[type], FILTER_META[type].order);
@@ -219,16 +242,44 @@
       }
 
       hasChips = true;
+      if (!labelInserted) {
+        const label = document.createElement('p');
+        label.className = 'timeline-filter-label';
+        label.textContent = 'Filter By:';
+        fragment.appendChild(label);
+        labelInserted = true;
+      }
       const group = document.createElement('div');
       group.className = 'timeline-filter-group';
 
-      const heading = document.createElement('h3');
+      const listId = `timeline-filter-${type}`;
+      const isExpanded = Boolean(DEFAULT_EXPANDED[type]);
+
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'timeline-filter-toggle';
+      toggle.setAttribute('aria-expanded', String(isExpanded));
+      toggle.setAttribute('aria-controls', listId);
+
+      const heading = document.createElement('span');
       heading.className = 'timeline-filter-heading';
       heading.textContent = FILTER_META[type].label;
-      group.appendChild(heading);
+      toggle.appendChild(heading);
+
+      const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      icon.setAttribute('class', 'timeline-filter-toggle-icon');
+      icon.setAttribute('viewBox', '0 0 16 16');
+      icon.setAttribute('role', 'presentation');
+      icon.setAttribute('aria-hidden', 'true');
+      icon.innerHTML = '<path d="M4.47 6.97a.75.75 0 0 1 1.06-1.06L8 8.38l2.47-2.47a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3Z" />';
+      toggle.appendChild(icon);
+
+      group.appendChild(toggle);
 
       const list = document.createElement('div');
       list.className = 'timeline-filter-chip-list';
+      list.id = listId;
+      list.hidden = !isExpanded;
 
       values.forEach(value => {
         const chip = document.createElement('button');
@@ -243,9 +294,10 @@
       });
 
       group.appendChild(list);
-      filterContainer.appendChild(group);
+      fragment.appendChild(group);
     });
 
+    filterContainer.appendChild(fragment);
     filterContainer.hidden = !hasChips;
   }
 
