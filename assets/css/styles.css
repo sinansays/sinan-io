@@ -444,7 +444,7 @@ body {
 /* ========== CARD COMPONENTS ========== */
 
 /* Project card - two column layout (thumbnail + content) */
-.card {
+.card { 
   display: grid;
   grid-template-columns: 120px 1fr; /* Fixed width thumbnail, flexible content */
   gap: .75rem;
@@ -475,6 +475,26 @@ body {
 }
 .card-body {
   min-width: 0;
+}
+
+.card.card-full {
+  grid-template-columns: 1fr;
+}
+
+.card.card-full iframe {
+  width: 100%;
+  min-height: 750px;
+  border-radius: .5rem;
+}
+
+.card.card-static {
+  box-shadow: none;
+  transition: none;
+}
+
+.card.card-static:hover {
+  transform: none;
+  border-color: var(--muted);
 }
 .card h3 { margin: .15rem 0 .3rem; font-size: 1.05rem; }
 .card p { margin: 0; opacity: .8; }
