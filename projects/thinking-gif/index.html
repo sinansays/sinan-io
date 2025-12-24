@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thinking Trace GIF Generator | Michael Sinanian</title>
+  <meta name="description" content="Generate shareable AI-style status GIFs with custom steps, shimmer effects, and GIF export.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+  <script src="/assets/js/includes.js" defer></script>
+  <script src="/thinking-gif/lib.js" defer></script>
+  <script src="/thinking-gif/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+  <header class="site-header" id="site-header">
+    <noscript>
+      <div style="padding: 1rem; background: var(--surface-2); border-radius: 0.5rem; margin: 1rem;">
+        <p style="margin: 0 0 0.5rem 0;"><strong>JavaScript Required:</strong> This site uses JavaScript to load navigation. Please enable JavaScript for the full experience.</p>
+        <nav style="margin-top: 0.75rem;">
+          <a href="/" style="margin: 0 0.5rem;">Home</a>
+          <a href="/about.html" style="margin: 0 0.5rem;">About</a>
+          <a href="/posts/" style="margin: 0 0.5rem;">Posts</a>
+          <a href="/projects/" style="margin: 0 0.5rem;">Projects</a>
+          <a href="/contact.html" style="margin: 0 0.5rem;">Contact</a>
+        </nav>
+      </div>
+    </noscript>
+  </header>
+  <main id="content" class="site-main">
+    <section class="page-header">
+      <h1>Thinking Trace GIF Generator</h1>
+    </section>
+
+    <section class="prose">
+      <p>Build a shareable, AI-style status animation. Customize the steps, tweak the shimmer, and export a looping GIF for social posts, chat drops, or product demos.</p>
+      <p class="thinking-gif-disclaimer">Unofficial meme generator.</p>
+    </section>
+
+    <section class="thinking-gif" aria-label="Thinking Trace GIF generator">
+      <noscript>
+        <div class="thinking-gif-noscript">
+          <p>This tool needs JavaScript to render the preview and export GIFs.</p>
+        </div>
+      </noscript>
+
+      <div class="thinking-gif-grid">
+        <div class="thinking-gif-preview" data-theme="dark">
+          <div class="thinking-gif-preview-header">
+            <h2>Preview</h2>
+            <div class="thinking-gif-preview-meta" id="preview-meta">480 × 270 · 20 FPS</div>
+          </div>
+          <div class="thinking-gif-canvas-wrap">
+            <canvas id="thinking-gif-canvas" width="480" height="270"></canvas>
+          </div>
+          <p class="thinking-gif-preview-note">Preview loops continuously. Exported GIF matches the canvas size exactly.</p>
+        </div>
+
+        <div class="thinking-gif-editor">
+          <div class="thinking-gif-panel">
+            <div class="thinking-gif-panel-header">
+              <h2>Steps</h2>
+              <button class="thinking-gif-button" type="button" id="add-step">Add step</button>
+            </div>
+            <ul class="thinking-gif-steps" id="steps-list" aria-live="polite"></ul>
+          </div>
+
+          <div class="thinking-gif-panel">
+            <h2>Timing</h2>
+            <div class="thinking-gif-fields">
+              <label class="thinking-gif-field">
+                <span>Step duration (seconds)</span>
+                <input type="number" id="step-duration" min="0.4" step="0.1" value="1.2">
+              </label>
+              <label class="thinking-gif-field">
+                <span>Transition style</span>
+                <select id="transition-style">
+                  <option value="typewriter">Typewriter</option>
+                  <option value="fade" selected>Fade</option>
+                  <option value="slide">Slide up</option>
+                </select>
+              </label>
+              <label class="thinking-gif-field">
+                <span>Transition length (ms)</span>
+                <input type="number" id="transition-ms" min="120" step="10" value="250">
+              </label>
+              <label class="thinking-gif-field thinking-gif-toggle">
+                <span>Loop animation</span>
+                <input type="checkbox" id="loop-toggle" checked>
+              </label>
+              <label class="thinking-gif-field">
+                <span>Pause between loops (ms)</span>
+                <input type="number" id="loop-pause" min="0" step="50" value="450">
+              </label>
+            </div>
+          </div>
+
+          <div class="thinking-gif-panel">
+            <h2>Visuals</h2>
+            <div class="thinking-gif-fields">
+              <label class="thinking-gif-field">
+                <span>Theme</span>
+                <select id="theme-select">
+                  <option value="dark" selected>Dark</option>
+                  <option value="light">Light</option>
+                </select>
+              </label>
+              <label class="thinking-gif-field">
+                <span>Font size</span>
+                <select id="font-size">
+                  <option value="16">Small</option>
+                  <option value="20" selected>Medium</option>
+                  <option value="24">Large</option>
+                </select>
+              </label>
+              <label class="thinking-gif-field">
+                <span>Canvas size</span>
+                <select id="canvas-size">
+                  <option value="320x240">320 × 240</option>
+                  <option value="480x270" selected>480 × 270</option>
+                  <option value="640x360">640 × 360</option>
+                  <option value="720x720">720 × 720</option>
+                  <option value="1080x1080">1080 × 1080</option>
+                </select>
+              </label>
+              <label class="thinking-gif-field">
+                <span>Shimmer intensity</span>
+                <input type="range" id="shimmer-intensity" min="0" max="1" step="0.05" value="0.6">
+              </label>
+              <label class="thinking-gif-field">
+                <span>Shimmer speed</span>
+                <input type="range" id="shimmer-speed" min="20" max="220" step="10" value="90">
+              </label>
+              <label class="thinking-gif-field">
+                <span>Display mode</span>
+                <select id="display-mode">
+                  <option value="single" selected>Single line</option>
+                  <option value="log">Log mode</option>
+                </select>
+              </label>
+              <label class="thinking-gif-field thinking-gif-toggle">
+                <span>Cursor indicator</span>
+                <input type="checkbox" id="cursor-toggle" checked>
+              </label>
+              <label class="thinking-gif-field">
+                <span>Cursor style</span>
+                <select id="cursor-style">
+                  <option value="bar" selected>Bar</option>
+                  <option value="block">Block</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="thinking-gif-panel">
+            <h2>Export</h2>
+            <div class="thinking-gif-export">
+              <button class="thinking-gif-button thinking-gif-button-primary" type="button" id="export-gif">Export GIF</button>
+              <div class="thinking-gif-export-meta" id="export-status" aria-live="polite">Ready to export.</div>
+              <div class="thinking-gif-export-help">If your download doesn’t start on iOS, tap the generated GIF and choose “Save Image.”</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer" id="site-footer">
+    <noscript>
+      <div style="padding: 1rem; text-align: center;">
+        <p style="margin: 0;">© 2025 Michael Sinanian | <a href="/colophon.html">Colophon</a> | <a href="/contact.html">Contact</a></p>
+      </div>
+    </noscript>
+  </footer>
+</body>
+</html>
