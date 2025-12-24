@@ -512,16 +512,13 @@
       if (shimmerEnabled && shimmerIntensity > 0) {
         const lineWidth = ctx.measureText(line).width;
         ctx.save();
-        ctx.beginPath();
-        ctx.rect(x, lineY, lineWidth, lineHeight);
-        ctx.clip();
         ctx.globalCompositeOperation = 'source-atop';
         const gradient = ctx.createLinearGradient(shimmerX, 0, shimmerX + shimmerWidth, 0);
         gradient.addColorStop(0, 'rgba(255,255,255,0)');
         gradient.addColorStop(0.5, `rgba(255,255,255,${0.25 + shimmerIntensity * 0.55})`);
         gradient.addColorStop(1, 'rgba(255,255,255,0)');
         ctx.fillStyle = gradient;
-        ctx.fillRect(x - shimmerWidth, lineY, lineWidth + shimmerWidth * 2, lineHeight);
+        ctx.fillText(line, x, lineY);
         ctx.restore();
       }
     });
