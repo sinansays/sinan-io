@@ -967,3 +967,226 @@ a.timeline-title:hover {
     font-size: 0.78rem;
   }
 }
+
+/* Thinking Trace GIF Generator */
+.thinking-gif {
+  margin-top: 2rem;
+}
+
+.thinking-gif-disclaimer {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-top: 0.5rem;
+}
+
+.thinking-gif-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+.thinking-gif-preview,
+.thinking-gif-panel {
+  background: var(--surface-1);
+  border: 1px solid var(--muted);
+  border-radius: 1rem;
+  padding: 1.4rem;
+  box-shadow: var(--shadow);
+}
+
+.thinking-gif-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.thinking-gif-preview-meta {
+  font-size: 0.85rem;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.thinking-gif-canvas-wrap {
+  border-radius: 0.85rem;
+  border: 1px solid var(--muted);
+  padding: 0.75rem;
+  background: #0b0c0f;
+  display: flex;
+  justify-content: center;
+}
+
+.thinking-gif-preview[data-theme="light"] .thinking-gif-canvas-wrap {
+  background: #f8fafc;
+}
+
+.thinking-gif-canvas-wrap canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.65rem;
+}
+
+.thinking-gif-preview-note {
+  margin-top: 0.85rem;
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.75;
+}
+
+.thinking-gif-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.thinking-gif-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.thinking-gif-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.thinking-gif-step {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.7rem;
+  background: var(--surface-2);
+  border: 1px solid var(--muted);
+  border-radius: 0.85rem;
+}
+
+.thinking-gif-step.is-dragging {
+  opacity: 0.6;
+}
+
+.thinking-gif-drag {
+  border: 1px solid var(--muted);
+  background: var(--surface-1);
+  color: var(--text);
+  border-radius: 0.6rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  cursor: grab;
+  font-size: 1rem;
+}
+
+.thinking-gif-drag:active {
+  cursor: grabbing;
+}
+
+.thinking-gif-step-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--muted);
+  background: var(--surface-1);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.thinking-gif-delete {
+  border: 1px solid var(--muted);
+  background: transparent;
+  color: var(--text);
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.thinking-gif-fields {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.thinking-gif-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.thinking-gif-field input,
+.thinking-gif-field select {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--muted);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.thinking-gif-field input[type="range"] {
+  padding: 0;
+}
+
+.thinking-gif-toggle {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.thinking-gif-toggle input {
+  width: auto;
+}
+
+.thinking-gif-button {
+  border: 1px solid var(--muted);
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 0.55rem 1rem;
+  border-radius: 0.7rem;
+  font-weight: 600;
+}
+
+.thinking-gif-button-primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.thinking-gif-export {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.thinking-gif-export-meta {
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.thinking-gif-export-help {
+  font-size: 0.85rem;
+  color: var(--text);
+  opacity: 0.6;
+}
+
+.thinking-gif-noscript {
+  padding: 1rem;
+  border-radius: 0.8rem;
+  border: 1px dashed var(--muted);
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 960px) {
+  .thinking-gif-grid {
+    grid-template-columns: 1fr;
+  }
+}
