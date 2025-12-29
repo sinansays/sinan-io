@@ -235,8 +235,18 @@
   function renderFrame(ctx, timeMs, steps, config) {
     const { width, height, padding } = config;
     const theme = config.theme === 'light'
-      ? { bg: '#f8fafc', text: '#1f2937', muted: 'rgba(31,41,55,0.45)' }
-      : { bg: '#0b0c0f', text: '#e5e7eb', muted: 'rgba(229,231,235,0.35)' };
+      ? {
+          bg: '#f8fafc',
+          text: '#1f2937',
+          muted: 'rgba(31,41,55,0.45)',
+          shimmer: { r: 255, g: 255, b: 255, minAlpha: 0.25, maxAlpha: 0.8 }
+        }
+      : {
+          bg: '#0b0c0f',
+          text: '#e5e7eb',
+          muted: 'rgba(229,231,235,0.35)',
+          shimmer: { r: 255, g: 255, b: 255, minAlpha: 0.05, maxAlpha: 0.22 }
+        };
 
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = theme.bg;
@@ -517,9 +527,14 @@
         ctx.clip();
         ctx.globalCompositeOperation = 'source-atop';
         const gradient = ctx.createLinearGradient(shimmerX, 0, shimmerX + shimmerWidth, 0);
-        gradient.addColorStop(0, 'rgba(255,255,255,0)');
-        gradient.addColorStop(0.5, `rgba(255,255,255,${0.25 + shimmerIntensity * 0.55})`);
-        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        const shimmerAlpha = theme.shimmer.minAlpha
+          + (theme.shimmer.maxAlpha - theme.shimmer.minAlpha) * shimmerIntensity;
+        gradient.addColorStop(0, `rgba(${theme.shimmer.r},${theme.shimmer.g},${theme.shimmer.b},0)`);
+        gradient.addColorStop(
+          0.5,
+          `rgba(${theme.shimmer.r},${theme.shimmer.g},${theme.shimmer.b},${shimmerAlpha})`
+        );
+        gradient.addColorStop(1, `rgba(${theme.shimmer.r},${theme.shimmer.g},${theme.shimmer.b},0)`);
         ctx.fillStyle = gradient;
         ctx.fillRect(x - shimmerWidth, lineY, lineWidth + shimmerWidth * 2, lineHeight);
         ctx.restore();
