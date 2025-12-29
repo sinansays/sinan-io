@@ -272,23 +272,23 @@
     const nextLines = wrapTextLines(ctx, steps[stepState.nextIndex].text, maxWidth, 2);
 
     if (config.mode === 'log') {
-    drawLogMode({
-      ctx,
-      steps,
-      stepState,
-      activeLines,
-      nextLines,
-      padding,
-      maxWidth,
-      lineHeight,
-      theme,
-      shimmerX,
-      shimmerWidth,
-      config,
-      timeMs
-    });
-    return;
-  }
+      drawLogMode({
+        ctx,
+        steps,
+        stepState,
+        activeLines,
+        nextLines,
+        padding,
+        maxWidth,
+        lineHeight,
+        theme,
+        shimmerX,
+        shimmerWidth,
+        config,
+        timeMs
+      });
+      return;
+    }
 
     const yStart = (height - activeLines.length * lineHeight) / 2;
     const transitionStyle = config.transitionStyle;
@@ -304,6 +304,7 @@
         alpha: 1,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: config.shimmer.enabled,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -324,6 +325,7 @@
         alpha: 1 - stepState.transitionProgress,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: false,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -340,6 +342,7 @@
         alpha: stepState.transitionProgress,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: config.shimmer.enabled,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -361,6 +364,7 @@
         alpha: 1 - stepState.transitionProgress,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: false,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -377,6 +381,7 @@
         alpha: stepState.transitionProgress,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: config.shimmer.enabled,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -398,11 +403,12 @@
       lineHeight,
       color: theme.text,
       alpha: 1 - stepState.transitionProgress,
-      shimmerX,
-      shimmerWidth,
-      shimmerEnabled: false,
-      shimmerIntensity: config.shimmer.intensity,
-      cursor: config.cursor,
+        shimmerX,
+        shimmerWidth,
+        shimmer: theme.shimmer,
+        shimmerEnabled: false,
+        shimmerIntensity: config.shimmer.intensity,
+        cursor: config.cursor,
       cursorActive: false,
       timeMs
     });
@@ -414,11 +420,12 @@
       lineHeight,
       color: theme.text,
       alpha: 1,
-      shimmerX,
-      shimmerWidth,
-      shimmerEnabled: config.shimmer.enabled,
-      shimmerIntensity: config.shimmer.intensity,
-      cursor: config.cursor,
+        shimmerX,
+        shimmerWidth,
+        shimmer: theme.shimmer,
+        shimmerEnabled: config.shimmer.enabled,
+        shimmerIntensity: config.shimmer.intensity,
+        cursor: config.cursor,
       cursorActive: true,
       timeMs
     });
@@ -486,6 +493,7 @@
         alpha: entry.alpha,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: entry.shimmer && config.shimmer.enabled,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -505,6 +513,7 @@
     alpha,
     shimmerX,
     shimmerWidth,
+    shimmer,
     shimmerEnabled,
     shimmerIntensity,
     cursor,
@@ -527,14 +536,14 @@
         ctx.clip();
         ctx.globalCompositeOperation = 'source-atop';
         const gradient = ctx.createLinearGradient(shimmerX, 0, shimmerX + shimmerWidth, 0);
-        const shimmerAlpha = theme.shimmer.minAlpha
-          + (theme.shimmer.maxAlpha - theme.shimmer.minAlpha) * shimmerIntensity;
-        gradient.addColorStop(0, `rgba(${theme.shimmer.r},${theme.shimmer.g},${theme.shimmer.b},0)`);
+        const shimmerAlpha = shimmer.minAlpha
+          + (shimmer.maxAlpha - shimmer.minAlpha) * shimmerIntensity;
+        gradient.addColorStop(0, `rgba(${shimmer.r},${shimmer.g},${shimmer.b},0)`);
         gradient.addColorStop(
           0.5,
-          `rgba(${theme.shimmer.r},${theme.shimmer.g},${theme.shimmer.b},${shimmerAlpha})`
+          `rgba(${shimmer.r},${shimmer.g},${shimmer.b},${shimmerAlpha})`
         );
-        gradient.addColorStop(1, `rgba(${theme.shimmer.r},${theme.shimmer.g},${theme.shimmer.b},0)`);
+        gradient.addColorStop(1, `rgba(${shimmer.r},${shimmer.g},${shimmer.b},0)`);
         ctx.fillStyle = gradient;
         ctx.fillRect(x - shimmerWidth, lineY, lineWidth + shimmerWidth * 2, lineHeight);
         ctx.restore();
