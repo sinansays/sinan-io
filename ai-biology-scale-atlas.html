@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>An Atlas of AI Across the Scales of Biology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3eee2; --paper-2:#ece4d2; --card:#fbf8f0;
+    --ink:#23211c; --ink-soft:#5d584b; --ink-faint:#928c79;
+    --rule:#cdc4ad; --rule-soft:#ddd5c0;
+    --lm:#0f7a68;      /* language models  — teal      */
+    --wm:#bf8a1e;      /* world models     — ochre     */
+    --narrow:#3b4ea6;  /* structure/narrow — indigo    */
+    --sim:#b04a2c;     /* simulation       — rust       */
+    --shadow:0 1px 0 rgba(35,33,28,.04), 0 6px 18px -10px rgba(35,33,28,.30);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  body{
+    background-image:
+      radial-gradient(120% 80% at 80% -10%, #f7f2e6 0%, rgba(247,242,230,0) 55%),
+      radial-gradient(100% 60% at -10% 110%, #efe7d6 0%, rgba(0,0,0,0) 55%);
+    background-color:var(--paper);
+    padding:30px clamp(16px,4vw,52px) 56px;
+  }
+  /* faint paper grain */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    opacity:.035;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");}
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;}
+
+  /* ---------- header ---------- */
+  header{margin-bottom:26px;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;
+    text-transform:uppercase;color:var(--ink-soft);margin:0 0 10px;}
+  h1{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(30px,5vw,52px);
+    line-height:1.02;letter-spacing:-.015em;margin:0 0 14px;max-width:18ch;}
+  h1 em{font-style:italic;font-weight:500;color:var(--sim);}
+  .lede{font-size:clamp(15px,1.6vw,18px);line-height:1.5;max-width:74ch;color:#3a372f;margin:0;}
+  .lede b{font-weight:600;}
+
+  /* ---------- legend / filter ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 4px;align-items:center;}
+  .legend .lab{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--ink-soft);margin-right:4px;}
+  .fbtn{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.02em;
+    border:1px solid var(--rule);background:var(--card);color:var(--ink);
+    padding:7px 12px;border-radius:999px;cursor:pointer;display:inline-flex;
+    align-items:center;gap:8px;transition:all .18s ease;line-height:1;}
+  .fbtn:hover{border-color:var(--ink-soft);transform:translateY(-1px);}
+  .fbtn .swatch{width:9px;height:9px;border-radius:50%;flex:none;}
+  .fbtn[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .fbtn[data-method="all"][aria-pressed="true"]{background:var(--ink);}
+  .sw-lm{background:var(--lm)} .sw-wm{background:var(--wm)}
+  .sw-narrow{background:var(--narrow)} .sw-sim{background:var(--sim)}
+
+  /* ---------- atlas layout ---------- */
+  .atlas{display:grid;grid-template-columns:1fr 312px;gap:26px;margin-top:20px;align-items:start;}
+  @media(max-width:920px){.atlas{grid-template-columns:1fr;}}
+
+  .plotbox{position:relative;}
+  .haxis{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px 4px;
+    display:flex;align-items:center;gap:10px;}
+  .haxis::after{content:"";flex:1;height:1px;background:var(--rule);}
+  .scrollx{overflow-x:auto;}
+
+  .plot{display:grid;
+    grid-template-columns:138px repeat(4,minmax(150px,1fr));
+    grid-template-rows:auto repeat(4,minmax(116px,auto)) minmax(104px,auto);
+    border:1px solid var(--rule);background:var(--paper-2);
+    border-radius:6px;overflow:hidden;min-width:720px;}
+
+  .corner{grid-row:1;grid-column:1;background:var(--paper-2);
+    border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    display:flex;align-items:flex-end;justify-content:flex-start;padding:8px;}
+  .corner span{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.12em;
+    color:var(--ink-faint);line-height:1.35;text-transform:uppercase;}
+
+  .colhead{grid-row:1;background:var(--paper-2);border-bottom:1px solid var(--rule);
+    border-right:1px solid var(--rule-soft);padding:11px 12px 10px;}
+  .colhead:last-child{border-right:none;}
+  .colhead .ch-name{font-family:"Fraunces",serif;font-weight:600;font-size:14.5px;
+    line-height:1.1;letter-spacing:-.01em;display:flex;align-items:center;gap:7px;}
+  .colhead .ch-dot{width:8px;height:8px;border-radius:50%;flex:none;}
+  .colhead .ch-sub{font-family:"IBM Plex Mono",monospace;font-size:9.5px;
+    color:var(--ink-faint);margin-top:4px;letter-spacing:.02em;}
+
+  .rowlab{grid-column:1;background:var(--paper-2);border-right:1px solid var(--rule);
+    border-bottom:1px solid var(--rule-soft);padding:12px 12px;display:flex;
+    flex-direction:column;justify-content:center;}
+  .rowlab:last-of-type{border-bottom:none;}
+  .rowlab .rl-name{font-family:"Fraunces",serif;font-weight:600;font-size:15px;
+    line-height:1.08;letter-spacing:-.01em;}
+  .rowlab .rl-sub{font-size:12px;font-style:italic;color:var(--ink-soft);
+    line-height:1.25;margin-top:5px;}
+  .rowlab.adj .rl-name{color:var(--sim);}
+
+  .cell{border-right:1px solid var(--rule-soft);border-bottom:1px solid var(--rule-soft);
+    padding:10px;display:flex;flex-direction:column;gap:9px;position:relative;
+    background:linear-gradient(0deg,rgba(255,255,255,.18),rgba(255,255,255,.18));}
+  .cell.lastcol{border-right:none;}
+  .cell.lastrow{border-bottom:none;}
+  .cell.adjrow{background:repeating-linear-gradient(135deg,rgba(176,74,44,.05) 0 7px,rgba(176,74,44,.015) 7px 14px);}
+
+  /* annotation (gap notes) */
+  .anno{font-size:11.5px;font-style:italic;color:var(--ink-faint);line-height:1.32;
+    border-left:2px dashed var(--rule);padding-left:9px;margin:auto 0;}
+  .anno b{font-style:normal;font-weight:600;color:var(--ink-soft);}
+
+  /* ---------- node chips ---------- */
+  .chip{appearance:none;text-align:left;width:100%;cursor:pointer;
+    background:var(--card);border:1px solid var(--rule);border-left-width:4px;
+    border-radius:5px;padding:9px 11px 10px;box-shadow:var(--shadow);
+    transition:transform .16s ease,box-shadow .16s ease,opacity .18s ease,border-color .16s ease;
+    font-family:inherit;color:inherit;position:relative;}
+  .chip:hover,.chip:focus-visible{transform:translateY(-2px);
+    box-shadow:0 2px 0 rgba(35,33,28,.05),0 14px 26px -12px rgba(35,33,28,.45);outline:none;}
+  .chip:focus-visible{border-color:var(--ink);}
+  .chip .c-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .chip .c-name{font-family:"Fraunces",serif;font-weight:600;font-size:14.5px;
+    line-height:1.05;letter-spacing:-.012em;}
+  .chip .c-yr{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-faint);
+    flex:none;padding-top:2px;}
+  .chip .c-org{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.02em;
+    color:var(--ink-soft);margin-top:5px;text-transform:uppercase;}
+  .chip .c-dots{display:flex;gap:4px;margin-top:8px;}
+  .chip .c-dots i{width:7px;height:7px;border-radius:50%;display:block;}
+  .chip .c-iface{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.04em;
+    color:var(--narrow);margin-top:6px;display:flex;align-items:center;gap:4px;}
+  .chip.is-outlier{background:#fbf1ec;border-color:#e2b9a8;}
+  .chip.is-active{outline:2px solid var(--ink);outline-offset:1px;}
+  .chip.is-dim{opacity:.24;filter:grayscale(.4);}
+  .chip.is-dim:hover{opacity:.55;}
+
+  .spine-lm{border-left-color:var(--lm)} .spine-wm{border-left-color:var(--wm)}
+  .spine-narrow{border-left-color:var(--narrow)} .spine-sim{border-left-color:var(--sim)}
+  .dot-lm{background:var(--lm)} .dot-wm{background:var(--wm)}
+  .dot-narrow{background:var(--narrow)} .dot-sim{background:var(--sim)}
+
+  /* ---------- detail panel ---------- */
+  .detail{position:sticky;top:18px;background:var(--card);border:1px solid var(--rule);
+    border-radius:8px;padding:0;overflow:hidden;box-shadow:var(--shadow);min-height:320px;}
+  .detail .d-spine{height:5px;width:100%;background:var(--rule);transition:background .2s;}
+  .detail .d-body{padding:20px 20px 22px;}
+  .d-empty{font-style:italic;color:var(--ink-soft);font-size:15px;line-height:1.5;}
+  .d-empty .hint{font-family:"IBM Plex Mono",monospace;font-style:normal;font-size:11px;
+    letter-spacing:.04em;color:var(--ink-faint);display:block;margin-top:14px;}
+  .d-scale{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px;}
+  .d-name{font-family:"Fraunces",serif;font-weight:600;font-size:23px;line-height:1.04;
+    letter-spacing:-.015em;margin:0 0 3px;}
+  .d-meta{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-soft);
+    letter-spacing:.02em;margin:0 0 14px;}
+  .d-methods{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;}
+  .d-mtag{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.06em;
+    text-transform:uppercase;padding:4px 8px;border-radius:999px;color:#fff;}
+  .mt-lm{background:var(--lm)} .mt-wm{background:var(--wm)}
+  .mt-narrow{background:var(--narrow)} .mt-sim{background:var(--sim)}
+  .d-method-label{font-size:13px;font-style:italic;color:var(--ink-soft);margin:0 0 13px;
+    padding-bottom:13px;border-bottom:1px solid var(--rule-soft);}
+  .d-desc{font-size:15.5px;line-height:1.52;color:#322f28;margin:0 0 16px;}
+  .d-cite{font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.5;
+    color:var(--ink-soft);border-left:2px solid var(--rule);padding-left:11px;}
+  .d-cite span{color:var(--ink-faint);display:block;margin-bottom:3px;letter-spacing:.16em;
+    text-transform:uppercase;font-size:9px;}
+
+  /* ---------- footer notes ---------- */
+  footer{margin-top:30px;border-top:1px solid var(--rule);padding-top:18px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px 30px;}
+  .note{font-size:13px;line-height:1.48;color:var(--ink-soft);}
+  .note h4{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--ink);margin:0 0 6px;font-weight:600;}
+  .note .spec{color:var(--sim);font-family:"IBM Plex Mono",monospace;font-size:10px;
+    letter-spacing:.06em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">A conceptual map · 2021 – 2026</p>
+    <h1>Where the AI is aimed across the scales of <em>biology</em></h1>
+    <p class="lede">Nine research efforts, placed by the <b>biological scale</b> they operate on (vertical, coarse&nbsp;→&nbsp;fine) and the <b>computational method</b> they embody (horizontal). Coloured dots mark every method a node draws on — <b>filter</b> to see which paradigm reaches which layer. Hover or tap any node for detail.</p>
+  </header>
+
+  <div class="legend" role="group" aria-label="Filter by method">
+    <span class="lab">Filter ·</span>
+    <button class="fbtn" data-method="all" aria-pressed="true">All</button>
+    <button class="fbtn" data-method="lm" aria-pressed="false"><span class="swatch sw-lm"></span>Language models</button>
+    <button class="fbtn" data-method="wm" aria-pressed="false"><span class="swatch sw-wm"></span>World models</button>
+    <button class="fbtn" data-method="narrow" aria-pressed="false"><span class="swatch sw-narrow"></span>Structure / narrow</button>
+    <button class="fbtn" data-method="sim" aria-pressed="false"><span class="swatch sw-sim"></span>Simulation</button>
+  </div>
+
+  <div class="atlas">
+    <div class="plotbox">
+      <p class="haxis">AI / Computational method&nbsp;&nbsp;→</p>
+      <div class="scrollx">
+        <div class="plot" id="plot"></div>
+      </div>
+    </div>
+
+    <aside class="detail" id="detail">
+      <div class="d-spine" id="dspine"></div>
+      <div class="d-body" id="dbody">
+        <p class="d-empty">Select a node to read what it does, the scale it works at, and the source.
+          <span class="hint">↳ hover to preview · click to pin</span></p>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="note">
+      <h4>How to read placement</h4>
+      Each node sits in its <em>primary</em> method column; dots show every paradigm it genuinely combines. Spine colour follows the column. Method tags reflect each work's dominant framing (and, for the protein and cell "world models," the papers' own framing).
+    </div>
+    <div class="note">
+      <h4>Two observations <span class="spec">[interpretive]</span></h4>
+      The <b>sub-cellular machinery</b> row is nearly empty — current efforts cluster at <em>cell</em> and <em>protein/molecule</em>, only grazing the gene-regulatory middle. And explicit <b>physics simulation</b> barely touches the biology rows: the bio models lean on learned representations, while simulation lives mainly in the materials outlier.
+    </div>
+    <div class="note">
+      <h4>The outlier</h4>
+      <b>Periodic Labs</b> is not life sciences. It sits below the biological stack at the atoms/materials layer — included as a contrast that anchors the "simulation + closed-loop experiment" end of the method axis.
+    </div>
+  </footer>
+</div>
+
+<script>
+const COLS = [
+  {key:'lm',     name:'Language models',         sub:'sequence as text'},
+  {key:'wm',     name:'World models',            sub:'learned internal model'},
+  {key:'narrow', name:'Structure / narrow',      sub:'task-specific predictors'},
+  {key:'sim',    name:'Simulation',              sub:'physics, non-neural'}
+];
+const ROWS = [
+  {name:'Cell',                        sub:'single-cell state · cell types · perturbation response'},
+  {name:'Sub-cellular machinery',      sub:'gene-regulatory networks · pathways · complexes'},
+  {name:'Protein',                     sub:'folded chains of amino acids · structure & function'},
+  {name:'Amino acid / small molecule', sub:'compounds, ligands, drug-like matter'},
+  {name:'Atoms / materials',           sub:'adjacent domain · physical sciences', adj:true}
+];
+const METHOD_NAMES = {lm:'Language model', wm:'World model', narrow:'Structure / narrow', sim:'Simulation (non-neural)'};
+const colKey = n => COLS[n.col-1].key;
+
+// row,col are 1-indexed logical (row 1 = Cell ... row 5 = Atoms; col 1 = LM ... col 4 = Sim)
+const NODES = [
+ {id:'c2s', name:'Cell2Sentence', year:2024, org:'van Dijk Lab', row:1, col:1, methods:['lm'],
+  scale:'Cell', methodLabel:'Language model on transcriptomes',
+  desc:'Turns single-cell RNA-seq profiles into "cell sentences" — genes listed in descending order of expression — so an off-the-shelf LLM can read and write cellular state as text, with no change to the model architecture.',
+  citeTitle:'Cell2Sentence: Teaching Large Language Models the Language of Biology', citeMeta:'2024'},
+
+ {id:'c2ss', name:'Scaling LLMs for Single-cell', year:2025, org:'Google · Yale · Brown', row:1, col:1, methods:['lm','wm'],
+  scale:'Cell', methodLabel:'Language model → "virtual cell"',
+  desc:'Scales the cell-sentence idea onto Gemma-2, up to 27B parameters over 1T+ tokens of transcriptomes, metadata and literature. Aims at a conversational "virtual cell"; a paired virtual drug screen nominated a therapy pathway later checked in the lab.',
+  citeTitle:'Scaling Large Language Models for Next-generation Single-cell Analysis (C2S-Scale)', citeMeta:'bioRxiv 2025.04.14.648850'},
+
+ {id:'rbio', name:'rbio1', year:2025, org:'Chan Zuckerberg Initiative', row:1, col:2, methods:['lm','wm'],
+  scale:'Cell / gene regulation', methodLabel:'Reasoning LLM verified by a world model',
+  desc:'A reasoning LLM post-trained by reinforcement learning whose reward comes from virtual-cell world models acting as "soft verifiers" — substituting simulation for slow, costly wet-lab signal. Biology\'s take on verifiable-reward training.',
+  citeTitle:'rbio1 — Training Scientific Reasoning LLMs with Biological World Models as Soft Verifiers', citeMeta:'bioRxiv 2025.08.18.670981'},
+
+ {id:'esm', name:'Protein World Model', year:2026, org:'Biohub · ESM lineage', row:3, col:2, methods:['lm','wm'],
+  scale:'Protein', methodLabel:'Protein language model → world model',
+  desc:'Argues that a language model trained only on protein sequences (the ESMC / ESMFold2 / ESM Atlas line) internalises a genuine world model of protein biology — structure, function and evolutionary constraint emerging from sequence alone.',
+  citeTitle:'Language Modeling Materializes a World Model of Protein Biology', citeMeta:'2026'},
+
+ {id:'af', name:'AlphaFold', year:2021, org:'DeepMind', row:3, col:3, methods:['narrow'],
+  scale:'Protein', methodLabel:'Structure-specific predictor (narrow)',
+  desc:'Predicts 3D protein structure from sequence via the Evoformer and multiple-sequence alignments. A purpose-built structural model — pointedly neither a language nor a world model — and the field\'s defining accuracy benchmark.',
+  citeTitle:'Highly Accurate Protein Structure Prediction with AlphaFold', citeMeta:'Jumper et al., Nature 2021'},
+
+ {id:'tb', name:'TerraBind', year:2026, org:'Terray Therapeutics', row:4, col:3, methods:['narrow'], iface:true,
+  scale:'Protein ⇄ ligand interface', methodLabel:'Multimodal structure model (narrow)',
+  desc:'Predicts protein–ligand binding affinity and pose from a deliberately coarse representation (protein Cβ + ligand heavy atoms only), fusing an ESM-2 protein encoder with the COATI-3 molecule encoder. Drops all-atom diffusion entirely — ~26× faster and ~20% more accurate than diffusion baselines.',
+  citeTitle:'TerraBind — Fast & Accurate Binding Affinity via Coarse Structural Representations', citeMeta:'arXiv 2602.07735 · 2026'},
+
+ {id:'coati', name:'COATI / COATI-LDM', year:2024, org:'Terray Therapeutics', row:4, col:1, methods:['lm'],
+  scale:'Small molecule', methodLabel:'Molecular language + generative latent diffusion',
+  desc:'COATI is a multimodal encoder that learns a navigable representation of chemical space; COATI-LDM runs latent diffusion inside that space to generate drug-like molecules under property constraints — a "language" model for molecules plus a generative head.',
+  citeTitle:'COATI & COATI-LDM', citeMeta:'Terray Therapeutics · 2024'},
+
+ {id:'bo', name:'Batch Bayesian Optimization', year:2025, org:'Terray Therapeutics', row:4, col:3, methods:['narrow'],
+  scale:'Small molecule', methodLabel:'Pretrained predictor + active learning',
+  desc:'A pretrained joint-prediction model drives scalable batch Bayesian optimization over molecular designs — deciding which compounds to synthesise next so potency improves with the fewest experiments.',
+  citeTitle:'Pretrained Joint Predictions for Scalable Batch Bayesian Optimization of Molecular Designs', citeMeta:'Terray Therapeutics · 2025'},
+
+ {id:'periodic', name:'Periodic Labs', year:2025, org:'Periodic Labs', row:5, col:4, methods:['sim','lm','wm'], outlier:true,
+  scale:'Atoms / materials — adjacent domain', methodLabel:'Physics simulation + LLM agents + robotic labs',
+  desc:'The outlier — not life sciences at all. LLM "AI scientists" generate hypotheses, run quantum-mechanical / DFT simulations, and command robotic labs to synthesise and characterise inorganic materials (e.g. superconductors). A closed experimental loop that grows a world model from proprietary physical data.',
+  citeTitle:'Periodic Labs — autonomous discovery for the physical sciences', citeMeta:'Founded 2025'}
+];
+
+// annotations injected into otherwise-empty cells: {row,col,html}
+const ANNOS = [
+  {row:2, col:2, html:'<span>⤴ Perturbation &amp; gene-regulation tasks (<b>C2S-Scale</b>, <b>rbio1</b>) only <b>graze</b> this layer — no effort here squarely targets sub-cellular machinery.</span>'},
+  {row:3, col:4, html:'<span>The biology rows lean on <b>learned models</b>; explicit physics simulation stays mostly in the materials domain below.</span>'}
+];
+
+const plot = document.getElementById('plot');
+const NC = COLS.length;     // 4
+const NR = ROWS.length;     // 5
+
+// corner
+const corner = document.createElement('div');
+corner.className='corner';
+corner.innerHTML='<span>scale&nbsp;↓ coarse&nbsp;to&nbsp;fine<br>method&nbsp;→</span>';
+plot.appendChild(corner);
+
+// column headers
+COLS.forEach((c,i)=>{
+  const h=document.createElement('div');
+  h.className='colhead';
+  h.style.gridRow='1'; h.style.gridColumn=String(i+2);
+  h.innerHTML=`<div class="ch-name"><span class="ch-dot dot-${c.key}"></span>${c.name}</div><div class="ch-sub">${c.sub}</div>`;
+  plot.appendChild(h);
+});
+
+// row labels + cells
+ROWS.forEach((r,ri)=>{
+  const lab=document.createElement('div');
+  lab.className='rowlab'+(r.adj?' adj':'');
+  lab.style.gridRow=String(ri+2); lab.style.gridColumn='1';
+  lab.innerHTML=`<div class="rl-name">${r.name}</div><div class="rl-sub">${r.sub}</div>`;
+  plot.appendChild(lab);
+
+  COLS.forEach((c,ci)=>{
+    const cell=document.createElement('div');
+    cell.className='cell'+(ci===NC-1?' lastcol':'')+(ri===NR-1?' lastrow':'')+(r.adj?' adjrow':'');
+    cell.style.gridRow=String(ri+2); cell.style.gridColumn=String(ci+2);
+    cell.dataset.row=ri+1; cell.dataset.col=ci+1;
+    // chips for this cell
+    NODES.filter(n=>n.row===ri+1 && n.col===ci+1).forEach(n=>cell.appendChild(makeChip(n)));
+    // annotation for this cell
+    const a=ANNOS.find(x=>x.row===ri+1 && x.col===ci+1);
+    if(a){const d=document.createElement('div');d.className='anno';d.innerHTML=a.html;cell.appendChild(d);}
+    plot.appendChild(cell);
+  });
+});
+
+function makeChip(n){
+  const b=document.createElement('button');
+  b.className='chip spine-'+colKey(n)+(n.outlier?' is-outlier':'');
+  b.dataset.id=n.id;
+  b.dataset.methods=n.methods.join(',');
+  const dots=n.methods.map(m=>`<i class="dot-${m}" title="${METHOD_NAMES[m]}"></i>`).join('');
+  b.innerHTML=`
+    <div class="c-top">
+      <div class="c-name">${n.name}</div>
+      <div class="c-yr">${n.year}</div>
+    </div>
+    <div class="c-org">${n.org}</div>
+    <div class="c-dots">${dots}</div>
+    ${n.iface?'<div class="c-iface">⇅ reaches up to the protein interface</div>':''}`;
+  b.addEventListener('mouseenter',()=>{ if(!pinned) show(n.id); });
+  b.addEventListener('focus',()=>{ if(!pinned) show(n.id); });
+  b.addEventListener('click',()=>{
+    if(pinned===n.id){ pinned=null; setActive(null); }
+    else { pinned=n.id; show(n.id); setActive(n.id); }
+  });
+  return b;
+}
+
+// ---------- detail panel ----------
+const dbody=document.getElementById('dbody');
+const dspine=document.getElementById('dspine');
+let pinned=null;
+const byId=Object.fromEntries(NODES.map(n=>[n.id,n]));
+
+function show(id){
+  const n=byId[id]; if(!n) return;
+  dspine.style.background='var(--'+COLS[n.col-1].key+')';
+  const tags=n.methods.map(m=>`<span class="d-mtag mt-${m}">${METHOD_NAMES[m]}</span>`).join('');
+  dbody.innerHTML=`
+    <p class="d-scale">${n.scale}</p>
+    <h2 class="d-name">${n.name}</h2>
+    <p class="d-meta">${n.org} · ${n.year}</p>
+    <div class="d-methods">${tags}</div>
+    <p class="d-method-label">${n.methodLabel}</p>
+    <p class="d-desc">${n.desc}</p>
+    <p class="d-cite"><span>Source</span>${n.citeTitle}<br>${n.citeMeta}</p>`;
+}
+function setActive(id){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('is-active',c.dataset.id===id));
+}
+
+// ---------- method filter ----------
+const fbtns=[...document.querySelectorAll('.fbtn')];
+let filter='all';
+fbtns.forEach(btn=>btn.addEventListener('click',()=>{
+  filter=btn.dataset.method;
+  fbtns.forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
+  applyFilter();
+}));
+function applyFilter(){
+  document.querySelectorAll('.chip').forEach(c=>{
+    const ms=c.dataset.methods.split(',');
+    const match=(filter==='all')||ms.includes(filter);
+    c.classList.toggle('is-dim',!match);
+  });
+}
+</script>
+</body>
+</html>
