@@ -24,10 +24,11 @@
       header.innerHTML = headerHTML;
     }
 
-    // Insert footer content
+    // Insert footer content, substituting {{year}} with the current year
+    // so the copyright notice never goes stale.
     const footer = document.getElementById('site-footer');
     if (footer) {
-      footer.innerHTML = footerHTML;
+      footer.innerHTML = footerHTML.replace(/\{\{year\}\}/g, new Date().getFullYear());
     }
 
     // Highlight current page in navigation
