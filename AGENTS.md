@@ -345,6 +345,13 @@ Then add CSS:
 
 3. **Test with and without JavaScript** to ensure `<noscript>` fallbacks work
 
+4. **Leave the `{{year}}` token alone.** `/includes/footer.html` uses `{{year}}`
+   for the copyright year; `/assets/js/includes.js` substitutes it with
+   `new Date().getFullYear()` when injecting the fragment. Replacing it with a
+   hardcoded year reintroduces an annual manual edit. Note that an inline
+   `<script>` in the partial would *not* work as an alternative — scripts
+   inserted via `innerHTML` are never executed.
+
 ### Adding Social Icons
 
 Social icons appear in the footer. To add a new one:
@@ -609,7 +616,7 @@ After Cloudflare Pages deploys:
 3. **Does this add external dependencies?** → If yes, justify why it's worth the maintenance cost
 4. **Does this work in dark mode?** → Always test both themes
 5. **Does this work on mobile?** → Always test responsive behavior
-6. **Does this affect all pages?** → If modifying header/footer, update all HTML files
+6. **Does this affect all pages?** → If modifying header/footer, edit `/includes/header.html` or `/includes/footer.html` (single source); only the per-page `<noscript>` fallbacks are duplicated
 
 ---
 
@@ -617,4 +624,4 @@ After Cloudflare Pages deploys:
 
 If you encounter something unexpected or need clarification that isn't in this document, note it for the human maintainer. This documentation should be kept up-to-date as the codebase evolves.
 
-**Documentation version**: 1.0 (2025-11-10)
+**Documentation version**: 1.1 (2026-07-25)

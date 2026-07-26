@@ -161,7 +161,7 @@ The site now uses vanilla JavaScript (`/assets/js/includes.js`) to load shared h
 
 ## License
 
-Content is © 2025 Michael Sinanian. All rights reserved.
+Content is © 2026 Michael Sinanian. All rights reserved.
 
 Code structure and CSS may be used as reference or adapted for other projects.
 

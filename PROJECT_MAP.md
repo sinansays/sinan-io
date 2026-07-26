@@ -196,32 +196,41 @@ The header structure is **identical** across all pages:
 
 ---
 
-### Pattern 2: Footer (Exact Duplicate)
+### Pattern 2: Footer (Single Source via Include)
 
-**Found in**: All HTML pages
-**Lines**: Last ~30 lines of each file
+**Canonical source**: `/includes/footer.html` — edit this file, not individual pages.
 
-The footer structure is **identical** across all pages:
+Each page carries only a placeholder plus a `<noscript>` fallback:
 
 ```html
-<footer class="site-footer">
-  <div>© 2025 Michael Sinanian.</div>
-  <div class="footer-social">
-    <a href="https://www.linkedin.com/in/michaelsinanian/" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-icon linkedin">
-      <img src="/assets/icons/linkedin.svg" width="26" height="26" alt="LinkedIn" />
-    </a>
-    <!-- ... other social links ... -->
-  </div>
+<footer class="site-footer" id="site-footer">
+  <noscript>
+    <div style="padding: 1rem; text-align: center;">
+      <p style="margin: 0;">© 2026 Michael Sinanian | <a href="/colophon.html">Colophon</a> | <a href="/contact.html">Contact</a></p>
+    </div>
+  </noscript>
 </footer>
 ```
 
-**Total pages with this pattern**: 20+ pages
+`/assets/js/includes.js` fetches the partial and injects it into `#site-footer`.
 
-**Known issue**: Some pages have an empty duplicate Bluesky link at the end
+**Copyright year is dynamic.** `/includes/footer.html` contains the literal token
+`{{year}}`, which `includes.js` substitutes with `new Date().getFullYear()` at
+injection time:
 
-**Modification impact**: To update copyright year or social links, must update all pages
+```js
+footer.innerHTML = footerHTML.replace(/\{\{year\}\}/g, new Date().getFullYear());
+```
 
-**Future improvement candidate**: Extract to `/includes/footer.html` and load via vanilla JS
+**Do not replace `{{year}}` with a hardcoded year.** Doing so reintroduces an
+annual manual edit that this token exists to eliminate.
+
+**Do not add an inline `<script>` to the footer partial.** Scripts inserted via
+`innerHTML` are never executed per the HTML spec, so it would silently no-op.
+
+**Modification impact**: Social links and footer markup change in one file and
+apply site-wide. Only the `<noscript>` year is per-page (see the copyright-year
+scenario below).
 
 ---
 
@@ -470,9 +479,19 @@ Live site updated
 3. Test that separators appear correctly
 
 ### Scenario: Update copyright year
-1. Edit footer in **all HTML files**
-2. Change `© 2025` to new year
-3. Or use bash: `find . -name "*.html" -exec sed -i 's/© 2025/© 2026/g' {} +`
+**No action needed.** The footer in `/includes/footer.html` uses a `{{year}}`
+token that `/assets/js/includes.js` replaces with the current year at runtime.
+
+The only static years are the `<noscript>` fallbacks in each HTML page, which
+cannot be dynamic by definition and are seen only by clients without JS. If you
+want those in sync too:
+
+```bash
+git ls-files -z '*.html' | xargs -0 perl -CSD -i -pe 's/\x{00A9} 2026 Michael Sinanian/\x{00A9} 2027 Michael Sinanian/g'
+```
+
+(Note: BSD/macOS `sed -i` requires an argument and mangles UTF-8; `perl -CSD`
+handles the `©` correctly.)
 
 ### Scenario: Add a new project
 1. Create `/projects/new-project.html` (copy existing project page)
@@ -488,6 +507,6 @@ Live site updated
 
 ---
 
-**Document version**: 1.0 (2025-11-10)
-**Last updated**: When documentation was created
+**Document version**: 1.1 (2026-07-25)
+**Last updated**: 2026-07-25 — footer section rewritten for the include system and dynamic `{{year}}` token
 **Maintainer**: AI agents and human developers should keep this updated as site evolves
