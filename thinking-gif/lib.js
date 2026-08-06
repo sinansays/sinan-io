@@ -235,8 +235,18 @@
   function renderFrame(ctx, timeMs, steps, config) {
     const { width, height, padding } = config;
     const theme = config.theme === 'light'
-      ? { bg: '#f8fafc', text: '#1f2937', muted: 'rgba(31,41,55,0.45)' }
-      : { bg: '#0b0c0f', text: '#e5e7eb', muted: 'rgba(229,231,235,0.35)' };
+      ? {
+          bg: '#f8fafc',
+          text: '#1f2937',
+          muted: 'rgba(31,41,55,0.45)',
+          shimmer: { r: 255, g: 255, b: 255, minAlpha: 0.25, maxAlpha: 0.8 }
+        }
+      : {
+          bg: '#0b0c0f',
+          text: '#e5e7eb',
+          muted: 'rgba(229,231,235,0.35)',
+          shimmer: { r: 255, g: 255, b: 255, minAlpha: 0.05, maxAlpha: 0.22 }
+        };
 
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = theme.bg;
@@ -262,23 +272,23 @@
     const nextLines = wrapTextLines(ctx, steps[stepState.nextIndex].text, maxWidth, 2);
 
     if (config.mode === 'log') {
-    drawLogMode({
-      ctx,
-      steps,
-      stepState,
-      activeLines,
-      nextLines,
-      padding,
-      maxWidth,
-      lineHeight,
-      theme,
-      shimmerX,
-      shimmerWidth,
-      config,
-      timeMs
-    });
-    return;
-  }
+      drawLogMode({
+        ctx,
+        steps,
+        stepState,
+        activeLines,
+        nextLines,
+        padding,
+        maxWidth,
+        lineHeight,
+        theme,
+        shimmerX,
+        shimmerWidth,
+        config,
+        timeMs
+      });
+      return;
+    }
 
     const yStart = (height - activeLines.length * lineHeight) / 2;
     const transitionStyle = config.transitionStyle;
@@ -294,6 +304,7 @@
         alpha: 1,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: config.shimmer.enabled,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -314,6 +325,7 @@
         alpha: 1 - stepState.transitionProgress,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: false,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -330,6 +342,7 @@
         alpha: stepState.transitionProgress,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: config.shimmer.enabled,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -351,6 +364,7 @@
         alpha: 1 - stepState.transitionProgress,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: false,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -367,6 +381,7 @@
         alpha: stepState.transitionProgress,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: config.shimmer.enabled,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -388,11 +403,12 @@
       lineHeight,
       color: theme.text,
       alpha: 1 - stepState.transitionProgress,
-      shimmerX,
-      shimmerWidth,
-      shimmerEnabled: false,
-      shimmerIntensity: config.shimmer.intensity,
-      cursor: config.cursor,
+        shimmerX,
+        shimmerWidth,
+        shimmer: theme.shimmer,
+        shimmerEnabled: false,
+        shimmerIntensity: config.shimmer.intensity,
+        cursor: config.cursor,
       cursorActive: false,
       timeMs
     });
@@ -404,11 +420,12 @@
       lineHeight,
       color: theme.text,
       alpha: 1,
-      shimmerX,
-      shimmerWidth,
-      shimmerEnabled: config.shimmer.enabled,
-      shimmerIntensity: config.shimmer.intensity,
-      cursor: config.cursor,
+        shimmerX,
+        shimmerWidth,
+        shimmer: theme.shimmer,
+        shimmerEnabled: config.shimmer.enabled,
+        shimmerIntensity: config.shimmer.intensity,
+        cursor: config.cursor,
       cursorActive: true,
       timeMs
     });
@@ -476,6 +493,7 @@
         alpha: entry.alpha,
         shimmerX,
         shimmerWidth,
+        shimmer: theme.shimmer,
         shimmerEnabled: entry.shimmer && config.shimmer.enabled,
         shimmerIntensity: config.shimmer.intensity,
         cursor: config.cursor,
@@ -495,6 +513,7 @@
     alpha,
     shimmerX,
     shimmerWidth,
+    shimmer,
     shimmerEnabled,
     shimmerIntensity,
     cursor,
@@ -517,9 +536,14 @@
         ctx.clip();
         ctx.globalCompositeOperation = 'source-atop';
         const gradient = ctx.createLinearGradient(shimmerX, 0, shimmerX + shimmerWidth, 0);
-        gradient.addColorStop(0, 'rgba(255,255,255,0)');
-        gradient.addColorStop(0.5, `rgba(255,255,255,${0.25 + shimmerIntensity * 0.55})`);
-        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        const shimmerAlpha = shimmer.minAlpha
+          + (shimmer.maxAlpha - shimmer.minAlpha) * shimmerIntensity;
+        gradient.addColorStop(0, `rgba(${shimmer.r},${shimmer.g},${shimmer.b},0)`);
+        gradient.addColorStop(
+          0.5,
+          `rgba(${shimmer.r},${shimmer.g},${shimmer.b},${shimmerAlpha})`
+        );
+        gradient.addColorStop(1, `rgba(${shimmer.r},${shimmer.g},${shimmer.b},0)`);
         ctx.fillStyle = gradient;
         ctx.fillRect(x - shimmerWidth, lineY, lineWidth + shimmerWidth * 2, lineHeight);
         ctx.restore();
