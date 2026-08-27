@@ -1,5 +1,16 @@
 [
   {
+    "title": "ParkSafe",
+    "tag": "Interactive Prototype",
+    "location": "Remote",
+    "dates": "8/2026 — Present",
+    "start": "2026-08",
+    "end": null,
+    "role": ["PM", "UX Design"],
+    "domain": ["Consumer", "Gen AI"],
+    "url": "/projects/parksafe/"
+  },
+  {
     "title": "UCLA 'AI for PM'",
     "tag": null,
     "location": "Remote",

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ParkSafe — Parking sign checker prototype</title>
+  <meta name="description" content="Try ParkSafe, a visual prototype that turns parking sign text into a clear, time-aware parking verdict.">
+  <meta property="og:title" content="ParkSafe — Can I park here right now?">
+  <meta property="og:description" content="A static, interactive parking sign checker prototype by Michael Sinanian.">
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+  <link rel="stylesheet" href="/assets/css/parksafe.css">
+  <script src="/assets/js/parksafe.js" defer></script>
+</head>
+<body class="parksafe-app">
+  <a class="parksafe-skip" href="#checker">Skip to checker</a>
+
+  <header class="parksafe-header">
+    <a class="parksafe-brand" href="/projects/parksafe/" aria-label="ParkSafe home">
+      <span class="parksafe-brand__mark" aria-hidden="true">P</span>
+      <span>ParkSafe</span>
+    </a>
+    <nav class="parksafe-nav" aria-label="ParkSafe navigation">
+      <a href="#how-it-works">How it works</a>
+      <a class="parksafe-nav__portfolio" href="/projects/">Back to portfolio</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="parksafe-hero" aria-labelledby="parksafe-title">
+      <div class="parksafe-hero__copy">
+        <p class="parksafe-eyebrow"><span aria-hidden="true"></span> Interactive product prototype</p>
+        <h1 id="parksafe-title">Can I park here <em>right now?</em></h1>
+        <p>Parking signs shouldn't require a law degree. Type what the sign says, choose a moment, and get a clear answer.</p>
+        <ul class="parksafe-trust" aria-label="Prototype features">
+          <li><span aria-hidden="true">✓</span> Instant answer</li>
+          <li><span aria-hidden="true">✓</span> Plain-language reasoning</li>
+          <li><span aria-hidden="true">✓</span> No account needed</li>
+        </ul>
+      </div>
+      <div class="parksafe-sign" aria-hidden="true">
+        <span>NO PARKING</span>
+        <strong>8AM – 10AM</strong>
+        <small>MON · WED · FRI</small>
+        <div>STREET CLEANING</div>
+      </div>
+    </section>
+
+    <section class="parksafe-checker" id="checker" aria-labelledby="checker-title">
+      <div class="parksafe-panel parksafe-input-panel">
+        <div class="parksafe-step-heading">
+          <span>1</span>
+          <div>
+            <p>Read the sign</p>
+            <h2 id="checker-title">What does it say?</h2>
+          </div>
+        </div>
+
+        <label class="parksafe-field-label" for="sign-text">Parking sign text</label>
+        <textarea id="sign-text" maxlength="2000" rows="6" aria-describedby="sign-hint sign-count">NO PARKING
+8AM TO 10AM
+MON WED FRI
+STREET CLEANING</textarea>
+        <div class="parksafe-field-meta">
+          <span id="sign-hint">Type the wording as it appears, line breaks and all.</span>
+          <span id="sign-count">50 / 2000</span>
+        </div>
+
+        <div class="parksafe-examples">
+          <span>Try an example:</span>
+          <button type="button" data-example="cleaning">Street cleaning</button>
+          <button type="button" data-example="limit">2-hour parking</button>
+          <button type="button" data-example="permit">Permit only</button>
+        </div>
+
+        <button class="parksafe-primary-button" id="check-sign" type="button">
+          Check this sign <span aria-hidden="true">→</span>
+        </button>
+        <p class="parksafe-prototype-note"><span aria-hidden="true">ⓘ</span> This static prototype recognizes the examples above and common parking-sign phrases. No text is uploaded or saved.</p>
+      </div>
+
+      <div class="parksafe-results" aria-live="polite">
+        <div class="parksafe-panel parksafe-time-panel">
+          <div class="parksafe-step-heading parksafe-step-heading--compact">
+            <span>2</span>
+            <div>
+              <p>Set the clock</p>
+              <h2>When are you parking?</h2>
+            </div>
+          </div>
+          <div class="parksafe-time-fields">
+            <label>Day
+              <select id="parking-day">
+                <option value="0">Sunday</option><option value="1">Monday</option>
+                <option value="2">Tuesday</option><option value="3">Wednesday</option>
+                <option value="4">Thursday</option><option value="5">Friday</option>
+                <option value="6">Saturday</option>
+              </select>
+            </label>
+            <label>Time
+              <input id="parking-time" type="time" value="09:00">
+            </label>
+            <button id="back-to-now" type="button">Use current time</button>
+          </div>
+        </div>
+
+        <article class="parksafe-verdict parksafe-verdict--red" id="verdict" tabindex="-1">
+          <div class="parksafe-verdict__status">
+            <span class="parksafe-verdict__icon" id="verdict-icon" aria-hidden="true">×</span>
+            <div><span id="verdict-label">No parking</span><small id="verdict-moment">Right now</small></div>
+          </div>
+          <h2 id="verdict-headline">You can't park here right now.</h2>
+          <p id="verdict-why">Street cleaning is in effect until 10:00 AM.</p>
+          <div class="parksafe-verdict__deadline" id="verdict-deadline">
+            <span aria-hidden="true">◷</span><div><small>Restriction ends</small><strong>10:00 AM today</strong></div>
+          </div>
+          <div class="parksafe-verdict__rule" id="active-rule">NO PARKING · MON, WED, FRI · 8:00–10:00 AM</div>
+        </article>
+
+        <details class="parksafe-panel parksafe-rules" open>
+          <summary>How ParkSafe read this sign <span aria-hidden="true">⌄</span></summary>
+          <div id="rule-list"></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="parksafe-how" id="how-it-works" aria-labelledby="how-title">
+      <p class="parksafe-eyebrow"><span aria-hidden="true"></span> Designed for clarity</p>
+      <h2 id="how-title">From confusing sign to clear next step.</h2>
+      <div class="parksafe-how__grid">
+        <article><span aria-hidden="true">Aa</span><h3>Enter the wording</h3><p>Copy the text from each plate on the parking sign.</p></article>
+        <article><span aria-hidden="true">≡</span><h3>Rules, structured</h3><p>ParkSafe separates days, times, restrictions, and limits.</p></article>
+        <article><span aria-hidden="true">✓</span><h3>Get a verdict</h3><p>See whether it is safe now and when the next rule begins.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="parksafe-footer">
+    <a class="parksafe-brand" href="/projects/parksafe/"><span class="parksafe-brand__mark" aria-hidden="true">P</span><span>ParkSafe</span></a>
+    <p>Guidance only—not legal advice. The posted sign always wins.</p>
+    <a href="/projects/">A prototype by Michael Sinanian ↗</a>
+  </footer>
+</body>
+</html>

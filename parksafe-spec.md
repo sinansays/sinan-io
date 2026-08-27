@@ -2,6 +2,13 @@
 
 _Last updated: 2026-08-27_
 
+> **Portfolio implementation note:** The version hosted at `/projects/parksafe/` is a
+> self-contained, static visual prototype built with plain HTML, CSS, and vanilla
+> JavaScript. It recognizes common sign phrases and the provided examples locally to
+> demonstrate the full checker interaction. It does not call an AI service, create
+> accounts, or persist saved spots. Those capabilities below describe the original
+> product vision rather than the portfolio prototype.
+
 ParkSafe answers one question: **"Can I park here right now?"** You type what a parking
 sign says, confirm the day and time, and get a color-coded verdict with a plain-language
 explanation of the reasoning.
