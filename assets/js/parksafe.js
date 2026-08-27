@@ -13,7 +13,7 @@
   const dayInput = document.querySelector('#parking-day');
   const timeInput = document.querySelector('#parking-time');
   const checkButton = document.querySelector('#check-sign');
-  let currentRule = parseSign(signText.value);
+  let currentRules = parseSigns(signText.value);
 
   function parseHour(value, meridiem) {
     let hour = Number(value);
@@ -22,15 +22,23 @@
     return hour * 60;
   }
 
-  function parseSign(text) {
+  function parseRule(text, timeMatch) {
     const normalized = text.toUpperCase().replace(/\s+/g, ' ').trim();
-    const timeMatch = normalized.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)\s*(?:TO|–|-|UNTIL)\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/);
     const start = timeMatch ? parseHour(timeMatch[1], timeMatch[3]) + Number(timeMatch[2] || 0) : 0;
     const end = timeMatch ? parseHour(timeMatch[4], timeMatch[6]) + Number(timeMatch[5] || 0) : 1440;
     let days = [0, 1, 2, 3, 4, 5, 6];
-    if (/MON WED FRI/.test(normalized)) days = [1, 3, 5];
-    else if (/MON (?:THRU|TO|-) FRI/.test(normalized)) days = [1, 2, 3, 4, 5];
-    else if (/MON (?:THRU|TO|-) SAT/.test(normalized)) days = [1, 2, 3, 4, 5, 6];
+    const dayNumbers = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 };
+    const rangeMatch = normalized.match(/\b(SUN|MON|TUE|WED|THU|FRI|SAT)\s+(?:THRU|TO|-)\s+(SUN|MON|TUE|WED|THU|FRI|SAT)\b/);
+    if (rangeMatch) {
+      days = [];
+      for (let candidate = dayNumbers[rangeMatch[1]]; ; candidate = (candidate + 1) % 7) {
+        days.push(candidate);
+        if (candidate === dayNumbers[rangeMatch[2]]) break;
+      }
+    } else {
+      const listedDays = Array.from(normalized.matchAll(/\b(SUN|MON|TUE|WED|THU|FRI|SAT)\b/g), match => dayNumbers[match[1]]);
+      if (listedDays.length) days = [...new Set(listedDays)];
+    }
 
     let type = 'no_parking';
     let title = 'No parking';
@@ -49,6 +57,27 @@
     return { type, title, detail, days, start, end, limitMinutes: limitMatch ? Number(limitMatch[1]) * 60 : null };
   }
 
+  function parseSigns(text) {
+    const normalized = text.toUpperCase().replace(/\s+/g, ' ').trim();
+    const timePattern = /(\d{1,2})(?::(\d{2}))?\s*(AM|PM)\s*(?:TO|–|-|UNTIL)\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/g;
+    const matches = Array.from(normalized.matchAll(timePattern));
+    if (!matches.length) return [parseRule(normalized, null)];
+
+    return matches.map((match, index) => {
+      const previousEnd = index ? matches[index - 1].index + matches[index - 1][0].length : 0;
+      const nextStart = index + 1 < matches.length ? matches[index + 1].index : normalized.length;
+      let before = normalized.slice(previousEnd, match.index);
+      const heading = /(?:NO PARKING|\d+\s*(?:HOUR|HR)[^\d]*PARKING|PERMIT(?:\s+ONLY)?)(?!.*(?:NO PARKING|\d+\s*(?:HOUR|HR)[^\d]*PARKING|PERMIT(?:\s+ONLY)?))/;
+      const headingMatch = before.match(heading);
+      if (headingMatch) before = before.slice(headingMatch.index);
+      let after = normalized.slice(match.index + match[0].length, nextStart);
+      const nextHeading = after.match(/(?:NO PARKING|\d+\s*(?:HOUR|HR)[^\d]*PARKING|PERMIT(?:\s+ONLY)?)/);
+      if (nextHeading) after = after.slice(0, nextHeading.index);
+      const context = `${before} ${match[0]} ${after}`;
+      return parseRule(context, match);
+    });
+  }
+
   function formatTime(minute) {
     const hour24 = Math.floor(minute / 60) % 24;
     const minutePart = minute % 60;
@@ -61,9 +90,12 @@
     return days.map(day => DAYS[day].slice(0, 3)).join(', ');
   }
 
-  function evaluate(rule, day, minute) {
-    const appliesToday = rule.days.includes(day);
-    const active = appliesToday && minute >= rule.start && minute < rule.end;
+  function ruleTiming(rule, day, minute) {
+    const crossesMidnight = rule.start > rule.end;
+    const previousDay = (day + 6) % 7;
+    const active = crossesMidnight
+      ? (rule.days.includes(day) && minute >= rule.start) || (rule.days.includes(previousDay) && minute < rule.end)
+      : rule.days.includes(day) && minute >= rule.start && minute < rule.end;
     let minutesUntil = Infinity;
     for (let offset = 0; offset < 8; offset += 1) {
       const candidateDay = (day + offset) % 7;
@@ -72,12 +104,25 @@
       if (candidate >= 0) { minutesUntil = candidate; break; }
     }
 
-    if (rule.type === 'time_limit' && active) {
-      return { status: 'green', label: 'Parking allowed', icon: '✓', headline: `You can park here for up to ${rule.limitMinutes / 60} hours.`, why: `The posted time limit applies until ${formatTime(rule.end)}. Remember when you arrived.`, deadlineLabel: 'Posted hours end', deadline: `${formatTime(rule.end)} today` };
+    return { active, minutesUntil, endsTomorrow: crossesMidnight && minute >= rule.start };
+  }
+
+  function evaluate(rules, day, minute) {
+    const timedRules = rules.map(rule => ({ rule, timing: ruleTiming(rule, day, minute) }));
+    const prohibited = timedRules.find(({ rule, timing }) => timing.active && rule.type !== 'time_limit');
+    if (prohibited) {
+      const { rule, timing } = prohibited;
+      const endDay = timing.endsTomorrow ? 'tomorrow' : 'today';
+      return { status: 'red', label: rule.title, icon: '×', headline: "You can't park here right now.", why: `${rule.detail} is in effect until ${formatTime(rule.end)}.`, deadlineLabel: 'Restriction ends', deadline: `${formatTime(rule.end)} ${endDay}` };
     }
-    if (active) {
-      return { status: 'red', label: rule.title, icon: '×', headline: "You can't park here right now.", why: `${rule.detail} is in effect until ${formatTime(rule.end)}.`, deadlineLabel: 'Restriction ends', deadline: `${formatTime(rule.end)} today` };
+    const limited = timedRules.find(({ rule, timing }) => timing.active && rule.type === 'time_limit');
+    if (limited) {
+      const { rule, timing } = limited;
+      const endDay = timing.endsTomorrow ? 'tomorrow' : 'today';
+      return { status: 'green', label: 'Parking allowed', icon: '✓', headline: `You can park here for up to ${rule.limitMinutes / 60} hours.`, why: `The posted time limit applies until ${formatTime(rule.end)}. Remember when you arrived.`, deadlineLabel: 'Posted hours end', deadline: `${formatTime(rule.end)} ${endDay}` };
     }
+    const next = timedRules.reduce((soonest, item) => item.timing.minutesUntil < soonest.timing.minutesUntil ? item : soonest, timedRules[0]);
+    const { rule, timing: { minutesUntil } } = next;
     if (minutesUntil <= 30) {
       return { status: 'amber', label: 'Move soon', icon: '!', headline: 'You can park—but not for long.', why: `${rule.detail} begins in ${minutesUntil} minutes.`, deadlineLabel: 'Move by', deadline: `${formatTime(rule.start)} today` };
     }
@@ -88,7 +133,7 @@
   function render() {
     const [hour, minute] = timeInput.value.split(':').map(Number);
     const selectedMinute = hour * 60 + minute;
-    const result = evaluate(currentRule, Number(dayInput.value), selectedMinute);
+    const result = evaluate(currentRules, Number(dayInput.value), selectedMinute);
     const verdict = document.querySelector('#verdict');
     verdict.className = `parksafe-verdict parksafe-verdict--${result.status}`;
     document.querySelector('#verdict-icon').textContent = result.icon;
@@ -98,8 +143,8 @@
     document.querySelector('#verdict-why').textContent = result.why;
     document.querySelector('#verdict-deadline small').textContent = result.deadlineLabel;
     document.querySelector('#verdict-deadline strong').textContent = result.deadline;
-    document.querySelector('#active-rule').textContent = `${currentRule.title.toUpperCase()} · ${daysLabel(currentRule.days).toUpperCase()} · ${formatTime(currentRule.start)}–${formatTime(currentRule.end)}`;
-    document.querySelector('#rule-list').innerHTML = `<div class="parksafe-rule-item"><span>1</span><div><strong>${currentRule.title}</strong><small>${currentRule.detail}</small></div></div><div class="parksafe-rule-item"><span>◷</span><div><strong>${formatTime(currentRule.start)}–${formatTime(currentRule.end)}</strong><small>${daysLabel(currentRule.days)}</small></div></div>`;
+    document.querySelector('#active-rule').textContent = currentRules.map(rule => `${rule.title.toUpperCase()} · ${daysLabel(rule.days).toUpperCase()} · ${formatTime(rule.start)}–${formatTime(rule.end)}`).join(' | ');
+    document.querySelector('#rule-list').innerHTML = currentRules.map((rule, index) => `<div class="parksafe-rule-item"><span>${index + 1}</span><div><strong>${rule.title}: ${formatTime(rule.start)}–${formatTime(rule.end)}</strong><small>${rule.detail} · ${daysLabel(rule.days)}</small></div></div>`).join('');
   }
 
   function setNow() {
@@ -112,7 +157,7 @@
   document.querySelectorAll('[data-example]').forEach(button => button.addEventListener('click', () => {
     signText.value = EXAMPLES[button.dataset.example];
     count.textContent = `${signText.value.length} / 2000`;
-    currentRule = parseSign(signText.value);
+    currentRules = parseSigns(signText.value);
     render();
   }));
   signText.addEventListener('input', () => { count.textContent = `${signText.value.length} / 2000`; });
@@ -121,7 +166,7 @@
     checkButton.disabled = true;
     checkButton.firstChild.textContent = 'Reading sign… ';
     window.setTimeout(() => {
-      currentRule = parseSign(signText.value);
+      currentRules = parseSigns(signText.value);
       render();
       checkButton.disabled = false;
       checkButton.firstChild.textContent = 'Check this sign ';
