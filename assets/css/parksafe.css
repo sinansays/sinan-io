@@ -36,6 +36,8 @@
 .parksafe-nav a { text-decoration: none; }
 .parksafe-nav a:hover { text-decoration: underline; }
 .parksafe-nav__portfolio { padding: .55rem .85rem; border: 1px solid rgba(255,255,255,.45); border-radius: .35rem; }
+.parksafe-course-demo { padding: .8rem max(1.25rem, calc((100% - 1120px) / 2)); display: flex; justify-content: center; align-items: center; gap: .65rem; color: #10243b; background: #dbeafe; border-bottom: 1px solid #a9c9f5; font-size: .82rem; text-align: center; }
+.parksafe-course-demo strong { padding: .25rem .5rem; color: var(--ps-white); background: var(--ps-blue); border-radius: .25rem; text-transform: uppercase; letter-spacing: .06em; font-size: .68rem; white-space: nowrap; }
 .parksafe-hero { min-height: 375px; padding: 4.5rem max(1.25rem, calc((100% - 1120px) / 2)) 7.5rem; display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: center; gap: 5rem; overflow: hidden; background: var(--ps-navy); color: var(--ps-white); }
 .parksafe-eyebrow { margin: 0 0 1rem; text-transform: uppercase; letter-spacing: .15em; font-size: .7rem; font-weight: 800; }
 .parksafe-eyebrow span { display: inline-block; width: 20px; height: 3px; margin: 0 .5rem .2rem 0; background: #61a8ff; }
@@ -124,6 +126,7 @@
 }
 @media (max-width: 560px) {
   .parksafe-header { min-height: 64px; }
+  .parksafe-course-demo { flex-direction: column; gap: .4rem; }
   .parksafe-nav > a:first-child { display: none; }
   .parksafe-nav { font-size: .72rem; }
   .parksafe-hero { padding-top: 3.5rem; }
