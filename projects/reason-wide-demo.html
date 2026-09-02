@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reason Wide, Not Deep — Interactive Demo</title>
+  <meta name="description" content="Interactive companion to the paper 'Reason Wide, Not Deep: Amortizing the Reasoning Premium into Distilled Skills' — Latent Space Paper Club, Sept 2026">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.min.js" crossorigin></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; background: #0f172a; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .trace-scroll::-webkit-scrollbar { width: 4px; }
+    .trace-scroll::-webkit-scrollbar-track { background: transparent; }
+    .trace-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#94a3b8;font-family:system-ui">
+      Loading demo…
+    </div>
+  </div>
+
+  <script type="text/babel" data-type="module">
+    const { useState, useEffect, useRef } = React;
+    const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
+
+    const SCENARIOS = [
+      {
+        id: "alfworld",
+        benchmark: "ALFWorld",
+        task: "Put a clean sponge on the counter.",
+        skill: "SKILL: Household Navigation\n\u2022 Sponges: check sinkbasin first, then countertop\n\u2022 Always clean at sinkbasin before placing\n\u2022 Use \"examine\" before \"take\" to verify object\n\u2022 Go directly to target after cleaning \u2014 don't re-explore",
+        reasoningTrace: [
+          "> I need to find a sponge and clean it, then put it on the counter.",
+          "> Let me think about where sponges might be...",
+          "> First, I'll check the kitchen. Go to countertop 1.",
+          ">> Nothing here. Let me try countertop 2.",
+          ">> No sponge on countertop 2 either.",
+          "> Maybe I should check the bathroom? Go to bathtub 1.",
+          ">> Found a cloth, but that's not a sponge.",
+          "> Let me reconsider. Sponges are often near sinks.",
+          "> Go to sinkbasin 1.",
+          ">> I see a sponge here! Take sponge from sinkbasin.",
+          "> Now I need to clean it. Where can I clean things?",
+          "> I recall that sinkbasins can clean objects.",
+          "> Clean sponge with sinkbasin 1.",
+          ">> Sponge is now clean.",
+          "> Now I need to find a counter to place it on.",
+          "> Go to countertop 1.",
+          "> Put clean sponge on countertop 1.",
+          ">> Done. Task complete."
+        ],
+        skillTrace: [
+          "> Go to sinkbasin 1.",
+          "> Take sponge from sinkbasin 1.",
+          "> Clean sponge with sinkbasin 1.",
+          "> Go to countertop 1.",
+          "> Put clean sponge on countertop 1.",
+          ">> Done. Task complete."
+        ],
+        reasoningTokens: 2847,
+        skillTokens: 684
+      },
+      {
+        id: "retail",
+        benchmark: "\u03C4\u00B2-bench Retail",
+        task: "Customer wants to return a laptop purchased 45 days ago, claiming it's defective.",
+        skill: "SKILL: Retail Returns\n\u2022 Return window: 30 days standard, 31-60 days store credit only\n\u2022 Defective claims in 31-60 day window: verify with diagnostic\n\u2022 Always call lookup_order first, then check_item_status\n\u2022 Offer store credit + goodwill discount on next purchase\n\u2022 Escalate only if customer explicitly asks for supervisor",
+        reasoningTrace: [
+          "> Customer wants to return a laptop from 45 days ago.",
+          "> Let me think about our return policy...",
+          "> Standard returns are within 30 days. This is past that.",
+          "> But they're claiming it's defective. Does that change things?",
+          "> I should check the order first. Let me look up the order.",
+          ">> [Tool: lookup_order] \u2192 Order #4821, Laptop, $1,299, purchased 45 days ago.",
+          "> OK so it's confirmed 45 days. Outside standard window.",
+          "> Let me check if there's a warranty claim process...",
+          "> Actually, I should check the item status first.",
+          ">> [Tool: check_item_status] \u2192 Item shows normal wear, no diagnostic run.",
+          "> Hmm, they claim it's defective but no diagnostic yet.",
+          "> I think I should offer a diagnostic check first.",
+          "> If defective confirmed, we could offer store credit.",
+          "> Let me also check if they have loyalty status...",
+          ">> [Tool: check_customer_profile] \u2192 Standard tier, 2 prior purchases.",
+          "> OK. I'll offer: diagnostic check, and if confirmed defective,",
+          "> store credit for the full amount plus 10% goodwill discount.",
+          "> Communicating resolution to customer now.",
+          ">> Resolution offered. Customer accepts store credit path."
+        ],
+        skillTrace: [
+          ">> [Tool: lookup_order] \u2192 Order #4821, Laptop, $1,299, 45 days ago.",
+          ">> [Tool: check_item_status] \u2192 Normal wear, no diagnostic.",
+          "> 45 days = 31-60 window. Defective claim: offer diagnostic.",
+          "> If confirmed: store credit + 10% goodwill on next purchase.",
+          "> Communicating resolution to customer now.",
+          ">> Resolution offered. Customer accepts store credit path."
+        ],
+        reasoningTokens: 3214,
+        skillTokens: 891
+      },
+      {
+        id: "spreadsheet",
+        benchmark: "SpreadsheetBench",
+        task: "In the sales report, compute total revenue for Q3 where region = \"West\" and status = \"Closed\".",
+        skill: "SKILL: Spreadsheet Operations\n\u2022 Use SUMIFS for multi-condition aggregation, not nested IFs\n\u2022 Column mapping: A=Date, B=Region, C=Status, D=Revenue\n\u2022 Date ranges: Q3 = July 1 to Sept 30\n\u2022 Always verify column headers before formula construction\n\u2022 Write formula, then validate against 2-3 manual spot checks",
+        reasoningTrace: [
+          "> I need to compute total revenue for Q3 in the West region",
+          "> where status is Closed. Let me examine the spreadsheet first.",
+          ">> [Tool: read_cells(\"A1:D1\")] \u2192 Date | Region | Status | Revenue",
+          "> OK, so revenue is column D. Region is B. Status is C.",
+          "> For Q3, I need dates from July 1 to September 30.",
+          "> What year? Let me check the data range.",
+          ">> [Tool: read_cells(\"A2:A5\")] \u2192 2026-01-15, 2026-03-22, ...",
+          "> OK, 2026 data. Q3 = 2026-07-01 to 2026-09-30.",
+          "> I could use SUMIFS or SUMPRODUCT... Let me think.",
+          "> SUMIFS is cleaner. Multiple conditions:",
+          "> sum_range = D:D",
+          "> criteria: B:B = \"West\", C:C = \"Closed\",",
+          "> A:A >= 2026-07-01, A:A <= 2026-09-30",
+          "> Let me write this formula...",
+          ">> [Tool: write_formula] \u2192 $487,250",
+          "> Let me verify with a spot check.",
+          ">> [Tool: read_cells(\"A100:D100\")] \u2192 2026-08-12 | West | Closed | $12,400",
+          "> That row should be included. Looks correct.",
+          ">> Result: $487,250. Task complete."
+        ],
+        skillTrace: [
+          ">> [Tool: read_cells(\"A1:D1\")] \u2192 Date | Region | Status | Revenue",
+          "> Columns confirmed. Using SUMIFS for multi-condition sum.",
+          ">> [Tool: write_formula] \u2192 $487,250",
+          ">> [Tool: read_cells(\"A100:D100\")] \u2192 spot check passes.",
+          ">> Result: $487,250. Task complete."
+        ],
+        reasoningTokens: 2190,
+        skillTokens: 526
+      }
+    ];
+
+    const RESULTS_DATA = [
+      { benchmark: "ALFWorld", noThink: 52, think: 84, skill: 80 },
+      { benchmark: "SSB-Verified", noThink: 38, think: 62, skill: 66 },
+      { benchmark: "\u03C4\u00B2-Telecom", noThink: 48, think: 72, skill: 64 },
+      { benchmark: "\u03C4\u00B2-Retail", noThink: 42, think: 60, skill: 64 }
+    ];
+
+    const TOKEN_DATA = [
+      { benchmark: "ALFWorld", reasoning: 2847, skill: 684, ratio: "4.2x" },
+      { benchmark: "SSB-Verified", reasoning: 2190, skill: 526, ratio: "4.2x" },
+      { benchmark: "\u03C4\u00B2-Telecom", reasoning: 3100, skill: 1068, ratio: "2.9x" },
+      { benchmark: "\u03C4\u00B2-Retail", reasoning: 3214, skill: 891, ratio: "3.6x" }
+    ];
+
+    function AnimatedCounter({ target, running, speed = 30 }) {
+      const [count, setCount] = useState(0);
+      const ref = useRef(null);
+      useEffect(() => {
+        if (running && count < target) {
+          const inc = Math.max(1, Math.floor(target / 80));
+          ref.current = setInterval(() => setCount(c => Math.min(c + inc, target)), speed);
+        }
+        return () => clearInterval(ref.current);
+      }, [running, count, target, speed]);
+      useEffect(() => { if (!running) setCount(0); }, [running]);
+      return count.toLocaleString();
+    }
+
+    function StreamingText({ lines, running, speed = 120, onComplete }) {
+      const [vis, setVis] = useState(0);
+      const cRef = useRef(null);
+      useEffect(() => {
+        if (!running) { setVis(0); return; }
+        if (vis >= lines.length) { if (onComplete) onComplete(); return; }
+        const t = setTimeout(() => setVis(v => v + 1), speed);
+        return () => clearTimeout(t);
+      }, [running, vis, lines.length, speed]);
+      useEffect(() => {
+        if (cRef.current) cRef.current.scrollTop = cRef.current.scrollHeight;
+      }, [vis]);
+      return (
+        <div ref={cRef} className="trace-scroll" style={{ overflowY: "auto", flex: 1, paddingRight: 8, maxHeight: 320 }}>
+          {lines.slice(0, vis).map((line, i) => (
+            <div key={i}
+              style={{ animation: "fadeIn 0.3s ease-in", lineHeight: 1.6, marginBottom: 4, fontFamily: "ui-monospace, monospace", fontSize: 14 }}
+              className={line.startsWith(">>") ? "text-emerald-400 pl-2" : "text-slate-300 opacity-80"}>
+              {line}
+            </div>
+          ))}
+          {running && vis < lines.length && (
+            <span className="inline-block w-2 h-4 bg-slate-400 animate-pulse ml-1" />
+          )}
+        </div>
+      );
+    }
+
+    function DemoView() {
+      const [idx, setIdx] = useState(0);
+      const [running, setRunning] = useState(false);
+      const [rDone, setRDone] = useState(false);
+      const [sDone, setSDone] = useState(false);
+      const [showSkill, setShowSkill] = useState(false);
+      const s = SCENARIOS[idx];
+
+      const play = () => {
+        setRunning(true); setRDone(false); setSDone(false); setShowSkill(false);
+        setTimeout(() => setShowSkill(true), 600);
+      };
+      const reset = () => { setRunning(false); setRDone(false); setSDone(false); setShowSkill(false); };
+      const pick = i => { reset(); setIdx(i); };
+      const bothDone = rDone && sDone;
+      const savings = (s.reasoningTokens / s.skillTokens).toFixed(1);
+
+      return (
+        <div className="flex flex-col gap-5">
+          <div className="bg-slate-800 rounded-xl p-5 border border-slate-700">
+            <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
+              <div className="flex gap-2">
+                {SCENARIOS.map((sc, i) => (
+                  <button key={sc.id} onClick={() => pick(i)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${i === idx ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-300 hover:bg-slate-600"}`}>
+                    {sc.benchmark}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <button onClick={play} disabled={running}
+                  className="px-5 py-1.5 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                  ▶ Play
+                </button>
+                <button onClick={reset}
+                  className="px-5 py-1.5 rounded-lg text-sm font-semibold bg-slate-600 text-white hover:bg-slate-500 transition-all">
+                  ↺ Reset
+                </button>
+              </div>
+            </div>
+            <div className="text-slate-200 text-base">
+              <span className="text-slate-500 font-medium mr-2">TASK:</span>{s.task}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {/* Reasoning Mode */}
+            <div className="bg-slate-800 rounded-xl border-2 border-red-900/50 flex flex-col">
+              <div className="px-5 py-3 border-b border-slate-700 flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500" />
+                <span className="text-red-400 font-bold text-sm tracking-wide">REASONING MODE</span>
+                <span className="text-slate-600 text-xs ml-auto">reasoning_effort: medium</span>
+              </div>
+              <div className="p-4 flex flex-col flex-1">
+                <StreamingText lines={s.reasoningTrace} running={running} speed={180} onComplete={() => setRDone(true)} />
+              </div>
+              <div className="px-5 py-3 border-t border-slate-700 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-500 text-xs font-medium">TOKENS:</span>
+                  <span className="text-red-400 font-bold text-xl tabular-nums">
+                    <AnimatedCounter target={s.reasoningTokens} running={running} speed={40} />
+                  </span>
+                </div>
+                {rDone && <span className="text-emerald-400 text-sm font-medium" style={{ animation: "fadeIn 0.3s" }}>✓ Correct</span>}
+              </div>
+            </div>
+
+            {/* Skill-Equipped */}
+            <div className="bg-slate-800 rounded-xl border-2 border-emerald-900/50 flex flex-col">
+              <div className="px-5 py-3 border-b border-slate-700 flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                <span className="text-emerald-400 font-bold text-sm tracking-wide">SKILL-EQUIPPED</span>
+                <span className="text-slate-600 text-xs ml-auto">reasoning_effort: none + skill</span>
+              </div>
+              <div className="p-4 flex flex-col flex-1">
+                {showSkill && (
+                  <div className="bg-emerald-950/40 border border-emerald-800/40 rounded-lg p-3 mb-3 text-xs" style={{ animation: "fadeIn 0.3s" }}>
+                    <div className="text-emerald-500 font-semibold mb-1.5 text-xs tracking-wide">INJECTED SKILL:</div>
+                    <pre className="text-emerald-300/70 whitespace-pre-wrap font-mono leading-relaxed">{s.skill}</pre>
+                  </div>
+                )}
+                <StreamingText lines={s.skillTrace} running={running && showSkill} speed={200} onComplete={() => setSDone(true)} />
+              </div>
+              <div className="px-5 py-3 border-t border-slate-700 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-500 text-xs font-medium">TOKENS:</span>
+                  <span className="text-emerald-400 font-bold text-xl tabular-nums">
+                    <AnimatedCounter target={s.skillTokens} running={running && showSkill} speed={60} />
+                  </span>
+                </div>
+                {sDone && <span className="text-emerald-400 text-sm font-medium" style={{ animation: "fadeIn 0.3s" }}>✓ Correct</span>}
+              </div>
+            </div>
+          </div>
+
+          {bothDone && (
+            <div className="bg-indigo-950/50 border border-indigo-700/50 rounded-xl p-5 text-center" style={{ animation: "fadeIn 0.5s" }}>
+              <div className="text-indigo-300 text-lg font-medium mb-1">Same result. Different cost.</div>
+              <div className="text-white text-3xl font-bold">{savings}× fewer tokens</div>
+              <div className="text-indigo-400/70 text-sm mt-1">
+                {s.reasoningTokens.toLocaleString()} → {s.skillTokens.toLocaleString()} output tokens
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function CTooltip({ active, payload, label }) {
+      if (!active || !payload) return null;
+      return (
+        <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 text-sm">
+          <div className="text-white font-semibold mb-2">{label}</div>
+          {payload.map((p, i) => (
+            <div key={i} className="flex items-center gap-2 mb-1">
+              <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: p.fill || p.color }} />
+              <span className="text-slate-300">{p.name}:</span>
+              <span className="text-white font-medium">
+                {p.value}{p.name !== "Reasoning" && p.name !== "Skill-Equipped" ? "%" : ""}
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    function ResultsView() {
+      const [showTokens, setShowTokens] = useState(false);
+      return (
+        <div className="flex flex-col gap-6">
+          <div className="flex gap-2 justify-center">
+            <button onClick={() => setShowTokens(false)}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${!showTokens ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-300 hover:bg-slate-600"}`}>
+              Accuracy Comparison
+            </button>
+            <button onClick={() => setShowTokens(true)}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${showTokens ? "bg-indigo-600 text-white" : "bg-slate-700 text-slate-300 hover:bg-slate-600"}`}>
+              Token Savings
+            </button>
+          </div>
+
+          {!showTokens ? (
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <h3 className="text-white text-lg font-bold mb-1">Task Accuracy by Benchmark</h3>
+              <p className="text-slate-400 text-sm mb-5">
+                GPT-5.4-mini: no reasoning vs. reasoning vs. skill-equipped (no reasoning + distilled skill)
+              </p>
+              <ResponsiveContainer width="100%" height={340}>
+                <BarChart data={RESULTS_DATA} barCategoryGap="20%">
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="benchmark" tick={{ fill: "#94a3b8", fontSize: 13 }} />
+                  <YAxis tick={{ fill: "#94a3b8", fontSize: 13 }} domain={[0, 100]} tickFormatter={v => v + "%"} />
+                  <Tooltip content={<CTooltip />} />
+                  <Legend wrapperStyle={{ fontSize: 13, paddingTop: 8 }}
+                    formatter={v => <span style={{ color: "#cbd5e1" }}>{v}</span>} />
+                  <Bar dataKey="noThink" name="No Reasoning" fill="#64748b" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="think" name="Reasoning Mode" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="skill" name="Skill-Equipped" fill="#10b981" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                {RESULTS_DATA.map(d => {
+                  const gap = d.think - d.noThink;
+                  const rec = d.skill - d.noThink;
+                  const pct = Math.round((rec / gap) * 100);
+                  const beats = d.skill >= d.think;
+                  return (
+                    <div key={d.benchmark} className="bg-slate-900/60 rounded-lg p-3">
+                      <div className="text-slate-400 text-xs font-medium">{d.benchmark}</div>
+                      <div className={`text-lg font-bold ${beats ? "text-emerald-400" : "text-amber-400"}`}>
+                        {pct}% of gap recovered {beats ? "\u2014 beats reasoning" : ""}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <h3 className="text-white text-lg font-bold mb-1">Output Token Usage</h3>
+              <p className="text-slate-400 text-sm mb-5">
+                Reasoning mode vs. skill-equipped \u2014 same tasks, dramatically fewer tokens
+              </p>
+              <ResponsiveContainer width="100%" height={340}>
+                <BarChart data={TOKEN_DATA} barCategoryGap="20%">
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="benchmark" tick={{ fill: "#94a3b8", fontSize: 13 }} />
+                  <YAxis tick={{ fill: "#94a3b8", fontSize: 13 }} />
+                  <Tooltip content={<CTooltip />} />
+                  <Legend wrapperStyle={{ fontSize: 13, paddingTop: 8 }}
+                    formatter={v => <span style={{ color: "#cbd5e1" }}>{v}</span>} />
+                  <Bar dataKey="reasoning" name="Reasoning" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="skill" name="Skill-Equipped" fill="#10b981" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+              <div className="flex justify-center gap-6 mt-4">
+                {TOKEN_DATA.map(d => (
+                  <div key={d.benchmark} className="text-center">
+                    <div className="text-slate-500 text-xs">{d.benchmark}</div>
+                    <div className="text-white text-xl font-bold">{d.ratio}</div>
+                    <div className="text-emerald-400 text-xs">fewer tokens</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="bg-amber-950/30 border border-amber-700/40 rounded-xl p-5">
+            <div className="text-amber-300 font-bold text-base mb-2">The Killer Ablation</div>
+            <div className="text-amber-100/80 text-sm leading-relaxed">
+              Skills distilled from <span className="text-white font-semibold">non-reasoning trajectories alone</span> are
+              competitive with skills from reasoning trajectories. You don't need to run the expensive reasoning model
+              to produce the training data. The amortization works even when you never paid the original premium.
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [tab, setTab] = useState("demo");
+      return (
+        <div className="min-h-screen bg-slate-900 text-white p-6" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+          <div className="max-w-5xl mx-auto mb-6">
+            <div className="flex items-baseline gap-3 mb-1 flex-wrap">
+              <h1 className="text-2xl font-bold tracking-tight">Reason Wide, Not Deep</h1>
+              <span className="text-slate-500 text-sm">Singh et al. (Microsoft) · arXiv:2608.07885</span>
+            </div>
+            <p className="text-slate-400 text-sm">
+              Amortizing the reasoning premium into distilled skills \u2014 interactive companion
+            </p>
+          </div>
+
+          <div className="max-w-5xl mx-auto mb-5">
+            <div className="flex gap-1 bg-slate-800 rounded-lg p-1 w-fit">
+              <button onClick={() => setTab("demo")}
+                className={`px-5 py-2 rounded-md text-sm font-semibold transition-all ${tab === "demo" ? "bg-indigo-600 text-white shadow-lg" : "text-slate-400 hover:text-white"}`}>
+                Live Demo
+              </button>
+              <button onClick={() => setTab("results")}
+                className={`px-5 py-2 rounded-md text-sm font-semibold transition-all ${tab === "results" ? "bg-indigo-600 text-white shadow-lg" : "text-slate-400 hover:text-white"}`}>
+                Results
+              </button>
+            </div>
+          </div>
+
+          <div className="max-w-5xl mx-auto">
+            {tab === "demo" ? <DemoView /> : <ResultsView />}
+          </div>
+
+          <div className="max-w-5xl mx-auto mt-6 text-center">
+            <p className="text-slate-600 text-xs">
+              Representative illustration based on paper's reported results · Latent Space Paper Club · Sept 2026
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
