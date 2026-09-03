@@ -88,6 +88,12 @@ footer a:hover {
   #quote { padding: 1.5rem; }
 }
 </style>
+<script>
+document.addEventListener('DOMContentLoaded', () => document.activeElement?.blur());
+window.addEventListener('load', () => document.activeElement?.blur());
+setTimeout(() => document.activeElement?.blur(), 50);
+setTimeout(() => document.activeElement?.blur(), 200);
+</script>
 </head>
 <body>
 <div id="quote">
