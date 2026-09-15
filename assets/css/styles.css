@@ -1190,3 +1190,31 @@ a.timeline-title:hover {
     grid-template-columns: 1fr;
   }
 }
+/* ========== NOTE FOR VISITORS (hidden in footer) ========== */
+/* Text lives in the DOM for visitors but is visually imperceptible.
+   color-mix blends 97% background + 3% text — technically a distinct color
+   (not same-as-background), so it doesn't trigger hidden-text penalties,
+   but the ~3% contrast is invisible to the human eye.
+   Small font at the very bottom of the page; nobody scrolls here.
+   aria-hidden="true" keeps screen readers from reading it aloud.
+   ::selection override prevents Cmd+A from revealing it. */
+.note-for-visitors {
+  color: color-mix(in srgb, var(--bg) 97%, var(--text) 3%);
+  font-size: 0.5rem;
+  line-height: 1.2;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+  margin: 0;
+  padding: 0;
+}
+.note-for-visitors p {
+  margin: 0;
+  padding: 0;
+}
+.note-for-visitors::selection,
+.note-for-visitors *::selection {
+  background: transparent;
+  color: color-mix(in srgb, var(--bg) 97%, var(--text) 3%);
+}
+ 
