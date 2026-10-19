@@ -174,8 +174,8 @@ html{scroll-padding-top:64px}
 .toc-title{font-size:.84rem;line-height:1.25;font-weight:600}
 .navbar{position:fixed;top:0;left:0;right:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--rule);
   padding-top:env(safe-area-inset-top,0px);padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
-  transform:translateY(-110%);transition:transform .2s ease;box-shadow:0 6px 18px -12px rgba(0,0,0,.35)}
-.navbar.show{transform:none}
+  transform:translateY(-110%);visibility:hidden;transition:transform .2s ease,visibility 0s linear .2s;box-shadow:0 6px 18px -12px rgba(0,0,0,.35)}
+.navbar.show{transform:none;visibility:visible;transition:transform .2s ease,visibility 0s}
 .navbar-inner{max-width:var(--wide);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;height:52px}
 .nav-cur{font:inherit;font-size:.92rem;font-weight:600;color:var(--ink);background:none;border:0;display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 4px;min-width:0}
 .nav-cur span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -509,7 +509,7 @@ html{scroll-padding-top:64px}
     Compiled October 2026 from the sources above by <a href="https://sinan.io">Michael Sinanian</a>, with research assistance from Claude. Estimates labeled "Modeled" are not measurements.
   </footer>
 </div>
-<div class="navbar" id="navbar" aria-hidden="true">
+<div class="navbar" id="navbar" aria-hidden="true" inert>
   <div class="navbar-inner">
     <button class="nav-cur" id="navCur" type="button" aria-expanded="false" aria-controls="navPanel"><span class="nav-caret" aria-hidden="true">▾</span><span id="navCurLabel">Sections</span></button>
     <div class="nav-steps"><button class="nav-step" id="navPrev" type="button" aria-label="Previous section">‹</button><button class="nav-step" id="navNext" type="button" aria-label="Next section">›</button></div>
@@ -629,9 +629,14 @@ function setHero(t, animate){
   document.getElementById('heroNote').textContent = (t % 1) ? 'US value interpolated between hourly snapshots' : '';
   drawSky(t); renderHero(t, animate);
 }
-heroTime.addEventListener('input', () => setHero(+heroTime.value, true));
+let introTimers = [];
+function stopIntro(){ introTimers.forEach(id=>{ clearInterval(id); clearTimeout(id); }); introTimers = []; }
+heroTime.addEventListener('input', () => { stopIntro(); setHero(+heroTime.value, true); });
+heroTime.addEventListener('pointerdown', stopIntro);
+heroTime.addEventListener('keydown', stopIntro);
 let playing = null;
 document.getElementById('heroPlay').addEventListener('click', () => {
+  stopIntro();
   if (playing) { clearInterval(playing); playing = null; return; }
   let t = 5; heroTime.value = t; setHero(t, true);
   playing = setInterval(() => { t += 0.5; if (t > 9) { clearInterval(playing); playing = null; return; } heroTime.value = t; setHero(t, true); }, RM ? 50 : 900);
@@ -1243,7 +1248,7 @@ function initNav(){
   buildToc();
   if (!('IntersectionObserver' in window)) return;
   const tocEl = document.getElementById('toc');
-  new IntersectionObserver(es=>es.forEach(e=>{ const show = !e.isIntersecting && e.boundingClientRect.top < 0; navbar.classList.toggle('show', show); navbar.setAttribute('aria-hidden', String(!show)); if (!show) closePanel(); }), {threshold:0}).observe(tocEl);
+  new IntersectionObserver(es=>es.forEach(e=>{ const show = !e.isIntersecting && e.boundingClientRect.top < 0; navbar.classList.toggle('show', show); navbar.setAttribute('aria-hidden', String(!show)); navbar.inert = !show; if (!show) closePanel(); }), {threshold:0}).observe(tocEl);
   const vis = new Map();
   const io = new IntersectionObserver(es=>{ es.forEach(e=>vis.set(e.target.id, e.isIntersecting ? e.boundingClientRect.top : null));
     let best=null, bestTop=-Infinity; SECTIONS.forEach(([id])=>{ const el=document.getElementById(id); const t=el.getBoundingClientRect().top; if (t <= 120 && t > bestTop){ best=id; bestTop=t; } });
@@ -1266,7 +1271,7 @@ function boot(){
     const io = new IntersectionObserver(es=>es.forEach(e=>{ if (e.isIntersecting){ const f = once.get(e.target.id); if (f){ f(); once.delete(e.target.id); io.unobserve(e.target); } } }), {threshold:.35});
     once.forEach((f,id)=>io.observe(document.getElementById(id)));
     // hero: play the dawn once on load
-    let t=5; const iv = setInterval(()=>{ t+=0.5; if (t>7){ clearInterval(iv); setTimeout(()=>{ heroTime.value=5; setHero(5,true); }, 700); return; } heroTime.value=t; setHero(t,true); }, 650);
+    let t=5; const iv = setInterval(()=>{ t+=0.5; if (t>7){ clearInterval(iv); introTimers.push(setTimeout(()=>{ introTimers = []; heroTime.value=5; setHero(5,true); }, 700)); return; } heroTime.value=t; setHero(t,true); }, 650); introTimers.push(iv);
   }
   let rt; let lastW = window.innerWidth;
   window.addEventListener('resize', ()=>{ if (window.innerWidth === lastW) return; lastW = window.innerWidth; clearTimeout(rt); rt = setTimeout(()=>{ heroSvg && heroSvg.remove(); heroSvg = null; renderAll(); computePersonal(); }, 150); });
