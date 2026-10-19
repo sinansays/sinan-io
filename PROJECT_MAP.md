@@ -505,6 +505,12 @@ handles the `©` correctly.)
 3. Update dark mode values in `@media (prefers-color-scheme: dark)`
 4. Update toggled theme values in `:root:has(#theme-toggle:checked)`
 
+### Scenario: Add a standalone artifact page
+1. Put a single self-contained HTML file in `/artifacts/` (own `<head>`, inline CSS/JS; no shared header/footer includes)
+2. Optional social preview image beside it (`/artifacts/<name>-social.jpg`, 1200×630) referenced by `og:image`
+3. Not linked from site navigation by default; served at `/artifacts/<name>` by Cloudflare Pages
+4. Current artifacts: `who-wakes-at-five.html` (chronotype baselines, Oct 2026)
+
 ---
 
 **Document version**: 1.1 (2026-07-25)
