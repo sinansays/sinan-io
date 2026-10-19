@@ -799,7 +799,7 @@ function renderDay(){
 function renderAlarmCards(){
   const a = +alarmIn.value + 24; document.getElementById('alarmOut').textContent = ampm(a);
   document.getElementById('alarmCards').innerHTML = [[LARK,'var(--lark)'],[OWL,'var(--owl)']].map(([p,col])=>{
-    const dT = a - p.tmin, sleep = Math.max(0, a - p.on), early = p.wake - a;
+    const dT = a - p.tmin, sleep = Math.max(0, Math.min(a, p.wake) - p.on), early = p.wake - a;
     const state = dT < 0 ? `${Math.abs(dT).toFixed(1)} h <b>before</b> the temperature low: biological night` : `${dT.toFixed(1)} h after the temperature low`;
     return `<div class="tile" style="background:var(--bg)"><div class="l"><i class="key" style="background:${col}"></i> <b>${p.name}</b></div><div class="l">${state}</div><div class="l">Sleep if bedtime unchanged: <b class="mono">${sleep.toFixed(1)} h</b> (usual ${(p.wake-p.on).toFixed(1)} h)</div><div class="s">${early>0?early.toFixed(1)+' h before natural wake':'after natural wake'}</div></div>`;
   }).join('');
