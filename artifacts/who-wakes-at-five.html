@@ -148,6 +148,43 @@ details.src summary{cursor:pointer;font-weight:600}
 details.src ul{margin:10px 0 0;padding-left:1.1em;display:grid;gap:6px;font-size:.86rem;color:var(--ink2)}
 .scroll-x{overflow-x:auto}
 ol.method{display:grid;gap:8px;padding-left:1.2em;color:var(--ink2);font-size:.94rem;margin:0}
+
+/* section navigator */
+html{scroll-padding-top:64px}
+@media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}
+.toc{display:grid;gap:10px;padding-block:8px 8px}
+.toc-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.toc-strip{list-style:none;margin:0;padding:0 0 6px;display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:10px}
+.toc-hint{display:none}
+@media (max-width:820px){
+  .toc-strip{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:148px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+  .toc-strip li{scroll-snap-align:start}
+  .toc-hint{display:inline}
+}
+.toc-card{display:grid;gap:6px;padding:8px 8px 10px;border-radius:12px;background:var(--surface);color:var(--ink);text-decoration:none;border:1px solid transparent;height:100%;transition:border-color .15s, transform .15s}
+.toc-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.toc-card[aria-current="true"]{border-color:var(--accent)}
+.toc-card svg{display:block;width:100%;height:auto;border-radius:8px;background:var(--bg)}
+.toc-num{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:var(--muted)}
+.toc-title{font-size:.84rem;line-height:1.25;font-weight:600}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--rule);
+  padding-top:env(safe-area-inset-top,0px);padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  transform:translateY(-110%);transition:transform .2s ease;box-shadow:0 6px 18px -12px rgba(0,0,0,.35)}
+.navbar.show{transform:none}
+.navbar-inner{max-width:var(--wide);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;height:52px}
+.nav-cur{font:inherit;font-size:.92rem;font-weight:600;color:var(--ink);background:none;border:0;display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 4px;min-width:0}
+.nav-cur span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-caret{font-size:.8rem;color:var(--muted);transition:transform .15s}
+.nav-cur[aria-expanded="true"] .nav-caret{transform:rotate(180deg)}
+.nav-steps{display:flex;gap:6px;flex:none}
+.nav-step{font:inherit;font-size:1.1rem;line-height:1;width:34px;height:34px;border-radius:8px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);cursor:pointer}
+.nav-step:disabled{opacity:.35;cursor:default}
+.nav-panel{max-width:var(--wide);margin:0 auto;max-height:min(70vh,560px);overflow-y:auto;padding-bottom:12px}
+.nav-panel ol{list-style:none;margin:0;padding:4px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px}
+.nav-item{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:center;padding:6px;border-radius:10px;color:var(--ink);text-decoration:none}
+.nav-item:hover,.nav-item[aria-current="true"]{background:var(--accent-wash)}
+.nav-item svg{width:72px;height:auto;border-radius:6px;background:var(--bg);display:block}
+.nav-item .toc-title{font-weight:500}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -159,7 +196,6 @@ ol.method{display:grid;gap:8px;padding-left:1.2em;color:var(--ink2);font-size:.9
     <div class="legend-chips">
       <span class="chip meas">Measured</span>
       <span class="chip mod">Modeled</span>
-      <span class="chip gap">No direct data</span>
     </div>
   </div>
 
@@ -194,26 +230,10 @@ ol.method{display:grid;gap:8px;padding-left:1.2em;color:var(--ink2);font-size:.9
     </div>
   </header>
 
-  <!-- ANSWERS -->
-  <section class="chapter" id="answers">
-    <div class="head col">
-      <div class="eyebrow">The short version</div>
-      <h2>Common questions, with the best available answers</h2>
-      <p class="ink2">Each answer is labeled by evidence type. Where nobody has measured the thing directly, the number is a labeled estimate built from measured distributions. The method is at the bottom of the page.</p>
-    </div>
-    <div class="answers">
-      <div class="ans"><div class="q">What share of Americans naturally wake around 5am with energy?</div>
-        <div class="a"><p><b>About 3–6% of US adults</b> <span class="chip mod">Modeled</span> have a body clock that would get them up by about 5:00 am without an alarm. Age drives most of it: the estimate is about 2% at ages 18–24 and about 15–17% at 65 and over.</p><p>"With high energy" has never been measured at that hour. The closest measured figure: 36% of US adults call themselves early birds <span class="chip meas">YouGov 2022, n=6,833</span>.</p></div></div>
-      <div class="ans"><div class="q">What share in Europe (say, France) get up at 5am, but with difficulty?</div>
-        <div class="a"><p><b>At least 4.5% of French adults are up at 5:00</b> <span class="chip meas">HETUS</span>. The figure is 2.5% in Spain, 4.8% in Germany, 7.2% in the UK and 8.3% in Hungary. The US figure is 15.7%.</p><p>In the European chronotype database (MCTQ), <b>under 1% have a body clock early enough</b> to wake by 5:00 unprompted <span class="chip mod">Modeled</span>. So most Europeans up at 5:00 are up before their body clock.</p></div></div>
-      <div class="ans"><div class="q">What separates natural 5am risers from natural 7am risers?</div>
-        <div class="a"><p><b>About two hours of circadian phase.</b> That is roughly the gap between a typical lark and a typical owl. What moves people by that much:</p><ul class="note-list"><li><b>Age:</b> the average American's clock moves about 1.8 h earlier between age 20 and age 60.</li><li><b>Light:</b> a week of natural light while camping moves the clock about 2 h earlier.</li><li><b>Genes:</b> common variants explain only about 25 minutes between the top and bottom 5% of genetic scores. Rare mutations such as familial advanced sleep phase can shift timing by about 4 h.</li></ul><p>The internal clock's natural cycle length also differs. Larks run about 24.1 h and owls about 24.3 h. A shorter cycle settles earlier.</p></div></div>
-      <div class="ans"><div class="q">Of 5am risers, how many exercise? What are their families like?</div>
-        <div class="a"><p><b>No dataset links these directly</b> <span class="chip gap">Gap</span>. What exists:</p><ul class="note-list"><li><b>Occupation:</b> early risers are mostly early-shift workers in transport, protective services, production and healthcare.</li><li><b>Sex:</b> 69% of people who leave for work before 6 am are men.</li><li><b>Parents:</b> 56% of parents are up by 6 am, against 37% of non-parents.</li><li><b>Exercise:</b> morning types are less often inactive, 22% against 32% for evening types (UK Biobank). But only about 3% of Americans awake at 5:00 are exercising at that moment.</li></ul></div></div>
-      <div class="ans"><div class="q">How many night owls have shifted for good, and how do they feel about it?</div>
-        <div class="a"><p><b>Nobody has asked owls this directly</b> <span class="chip gap">Gap</span>. The best proxies:</p><ul class="note-list"><li><b>Category change:</b> over 6 years, 56% of self-rated evening types move category, but fewer than 4% become morning types.</li><li><b>Interventions:</b> a structured plan moves an owl's clock about 2 h earlier in 3 weeks, and depression and stress scores fall.</li><li><b>Reversion:</b> the shift fades about 2 weeks after people stop. 91.5% of treated patients reported relapse within a year.</li><li><b>Satisfaction:</b> participants rate the effort "worth it" at about 72 out of 100.</li></ul></div></div>
-    </div>
-  </section>
+  <nav class="toc" id="toc" aria-label="Sections">
+    <div class="toc-head"><span class="eyebrow">Jump to a section</span><span class="small muted toc-hint">Swipe for more →</span></div>
+    <ol class="toc-strip" id="tocStrip"></ol>
+  </nav>
 
   <!-- 1. 100 people -->
   <section class="chapter" id="hundred">
@@ -409,7 +429,7 @@ ol.method{display:grid;gap:8px;padding-left:1.2em;color:var(--ink2);font-size:.9
   </section>
 
   <!-- CALCULATOR -->
-  <section class="chapter" id="personal">
+  <section class="chapter" id="calculator">
     <div class="personal">
       <div class="head" style="display:grid;gap:8px">
         <div class="eyebrow">09 · Find your chronotype</div>
@@ -437,6 +457,27 @@ ol.method{display:grid;gap:8px;padding-left:1.2em;color:var(--ink2);font-size:.9
     </div>
   </section>
 
+  <!-- ANSWERS -->
+  <section class="chapter" id="answers">
+    <div class="head col">
+      <div class="eyebrow">10 · The short version</div>
+      <h2>Common questions, with the best available answers</h2>
+      <p class="ink2">Each answer is labeled by evidence type. Where nobody has measured the thing directly, the number is a labeled estimate built from measured distributions. The method is just below.</p>
+    </div>
+    <div class="answers">
+      <div class="ans"><div class="q">What share of Americans naturally wake around 5am with energy?</div>
+        <div class="a"><p><b>About 3–6% of US adults</b> <span class="chip mod">Modeled</span> have a body clock that would get them up by about 5:00 am without an alarm. Age drives most of it: the estimate is about 2% at ages 18–24 and about 15–17% at 65 and over.</p><p>"With high energy" has never been measured at that hour. The closest measured figure: 36% of US adults call themselves early birds <span class="chip meas">YouGov 2022, n=6,833</span>.</p></div></div>
+      <div class="ans"><div class="q">What share in Europe (say, France) get up at 5am, but with difficulty?</div>
+        <div class="a"><p><b>At least 4.5% of French adults are up at 5:00</b> <span class="chip meas">HETUS</span>. The figure is 2.5% in Spain, 4.8% in Germany, 7.2% in the UK and 8.3% in Hungary. The US figure is 15.7%.</p><p>In the European chronotype database (MCTQ), <b>under 1% have a body clock early enough</b> to wake by 5:00 unprompted <span class="chip mod">Modeled</span>. So most Europeans up at 5:00 are up before their body clock.</p></div></div>
+      <div class="ans"><div class="q">What separates natural 5am risers from natural 7am risers?</div>
+        <div class="a"><p><b>About two hours of circadian phase.</b> That is roughly the gap between a typical lark and a typical owl. What moves people by that much:</p><ul class="note-list"><li><b>Age:</b> the average American's clock moves about 1.8 h earlier between age 20 and age 60.</li><li><b>Light:</b> a week of natural light while camping moves the clock about 2 h earlier.</li><li><b>Genes:</b> common variants explain only about 25 minutes between the top and bottom 5% of genetic scores. Rare mutations such as familial advanced sleep phase can shift timing by about 4 h.</li></ul><p>The internal clock's natural cycle length also differs. Larks run about 24.1 h and owls about 24.3 h. A shorter cycle settles earlier.</p></div></div>
+      <div class="ans"><div class="q">Of 5am risers, how many exercise? What are their families like?</div>
+        <div class="a"><p><b>No dataset links these directly</b> <span class="chip gap">Gap</span>. What exists:</p><ul class="note-list"><li><b>Occupation:</b> early risers are mostly early-shift workers in transport, protective services, production and healthcare.</li><li><b>Sex:</b> 69% of people who leave for work before 6 am are men.</li><li><b>Parents:</b> 56% of parents are up by 6 am, against 37% of non-parents.</li><li><b>Exercise:</b> morning types are less often inactive, 22% against 32% for evening types (UK Biobank). But only about 3% of Americans awake at 5:00 are exercising at that moment.</li></ul></div></div>
+      <div class="ans"><div class="q">How many night owls have shifted for good, and how do they feel about it?</div>
+        <div class="a"><p><b>Nobody has asked owls this directly</b> <span class="chip gap">Gap</span>. The best proxies:</p><ul class="note-list"><li><b>Category change:</b> over 6 years, 56% of self-rated evening types move category, but fewer than 4% become morning types.</li><li><b>Interventions:</b> a structured plan moves an owl's clock about 2 h earlier in 3 weeks, and depression and stress scores fall.</li><li><b>Reversion:</b> the shift fades about 2 weeks after people stop. 91.5% of treated patients reported relapse within a year.</li><li><b>Satisfaction:</b> participants rate the effort "worth it" at about 72 out of 100.</li></ul></div></div>
+    </div>
+  </section>
+
   <!-- METHOD -->
   <section class="chapter" id="method">
     <div class="head col">
@@ -458,6 +499,13 @@ ol.method{display:grid;gap:8px;padding-left:1.2em;color:var(--ink2);font-size:.9
   <footer class="col small muted" style="padding-block:40px 0;border-top:1px solid var(--rule);margin-top:40px">
     Compiled October 2026 from the sources above by <a href="https://sinan.io">Michael Sinanian</a>, with research assistance from Claude. Estimates labeled "Modeled" are not measurements.
   </footer>
+</div>
+<div class="navbar" id="navbar" aria-hidden="true">
+  <div class="navbar-inner">
+    <button class="nav-cur" id="navCur" type="button" aria-expanded="false" aria-controls="navPanel"><span class="nav-caret" aria-hidden="true">▾</span><span id="navCurLabel">Sections</span></button>
+    <div class="nav-steps"><button class="nav-step" id="navPrev" type="button" aria-label="Previous section">‹</button><button class="nav-step" id="navNext" type="button" aria-label="Next section">›</button></div>
+  </div>
+  <div class="nav-panel" id="navPanel" hidden><ol id="navList"></ol></div>
 </div>
 <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
@@ -1040,6 +1088,7 @@ function computePersonal(){
     ['A 5:00 alarm vs. your temperature low', `${d5>=0?'+':''}${d5.toFixed(1)} h`, d5 < 0 ? 'before it: biological night, heavy inertia' : 'after it: the rising phase'],
   ].map(([l,v,s])=>`<div class="tile"><div class="l">${l}</div><div class="v" style="font-size:1.6rem">${v}</div><div class="s">${s}</div></div>`).join('');
   renderHist();
+  const tc = document.querySelector('.toc-card[data-id="calculator"] svg'); if (tc){ const n = thumb('calculator'); tc.replaceWith(n); const nc = document.querySelector('.nav-item[data-id="calculator"] svg'); if (nc) nc.replaceWith(thumb('calculator')); }
 }
 pIds.forEach(id=>document.getElementById(id).addEventListener('change', computePersonal));
 pIds.forEach(id=>document.getElementById(id).addEventListener('input', computePersonal));
@@ -1102,6 +1151,98 @@ const SRC = [
 ];
 document.getElementById('sources').innerHTML = SRC.map(([h,l])=>`<details class="src"><summary>${h} (${l.length})</summary><ul>${l.map(([t,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}</ul></details>`).join('');
 
+
+/* ================= SECTION NAVIGATOR ================= */
+const SECTIONS = [
+  ['hundred','01','The 5:00 am crowd'],['distribution','02','The chronotype curve'],['gap','03','Biology vs. the alarm'],
+  ['day','04','Same alarm, different hour'],['levers','05','What sets your clock'],['who','06','Who rises early'],
+  ['health','07','Health correlates'],['shift','08','Can owls shift?'],['calculator','09','Find your chronotype'],
+  ['answers','10','Common questions'],['method','—','Method & sources']
+];
+const TW = 120, TH = 66;
+function thumb(id){
+  const svg = d3.create('svg').attr('viewBox',`0 0 ${TW} ${TH}`).attr('aria-hidden','true').attr('focusable','false');
+  const P = 8, x0 = P, x1 = TW-P, y0 = P, y1 = TH-P;
+  const g = svg.append('g');
+  if (id==='hundred'){
+    let k=0; GROUPS.forEach(gr=>{ for(let i=0;i<gr.n;i++){ const c=k%20, r=Math.floor(k/20); g.append('circle').attr('cx',x0+3+c*5.4).attr('cy',y0+4+r*10.5).attr('r',2.1).style('fill',gr.color); k++; } });
+  } else if (id==='distribution' || id==='calculator'){
+    const x = d3.scaleLinear().domain([-1,11.5]).range([x0,x1]), y = d3.scaleLinear().domain([0,16]).range([y1,y0]);
+    MCTQ_HIST.forEach(d=>g.append('rect').attr('x',x(d[0]-.25)+.4).attr('width',Math.max(1,x(.5)-x(0)-.8)).attr('y',y(d[1])).attr('height',y1-y(d[1])).attr('rx',.8).style('fill', id==='calculator'?'var(--rule)':typeColor(d[0])));
+    if (id==='calculator'){ const px=x(personalMSF!=null?personalMSF:4.3); g.append('line').attr('x1',px).attr('x2',px).attr('y1',y0).attr('y2',y1).style('stroke','var(--ink)').attr('stroke-width',1.6); g.append('path').attr('d',d3.symbol(d3.symbolTriangle,26)()).attr('transform',`translate(${px},${y0}) rotate(180)`).style('fill','var(--ink)'); }
+  } else if (id==='gap'){
+    const x = d3.scaleLinear().domain([4,10]).range([x0,x1]), y = d3.scaleLinear().domain([0,100]).range([y1,y0]);
+    const mod = MT.map((t,i)=>[t,MODEL.base[i],MODEL.mctq[i]]); const act = Object.entries(ATUS).map(([k,v])=>[+k,v]);
+    g.append('path').datum(mod).style('fill','var(--owl)').style('opacity',.15).attr('d',d3.area().x(d=>x(d[0])).y0(d=>y(d[1])).y1(d=>y(lerpObj(ATUS,d[0]))).curve(d3.curveMonotoneX));
+    [[mod,2,'var(--mid)'],[mod,1,'var(--lark)'],[act,1,'var(--ink)']].forEach(([data,k,c])=>g.append('path').datum(data).attr('fill','none').style('stroke',c).attr('stroke-width',1.6).attr('d',d3.line().x(d=>x(d[0])).y(d=>y(d[k])).curve(d3.curveMonotoneX)));
+  } else if (id==='day'){
+    const x = d3.scaleLinear().domain([18,42]).range([x0,x1]);
+    [[LARK,'var(--lark)',y0+8],[OWL,'var(--owl)',y0+30]].forEach(([p,c,yy])=>{ g.append('rect').attr('x',x(p.on)).attr('width',x(p.wake)-x(p.on)).attr('y',yy).attr('height',10).attr('rx',2).style('fill',c);
+      g.append('path').attr('d',d3.symbol(d3.symbolTriangle,14)()).attr('transform',`translate(${x(p.tmin)},${yy-4}) rotate(180)`).style('fill','var(--ink)'); });
+    g.append('line').attr('x1',x(29)).attr('x2',x(29)).attr('y1',y0).attr('y2',y1).style('stroke','var(--ink)').attr('stroke-width',1.4);
+  } else if (id==='levers' || id==='who' || id==='shift'){
+    const rows = id==='levers' ? LEVERS.map(d=>[d.v,'var(--accent)']) : id==='who' ? OCC.slice(0,8).map(d=>[d[1], d[1]>=10?'var(--owl)':'var(--muted)']) : INT.slice(0,8).map(d=>[d[1], d[2]==='clinical'?'var(--owl)':'var(--lark)']);
+    const mx = d3.max(rows,d=>d[0]); const bh = (y1-y0)/rows.length;
+    rows.forEach((r,i)=>g.append('rect').attr('x',x0).attr('y',y0+i*bh+bh*.18).attr('height',bh*.64).attr('rx',1.2).attr('width',Math.max(1,(x1-x0)*r[0]/mx)).style('fill',r[1]));
+  } else if (id==='health'){
+    const x = d3.scaleLog().domain([0.85,2.2]).range([x0+4,x1]); const bh = (y1-y0)/FOREST.length;
+    g.append('line').attr('x1',x(1)).attr('x2',x(1)).attr('y1',y0).attr('y2',y1).style('stroke','var(--ink)').attr('stroke-width',1);
+    FOREST.forEach((d,i)=>{ const yy=y0+i*bh+bh/2, c=d.t==='mr'?'var(--lark)':'var(--owl)';
+      g.append('line').attr('x1',x(d.r[1])).attr('x2',x(d.r[2])).attr('y1',yy).attr('y2',yy).style('stroke',c).attr('stroke-width',1.4);
+      g.append('circle').attr('cx',x(d.r[0])).attr('cy',yy).attr('r',2.4).style('fill',c); });
+  } else if (id==='answers'){
+    for (let i=0;i<4;i++){ const yy=y0+2+i*13; g.append('rect').attr('x',x0).attr('y',yy).attr('width',30).attr('height',4).attr('rx',2).style('fill','var(--ink2)');
+      g.append('rect').attr('x',x0+38).attr('y',yy).attr('width',(x1-x0-38)*(.9-.12*(i%3))).attr('height',4).attr('rx',2).style('fill','var(--rule)');
+      g.append('rect').attr('x',x0+38).attr('y',yy+6).attr('width',14).attr('height',4).attr('rx',2).style('fill', ['var(--chip-mod)','var(--chip-meas)','var(--chip-gap)','var(--chip-mod)'][i]); }
+  } else if (id==='method'){
+    for (let i=0;i<6;i++){ const yy=y0+2+i*8.6; g.append('text').attr('x',x0).attr('y',yy+4.5).style('font-family','var(--mono)').style('font-size','6px').style('fill','var(--muted)').text(i+1);
+      g.append('rect').attr('x',x0+8).attr('y',yy).attr('width',(x1-x0-8)*[.95,.7,.85,.6,.9,.5][i]).attr('height',4).attr('rx',2).style('fill','var(--rule)'); }
+  }
+  return svg.node();
+}
+const tocStrip = document.getElementById('tocStrip'), navList = document.getElementById('navList');
+function buildToc(){
+  tocStrip.innerHTML=''; navList.innerHTML='';
+  SECTIONS.forEach(([id,num,title])=>{
+    const li = document.createElement('li'); const a = document.createElement('a'); a.className='toc-card'; a.href='#'+id; a.dataset.id=id;
+    a.appendChild(thumb(id)); a.insertAdjacentHTML('beforeend', `<span class="toc-num">${num==='—'?'Appendix':num}</span><span class="toc-title">${title}</span>`);
+    li.appendChild(a); tocStrip.appendChild(li);
+    const li2 = document.createElement('li'); const b = document.createElement('a'); b.className='nav-item'; b.href='#'+id; b.dataset.id=id;
+    b.appendChild(thumb(id)); b.insertAdjacentHTML('beforeend', `<span><span class="toc-num">${num==='—'?'Appendix':num}</span><br><span class="toc-title">${title}</span></span>`);
+    li2.appendChild(b); navList.appendChild(li2);
+  });
+  markCurrent(currentId);
+}
+let currentId = null;
+const navbar = document.getElementById('navbar'), navCur = document.getElementById('navCur'), navPanel = document.getElementById('navPanel');
+function markCurrent(id){
+  currentId = id;
+  document.querySelectorAll('.toc-card,.nav-item').forEach(a=>a.setAttribute('aria-current', a.dataset.id===id ? 'true':'false'));
+  const i = SECTIONS.findIndex(s=>s[0]===id);
+  document.getElementById('navCurLabel').textContent = i<0 ? 'Sections' : (SECTIONS[i][1]==='—'?'':SECTIONS[i][1]+' · ') + SECTIONS[i][2];
+  document.getElementById('navPrev').disabled = i<=0; document.getElementById('navNext').disabled = i<0 || i>=SECTIONS.length-1;
+}
+function go(id){ const el = document.getElementById(id); if (el){ el.scrollIntoView({behavior: RM?'auto':'smooth', block:'start'}); try { history.replaceState(null,'','#'+id); } catch(e){} } }
+function closePanel(){ navPanel.hidden = true; navCur.setAttribute('aria-expanded','false'); }
+navCur.addEventListener('click', ()=>{ const open = navPanel.hidden; navPanel.hidden = !open; navCur.setAttribute('aria-expanded', String(open)); });
+document.getElementById('navPrev').addEventListener('click', ()=>{ const i = SECTIONS.findIndex(s=>s[0]===currentId); if (i>0) go(SECTIONS[i-1][0]); });
+document.getElementById('navNext').addEventListener('click', ()=>{ const i = SECTIONS.findIndex(s=>s[0]===currentId); go(SECTIONS[Math.min(SECTIONS.length-1, i+1)][0]); });
+navList.addEventListener('click', e=>{ if (e.target.closest('a')) closePanel(); });
+document.addEventListener('keydown', e=>{ if (e.key==='Escape') closePanel(); });
+document.addEventListener('click', e=>{ if (!navbar.contains(e.target)) closePanel(); });
+function initNav(){
+  buildToc();
+  if (!('IntersectionObserver' in window)) return;
+  const tocEl = document.getElementById('toc');
+  new IntersectionObserver(es=>es.forEach(e=>{ const show = !e.isIntersecting && e.boundingClientRect.top < 0; navbar.classList.toggle('show', show); navbar.setAttribute('aria-hidden', String(!show)); if (!show) closePanel(); }), {threshold:0}).observe(tocEl);
+  const vis = new Map();
+  const io = new IntersectionObserver(es=>{ es.forEach(e=>vis.set(e.target.id, e.isIntersecting ? e.boundingClientRect.top : null));
+    let best=null, bestTop=-Infinity; SECTIONS.forEach(([id])=>{ const el=document.getElementById(id); const t=el.getBoundingClientRect().top; if (t <= 120 && t > bestTop){ best=id; bestTop=t; } });
+    markCurrent(best); }, {rootMargin:'-80px 0px -55% 0px', threshold:[0,1]});
+  SECTIONS.forEach(([id])=>io.observe(document.getElementById(id)));
+  window.addEventListener('scroll', ()=>{ let best=null, bestTop=-Infinity; SECTIONS.forEach(([id])=>{ const t=document.getElementById(id).getBoundingClientRect().top; if (t<=120 && t>bestTop){best=id;bestTop=t;} }); if (best!==currentId) markCurrent(best); }, {passive:true});
+}
+
 /* ================= BOOT ================= */
 function renderAll(){
   setHero(+heroTime.value, false); renderDots('final'); renderHist(); renderGap(); renderDay(); renderAlarmCards(); renderLevers(); renderAge(); renderTau(); renderOcc(); renderLife(); renderForest(false); renderInt(); renderTC(false); renderStay(); renderFeel();
@@ -1109,6 +1250,7 @@ function renderAll(){
 function boot(){
   renderAll();
   computePersonal();
+  initNav();
   // scroll-triggered replays (charts are complete at rest; motion replays once on first view)
   if ('IntersectionObserver' in window && !RM){
     const once = new Map([['dots',()=>renderDots('start')],['gapChart',renderGap],['tcChart',()=>renderTC(true)],['feelChart',renderFeel],['dayChart',()=>{ let a=7; const iv=setInterval(()=>{ a-=0.25; alarmIn.value=a; renderDay(); renderAlarmCards(); if(a<=5) clearInterval(iv); },60); }]]);
