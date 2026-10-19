@@ -564,6 +564,7 @@ Minimum test matrix:
 - Total page weight: <200KB (currently achievable)
 - CSS: <20KB
 - Images: <100KB each after compression
+- Exception: standalone pages in `/artifacts/` are self-contained by design (inline CSS/JS and any charting library, so the single file also works offline or as an attachment). Judge them by compressed transfer size (<200KB over the wire), not raw file size.
 
 ### Pre-deployment Checklist
 
