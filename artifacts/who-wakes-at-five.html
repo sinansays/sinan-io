@@ -631,9 +631,10 @@ function setHero(t, animate){
 }
 let introTimers = [];
 function stopIntro(){ introTimers.forEach(id=>{ clearInterval(id); clearTimeout(id); }); introTimers = []; }
-heroTime.addEventListener('input', () => { stopIntro(); setHero(+heroTime.value, true); });
-heroTime.addEventListener('pointerdown', stopIntro);
-heroTime.addEventListener('keydown', stopIntro);
+function userClock(){ stopIntro(); if (typeof playing !== 'undefined' && playing){ clearInterval(playing); playing = null; } }
+heroTime.addEventListener('input', e => { if (e.isTrusted) userClock(); setHero(+heroTime.value, true); });
+heroTime.addEventListener('pointerdown', userClock);
+heroTime.addEventListener('keydown', userClock);
 let playing = null;
 document.getElementById('heroPlay').addEventListener('click', () => {
   stopIntro();
@@ -1085,7 +1086,7 @@ function erf(x){ const t=1/(1+0.3275911*Math.abs(x)); const y=1-(((((1.061405429
 function mctqPct(msf){ let s=0, tot=0; MCTQ_HIST.forEach(([c,p])=>{ tot+=p; const lo=c-.25, hi=c+.25; if (msf>=hi) s+=p; else if (msf>lo) s+=p*(msf-lo)/.5; }); return 100*s/tot; }
 function computePersonal(){
   const g = id => document.getElementById(id).value;
-  if (['wOn','wOff','fOn','fOff'].some(id => !/^\d{1,2}:\d{2}/.test(g(id)))) { document.getElementById('pOut').innerHTML = '<div class="tile"><div class="l">Enter all four times to see your results.</div></div>'; return; }
+  if (['wOn','wOff','fOn','fOff'].some(id => !/^\d{1,2}:\d{2}/.test(g(id)))) { document.getElementById('pOut').innerHTML = '<div class="tile"><div class="l">Enter all four times to see your results.</div></div>'; personalMSF = null; renderHist(); refreshCalcThumb(); return; }
   pIds.forEach(id=>store.set('wwf_'+id, g(id)));
   let wOn = toH(g('wOn')), wOff = toH(g('wOff')), fOn = toH(g('fOn')), fOff = toH(g('fOff')); const nW = +g('nW'), age = +g('ageBand');
   const norm = (on,off) => { if (on > 15) on -= 24; if (off <= on) off += 24; return [on,off]; };
@@ -1108,8 +1109,9 @@ function computePersonal(){
     ['A 5:00 alarm vs. your temperature low', `${d5>=0?'+':''}${d5.toFixed(1)} h`, d5 < 0 ? 'before it: biological night, heavy inertia' : 'after it: the rising phase'],
   ].map(([l,v,s])=>`<div class="tile"><div class="l">${l}</div><div class="v" style="font-size:1.6rem">${v}</div><div class="s">${s}</div></div>`).join('');
   renderHist();
-  const tc = document.querySelector('.toc-card[data-id="calculator"] svg'); if (tc){ const n = thumb('calculator'); tc.replaceWith(n); const nc = document.querySelector('.nav-item[data-id="calculator"] svg'); if (nc) nc.replaceWith(thumb('calculator')); }
+  refreshCalcThumb();
 }
+function refreshCalcThumb(){ if (typeof thumb !== 'function') return; const tc = document.querySelector('.toc-card[data-id="calculator"] svg'); if (tc) tc.replaceWith(thumb('calculator')); const nc = document.querySelector('.nav-item[data-id="calculator"] svg'); if (nc) nc.replaceWith(thumb('calculator')); }
 pIds.forEach(id=>document.getElementById(id).addEventListener('change', computePersonal));
 pIds.forEach(id=>document.getElementById(id).addEventListener('input', computePersonal));
 
@@ -1189,7 +1191,7 @@ function thumb(id){
   } else if (id==='distribution' || id==='calculator'){
     const x = d3.scaleLinear().domain([-1,11.5]).range([x0,x1]), y = d3.scaleLinear().domain([0,16]).range([y1,y0]);
     MCTQ_HIST.forEach(d=>g.append('rect').attr('x',x(d[0]-.25)+.4).attr('width',Math.max(1,x(.5)-x(0)-.8)).attr('y',y(d[1])).attr('height',y1-y(d[1])).attr('rx',.8).style('fill', id==='calculator'?'var(--rule)':typeColor(d[0])));
-    if (id==='calculator'){ const px=x(personalMSF!=null?personalMSF:4.3); g.append('line').attr('x1',px).attr('x2',px).attr('y1',y0).attr('y2',y1).style('stroke','var(--ink)').attr('stroke-width',1.6); g.append('path').attr('d',d3.symbol(d3.symbolTriangle,26)()).attr('transform',`translate(${px},${y0}) rotate(180)`).style('fill','var(--ink)'); }
+    if (id==='calculator' && personalMSF!=null){ const px=x(personalMSF); g.append('line').attr('x1',px).attr('x2',px).attr('y1',y0).attr('y2',y1).style('stroke','var(--ink)').attr('stroke-width',1.6); g.append('path').attr('d',d3.symbol(d3.symbolTriangle,26)()).attr('transform',`translate(${px},${y0}) rotate(180)`).style('fill','var(--ink)'); }
   } else if (id==='gap'){
     const x = d3.scaleLinear().domain([4,10]).range([x0,x1]), y = d3.scaleLinear().domain([0,100]).range([y1,y0]);
     const mod = MT.map((t,i)=>[t,MODEL.base[i],MODEL.mctq[i]]); const act = Object.entries(ATUS).map(([k,v])=>[+k,v]);
