@@ -149,6 +149,11 @@ details.src ul{margin:10px 0 0;padding-left:1.1em;display:grid;gap:6px;font-size
 .scroll-x{overflow-x:auto}
 ol.method{display:grid;gap:8px;padding-left:1.2em;color:var(--ink2);font-size:.94rem;margin:0}
 
+/* skip link */
+.skip-link{position:absolute;left:-9999px;top:8px;z-index:60;background:var(--ink);color:var(--bg);padding:8px 12px;border-radius:8px;text-decoration:none}
+.skip-link:focus{left:max(16px, env(safe-area-inset-left, 0px))}
+#content{display:block}
+
 /* section navigator */
 html{scroll-padding-top:64px}
 @media (prefers-reduced-motion: no-preference){html{scroll-behavior:smooth}}
@@ -188,6 +193,7 @@ html{scroll-padding-top:64px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 
+<a class="skip-link" href="#content">Skip to content</a>
 </head>
 <body>
 <div class="wrap">
@@ -199,6 +205,7 @@ html{scroll-padding-top:64px}
     </div>
   </div>
 
+  <main id="content">
   <!-- HERO -->
   <header class="hero">
     <div class="hero-grid">
@@ -441,9 +448,10 @@ html{scroll-padding-top:64px}
         <label for="wOff">Workdays: wake at<input id="wOff" type="time" value="07:00"></label>
         <label for="fOn">Free days: asleep at<input id="fOn" type="time" value="00:30"></label>
         <label for="fOff">Free days: wake at (no alarm)<input id="fOff" type="time" value="08:30"></label>
-        <label for="nW">Workdays per week<select id="nW"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option></select></label>
+        <label for="nW">Workdays per week<select id="nW"><option>3</option><option>4</option><option selected>5</option><option>6</option></select></label>
         <label for="ageBand">Age band<select id="ageBand"><option value="18">18–24</option><option value="25">25–34</option><option value="35" selected>35–44</option><option value="45">45–54</option><option value="55">55–64</option><option value="65">65+</option></select></label>
       </div>
+      <p class="small muted" style="margin-top:-6px">The MCTQ formula needs at least one alarm-free day a week, so the maximum is 6 workdays.</p>
       <div class="out" id="pOut"></div>
       <div class="plate" style="gap:10px">
         <h3>If you want to shift earlier</h3>
@@ -496,6 +504,7 @@ html{scroll-padding-top:64px}
     </ol>
     <div style="display:grid;gap:10px" id="sources"></div>
   </section>
+  </main>
   <footer class="col small muted" style="padding-block:40px 0;border-top:1px solid var(--rule);margin-top:40px">
     Compiled October 2026 from the sources above by <a href="https://sinan.io">Michael Sinanian</a>, with research assistance from Claude. Estimates labeled "Modeled" are not measurements.
   </footer>
@@ -1059,7 +1068,7 @@ function renderFeel(){
 
 const toH = s => { const [a,b] = s.split(':').map(Number); return a + b/60; };
 const pIds = ['wOn','wOff','fOn','fOff','nW','ageBand'];
-pIds.forEach(id=>{ const v = store.get('wwf_'+id); if (v) document.getElementById(id).value = v; });
+pIds.forEach(id=>{ const el = document.getElementById(id), def = el.value, v = store.get('wwf_'+id); if (v) el.value = v; if (el.value === '') el.value = def; });
 const AGE_MEAN = {18:4.42, 25:3.70, 35:3.32, 45:3.16, 55:3.00, 65:2.90};
 const Phi = z => 0.5*(1+erf(z/Math.SQRT2));
 function erf(x){ const t=1/(1+0.3275911*Math.abs(x)); const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x); return x>=0?y:-y; }
@@ -1082,9 +1091,9 @@ function computePersonal(){
   const type = MSFsc < 3.25 ? 'early' : MSFsc < 4.25 ? 'intermediate' : 'late';
   document.getElementById('pOut').innerHTML = [
     ['Chronotype (MSF<sub>sc</sub>)', fmt(MSFsc), `${type} type · earlier than ${(100-pE).toFixed(0)}% of the MCTQ database`],
-    ['Vs. your US age group', `${pUS.toFixed(0)}th pct`, `0 = earliest. US mean for the band: ${fmt(AGE_MEAN[age])} <span class="chip mod">Modeled</span>`],
+    ['Vs. your US age group', (()=>{ const n = Math.max(1, Math.min(99, Math.round(pUS))); const sfx = (n%100>=11 && n%100<=13) ? 'th' : ({1:'st',2:'nd',3:'rd'}[n%10] || 'th'); return n + sfx + ' pct'; })(), `0 = earliest. US mean for the band: ${fmt(AGE_MEAN[age])} <span class="chip mod">Modeled</span>`],
     ['Social jetlag', `${SJL.toFixed(1)} h`, SJL >= 2 ? 'high: ≥2 h (≈17% of the MCTQ database)' : SJL >= 1 ? 'moderate: 1–2 h' : 'low: under 1 h'],
-    ['Natural wake (8 h sleep)', ampm(natWake), `about ${Math.max(0,(natWake-5)).toFixed(1)} h after a 5:00 alarm`],
+    ['Natural wake (8 h sleep)', ampm(natWake), (()=>{ let d = ((natWake - 5) % 24 + 24) % 24; if (d > 12) d -= 24; return Math.abs(d) < 0.05 ? 'right at a 5:00 alarm' : `about ${Math.abs(d).toFixed(1)} h ${d > 0 ? 'after' : 'before'} a 5:00 alarm`; })()],
     ['A 5:00 alarm vs. your temperature low', `${d5>=0?'+':''}${d5.toFixed(1)} h`, d5 < 0 ? 'before it: biological night, heavy inertia' : 'after it: the rising phase'],
   ].map(([l,v,s])=>`<div class="tile"><div class="l">${l}</div><div class="v" style="font-size:1.6rem">${v}</div><div class="s">${s}</div></div>`).join('');
   renderHist();
