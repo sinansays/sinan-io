@@ -448,7 +448,7 @@ html{scroll-padding-top:64px}
         <label for="wOff">Workdays: wake at<input id="wOff" type="time" value="07:00"></label>
         <label for="fOn">Free days: asleep at<input id="fOn" type="time" value="00:30"></label>
         <label for="fOff">Free days: wake at (no alarm)<input id="fOff" type="time" value="08:30"></label>
-        <label for="nW">Workdays per week<select id="nW"><option>3</option><option>4</option><option selected>5</option><option>6</option></select></label>
+        <label for="nW">Workdays per week<select id="nW"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option><option>6</option></select></label>
         <label for="ageBand">Age band<select id="ageBand"><option value="18">18–24</option><option value="25">25–34</option><option value="35" selected>35–44</option><option value="45">45–54</option><option value="55">55–64</option><option value="65">65+</option></select></label>
       </div>
       <p class="small muted" style="margin-top:-6px">The MCTQ formula needs at least one alarm-free day a week, so the maximum is 6 workdays.</p>
@@ -804,7 +804,12 @@ function renderAlarmCards(){
     return `<div class="tile" style="background:var(--bg)"><div class="l"><i class="key" style="background:${col}"></i> <b>${p.name}</b></div><div class="l">${state}</div><div class="l">Sleep if bedtime unchanged: <b class="mono">${sleep.toFixed(1)} h</b> (usual ${(p.wake-p.on).toFixed(1)} h)</div><div class="s">${early>0?early.toFixed(1)+' h before natural wake':'after natural wake'}</div></div>`;
   }).join('');
 }
-alarmIn.addEventListener('input', ()=>{ renderDay(); renderAlarmCards(); });
+let dayReplay = null, alarmTouched = false;
+function stopDayReplay(){ if (dayReplay){ clearInterval(dayReplay); dayReplay = null; } }
+function userAlarm(){ alarmTouched = true; stopDayReplay(); }
+alarmIn.addEventListener('pointerdown', userAlarm);
+alarmIn.addEventListener('keydown', userAlarm);
+alarmIn.addEventListener('input', e=>{ if (e.isTrusted) userAlarm(); renderDay(); renderAlarmCards(); });
 
 /* ================= LEVERS ================= */
 const LEVERS = [
@@ -1080,6 +1085,7 @@ function erf(x){ const t=1/(1+0.3275911*Math.abs(x)); const y=1-(((((1.061405429
 function mctqPct(msf){ let s=0, tot=0; MCTQ_HIST.forEach(([c,p])=>{ tot+=p; const lo=c-.25, hi=c+.25; if (msf>=hi) s+=p; else if (msf>lo) s+=p*(msf-lo)/.5; }); return 100*s/tot; }
 function computePersonal(){
   const g = id => document.getElementById(id).value;
+  if (['wOn','wOff','fOn','fOff'].some(id => !/^\d{1,2}:\d{2}/.test(g(id)))) { document.getElementById('pOut').innerHTML = '<div class="tile"><div class="l">Enter all four times to see your results.</div></div>'; return; }
   pIds.forEach(id=>store.set('wwf_'+id, g(id)));
   let wOn = toH(g('wOn')), wOff = toH(g('wOff')), fOn = toH(g('fOn')), fOff = toH(g('fOff')); const nW = +g('nW'), age = +g('ageBand');
   const norm = (on,off) => { if (on > 15) on -= 24; if (off <= on) off += 24; return [on,off]; };
@@ -1267,7 +1273,7 @@ function boot(){
   initNav();
   // scroll-triggered replays (charts are complete at rest; motion replays once on first view)
   if ('IntersectionObserver' in window && !RM){
-    const once = new Map([['dots',()=>renderDots('start')],['gapChart',renderGap],['tcChart',()=>renderTC(true)],['feelChart',renderFeel],['dayChart',()=>{ let a=7; const iv=setInterval(()=>{ a-=0.25; alarmIn.value=a; renderDay(); renderAlarmCards(); if(a<=5) clearInterval(iv); },60); }]]);
+    const once = new Map([['dots',()=>renderDots('start')],['gapChart',renderGap],['tcChart',()=>renderTC(true)],['feelChart',renderFeel],['dayChart',()=>{ if (alarmTouched) return; let a=7; stopDayReplay(); dayReplay=setInterval(()=>{ a-=0.25; alarmIn.value=a; renderDay(); renderAlarmCards(); if(a<=5) stopDayReplay(); },60); }]]);
     const io = new IntersectionObserver(es=>es.forEach(e=>{ if (e.isIntersecting){ const f = once.get(e.target.id); if (f){ f(); once.delete(e.target.id); io.unobserve(e.target); } } }), {threshold:.35});
     once.forEach((f,id)=>io.observe(document.getElementById(id)));
     // hero: play the dawn once on load
