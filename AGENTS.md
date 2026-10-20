@@ -20,8 +20,8 @@ This document provides detailed technical information for AI coding agents worki
 
 | | **Core pages** | **Labs pieces** |
 |---|---|---|
-| What | Home, About, Projects (and project detail pages), Posts, Contact, Colophon, and the **Labs index** (`/labs/index.html`) | Each interactive item listed on the Labs index: research pages, paper demos, small tools, prototypes |
-| Where | Site root, `/projects/`, `/posts/`, `/labs/index.html` | `/labs/<name>.html`, or `/labs/<name>/` for a piece that needs its own folder |
+| What | Home, About, Work (and its detail pages under `/work/`), Life (`/life/`), Posts, Contact, Colophon, and the **Labs index** (`/labs/index.html`) | Each interactive item listed on the Labs index: research pages, paper demos, small tools, prototypes |
+| Where | Site root, `/work/`, `/life/`, `/posts/`, `/labs/index.html` | `/labs/<name>.html`, or `/labs/<name>/` for a piece that needs its own folder |
 | Styling | Shared `/assets/css/styles.css`, header/footer includes, the site's design | Its own distinct design. Must **not** use `styles.css`, `/includes/`, or `/assets/js` / `/assets/css` |
 | Dependencies | Shared site assets are expected | **Self-contained.** Preferred: one HTML file with all CSS, JS and libraries inline (versions pinned), so it works offline and as a file attachment. Allowed: a folder under `/labs/<name>/` with its own files that no other page uses. Allowed external requests: optional extras with fallbacks (e.g. Google Fonts) and the site favicon. No runtime CDNs for code |
 | Required | Skip link, `<main id="content">`, header/footer placeholders, `<noscript>` nav with every nav item | Own `<head>` with title, description and Open Graph tags; a "← sinanLabs" back-link to `https://sinan.io/labs/` (absolute, so it works from a saved copy); a 720×378 WebP thumbnail in `/labs/thumbs/`; a card on the Labs index |
@@ -31,7 +31,7 @@ This document provides detailed technical information for AI coding agents worki
 
 **Naming**: the section is called **Labs** in the nav, **sinanLabs** as the page title and brand, and lives at `/labs/`. The old `/artifacts/` path redirects (`/_redirects`).
 
-**Routing requests**: If you're asked to make an *artifact*, *lab*, *experiment*, *demo*, *interactive*, *tool* or *microsite* for this site, it is a **Labs piece**. Put it under `/labs/` and follow the Labs-piece rules above, plus the "Add a Labs piece" scenario in PROJECT_MAP.md. Never create an `/artifacts/` folder: that path is a legacy redirect to `/labs/` and would silently shadow new files. Portfolio case studies of past work are **core pages** under `/projects/`.
+**Routing requests**: If you're asked to make an *artifact*, *lab*, *experiment*, *demo*, *interactive*, *tool* or *microsite* for this site, it is a **Labs piece**. Put it under `/labs/` and follow the Labs-piece rules above, plus the "Add a Labs piece" scenario in PROJECT_MAP.md. Never create an `/artifacts/` folder: that path is a legacy redirect to `/labs/` and would silently shadow new files. Portfolio case studies of past work are **core pages** under `/work/`; personal pages (trip notes, guides) are core pages under `/life/`.
 
 ### Why Plain HTML/CSS + Minimal Vanilla JS?
 
@@ -165,7 +165,7 @@ There are two main card types:
 
 #### 1. Project Cards (`.card`)
 ```html
-<a class="card" href="/projects/example.html">
+<a class="card" href="/work/example.html">
   <div class="thumb" aria-hidden="true">Label</div>
   <div class="card-body">
     <h3>Project Name</h3>
@@ -184,7 +184,7 @@ There are two main card types:
 ```
 
 **Structure**: Simple block link with padding and border
-**Use case**: List of links (like "Prior Projects" section)
+**Use case**: List of links (like "Prior Work" section)
 
 ### Grid Layouts
 
@@ -218,7 +218,7 @@ The site uses a "current page" pattern where the page you're on should be styled
   <a href="/">Home</a>
   <a href="/about.html" aria-current="page">About</a> <!-- Current page -->
   <a href="/posts/">Posts</a>
-  <a href="/projects/">Projects</a>
+  <a href="/work/">Work</a>
   <a href="/contact.html">Contact</a>
 </nav>
 ```
@@ -300,18 +300,18 @@ Then add CSS:
    - Check mobile responsiveness
    - Test in both light and dark themes
 
-### Adding a New Portfolio Project
+### Adding a New Work Page
 
 1. **Create project HTML file**:
    ```bash
-   cp projects/gencog.html projects/new-project.html
+   cp work/gencog.html work/new-project.html
    ```
 
-2. **Update project content** in `projects/new-project.html`
+2. **Update project content** in `work/new-project.html`
 
 3. **Add card to homepage** (`index.html`):
    ```html
-   <a class="card" href="/projects/new-project.html">
+   <a class="card" href="/work/new-project.html">
      <div class="thumb" aria-hidden="true">Label</div>
      <div class="card-body">
        <h3>Project Name</h3>
@@ -320,7 +320,7 @@ Then add CSS:
    </a>
    ```
 
-4. **Add to projects index** (`projects/index.html`)
+4. **Add to the Work index** (`work/index.html`)
 
 ### Modifying Styles
 
@@ -405,7 +405,7 @@ Social icons appear in the footer. To add a new one:
 
 **Wrong**:
 ```html
-<link rel="stylesheet" href="assets/css/styles.css">  <!-- Breaks in /projects/ -->
+<link rel="stylesheet" href="assets/css/styles.css">  <!-- Breaks in /work/ -->
 ```
 
 **Correct**:
@@ -635,9 +635,9 @@ After Cloudflare Pages deploys:
 | Homepage | `/index.html` |
 | About page | `/about.html` |
 | Contact page | `/contact.html` |
-| Projects index | `/projects/index.html` |
-| Individual project | `/projects/{name}.html` |
-| Prior projects | `/projects/prior/{name}.html` |
+| Work index | `/work/index.html` |
+| Individual project | `/work/{name}.html` |
+| Prior work | `/work/prior/{name}.html` |
 | Posts index | `/posts/index.html` |
 
 ---

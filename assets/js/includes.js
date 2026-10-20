@@ -54,7 +54,7 @@
       if (linkPath === currentPath) {
         link.setAttribute('aria-current', 'page');
       }
-      // Check for section match (directories like /posts/ or /projects/)
+      // Check for section match (directories like /posts/ or /work/)
       // But not for home page (/)
       else if (linkPath.endsWith('/') && linkPath !== '/' && currentPath.startsWith(linkPath)) {
         link.setAttribute('aria-current', 'page');
