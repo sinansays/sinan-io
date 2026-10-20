@@ -33,6 +33,19 @@ test('every panel exists, has alt text and intrinsic size', () => {
   }
 });
 
+test('every panel has a sharpened 2x version for high-resolution screens', () => {
+  for (const tag of imgs) {
+    const set = attr(tag, 'srcset') || '';
+    const two = (set.match(/(\S+) 2x/) || [])[1];
+    assert.ok(two && fs.existsSync(path.join(dir, two)), `${attr(tag, 'src')} lacks a 2x file`);
+  }
+});
+
+test('the transcript lives in the repo, not on the page', () => {
+  assert.doesNotMatch(html, /id="transcript"|Read the transcript/);
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tools', 'they-put-ads-in-the-intelligence', 'transcript.md')));
+});
+
 test('only the opening panels load eagerly', () => {
   const eager = imgs.filter(t => attr(t, 'loading') === 'eager');
   assert.ok(eager.length <= 4, `${eager.length} eager images`);
