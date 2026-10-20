@@ -187,18 +187,22 @@ function valuesScore(ans){
   const tiers = { closest:ranked.slice(0, 3), compatible:ranked.slice(3, 7), neutral:ranked.slice(7, 13), tension:ranked.slice(13) };
   return { desire, fmt, usage, audience, score, ranked, tiers, ...blendFrom(score, 14) };
 }
-const lvl = (d, v) => T[d].levels[Math.max(0, Math.min(4, Math.round(v)))];
+/* Explanation metadata for every scored dimension: the eight structural traits plus the six formats,
+   which some answers (attention, purpose) also set. */
+const FORMAT_LEVELS = ["absent", "rare", "secondary", "common", "central"];
+const DIM = Object.assign({}, T, Object.fromEntries(Object.entries(SME.FORMATS).map(([k, name]) => [k, { name, levels:FORMAT_LEVELS }])));
+const lvl = (d, v) => DIM[d].levels[Math.max(0, Math.min(4, Math.round(v)))];
 function mismatches(R, id, n = 2){
   const p = byId[id];
-  return Object.keys(R.desire).map(d => ({ d, gap:Math.abs(R.desire[d].d - p.traits[d]), w:R.desire[d].w }))
+  return Object.keys(R.desire).filter(d => DIM[d]).map(d => ({ d, gap:Math.abs(R.desire[d].d - p.traits[d]), w:R.desire[d].w }))
     .filter(x => x.gap >= 1.5).sort((a, b) => b.gap * b.w - a.gap * a.w).slice(0, n)
-    .map(x => `${T[x.d].name.toLowerCase()} (you: ${lvl(x.d, R.desire[x.d].d)}; ${short(id)}: ${lvl(x.d, p.traits[x.d])})`);
+    .map(x => `${DIM[x.d].name.toLowerCase()} (you: ${lvl(x.d, R.desire[x.d].d)}; ${short(id)}: ${lvl(x.d, p.traits[x.d])})`);
 }
 function matches(R, id, n = 2){
   const p = byId[id];
-  return Object.keys(R.desire).map(d => ({ d, gap:Math.abs(R.desire[d].d - p.traits[d]), w:R.desire[d].w }))
+  return Object.keys(R.desire).filter(d => DIM[d]).map(d => ({ d, gap:Math.abs(R.desire[d].d - p.traits[d]), w:R.desire[d].w }))
     .filter(x => x.gap <= .75).sort((a, b) => b.w - a.w).slice(0, n)
-    .map(x => `${T[x.d].name.toLowerCase()} (${lvl(x.d, p.traits[x.d])})`);
+    .map(x => `${DIM[x.d].name.toLowerCase()} (${lvl(x.d, p.traits[x.d])})`);
 }
 function valueTensions(R){
   const D = d => R.desire[d] ? R.desire[d].d : null, out = [];
