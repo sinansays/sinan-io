@@ -1,0 +1,431 @@
+const { useState, useEffect, useRef } = React;
+const h = React.createElement;
+
+const SCENARIOS = [
+  {
+    id: "alfworld", benchmark: "ALFWorld",
+    task: "Put a clean sponge on the counter.",
+    skill: "SKILL: Household Navigation\n\u2022 Sponges: check sinkbasin first, then countertop\n\u2022 Always clean at sinkbasin before placing\n\u2022 Use \"examine\" before \"take\" to verify object\n\u2022 Go directly to target after cleaning \u2014 don't re-explore",
+    reasoningTrace: [
+      "> I need to find a sponge and clean it, then put it on the counter.",
+      "> Let me think about where sponges might be...",
+      "> First, I'll check the kitchen. Go to countertop 1.",
+      ">> Nothing here. Let me try countertop 2.",
+      ">> No sponge on countertop 2 either.",
+      "> Maybe I should check the bathroom? Go to bathtub 1.",
+      ">> Found a cloth, but that's not a sponge.",
+      "> Let me reconsider. Sponges are often near sinks.",
+      "> Go to sinkbasin 1.",
+      ">> I see a sponge here! Take sponge from sinkbasin.",
+      "> Now I need to clean it. Where can I clean things?",
+      "> I recall that sinkbasins can clean objects.",
+      "> Clean sponge with sinkbasin 1.",
+      ">> Sponge is now clean.",
+      "> Now I need to find a counter to place it on.",
+      "> Go to countertop 1.",
+      "> Put clean sponge on countertop 1.",
+      ">> Done. Task complete."
+    ],
+    skillTrace: [
+      "> Go to sinkbasin 1.", "> Take sponge from sinkbasin 1.",
+      "> Clean sponge with sinkbasin 1.", "> Go to countertop 1.",
+      "> Put clean sponge on countertop 1.", ">> Done. Task complete."
+    ],
+    reasoningTokens: 2847, skillTokens: 684
+  },
+  {
+    id: "retail", benchmark: "\u03C4\u00B2-bench Retail",
+    task: "Customer wants to return a laptop purchased 45 days ago, claiming it's defective.",
+    skill: "SKILL: Retail Returns\n\u2022 Return window: 30 days standard, 31-60 days store credit only\n\u2022 Defective claims in 31-60 day window: verify with diagnostic\n\u2022 Always call lookup_order first, then check_item_status\n\u2022 Offer store credit + goodwill discount on next purchase\n\u2022 Escalate only if customer explicitly asks for supervisor",
+    reasoningTrace: [
+      "> Customer wants to return a laptop from 45 days ago.",
+      "> Let me think about our return policy...",
+      "> Standard returns are within 30 days. This is past that.",
+      "> But they're claiming it's defective. Does that change things?",
+      "> I should check the order first. Let me look up the order.",
+      ">> [Tool: lookup_order] \u2192 Order #4821, Laptop, $1,299, purchased 45 days ago.",
+      "> OK so it's confirmed 45 days. Outside standard window.",
+      "> Let me check if there's a warranty claim process...",
+      "> Actually, I should check the item status first.",
+      ">> [Tool: check_item_status] \u2192 Item shows normal wear, no diagnostic run.",
+      "> Hmm, they claim it's defective but no diagnostic yet.",
+      "> I think I should offer a diagnostic check first.",
+      "> If defective confirmed, we could offer store credit.",
+      "> Let me also check if they have loyalty status...",
+      ">> [Tool: check_customer_profile] \u2192 Standard tier, 2 prior purchases.",
+      "> OK. I'll offer: diagnostic check, and if confirmed defective,",
+      "> store credit for the full amount plus 10% goodwill discount.",
+      "> Communicating resolution to customer now.",
+      ">> Resolution offered. Customer accepts store credit path."
+    ],
+    skillTrace: [
+      ">> [Tool: lookup_order] \u2192 Order #4821, Laptop, $1,299, 45 days ago.",
+      ">> [Tool: check_item_status] \u2192 Normal wear, no diagnostic.",
+      "> 45 days = 31-60 window. Defective claim: offer diagnostic.",
+      "> If confirmed: store credit + 10% goodwill on next purchase.",
+      "> Communicating resolution to customer now.",
+      ">> Resolution offered. Customer accepts store credit path."
+    ],
+    reasoningTokens: 3214, skillTokens: 891
+  },
+  {
+    id: "spreadsheet", benchmark: "SpreadsheetBench",
+    task: "In the sales report, compute total revenue for Q3 where region = \"West\" and status = \"Closed\".",
+    skill: "SKILL: Spreadsheet Operations\n\u2022 Use SUMIFS for multi-condition aggregation, not nested IFs\n\u2022 Column mapping: A=Date, B=Region, C=Status, D=Revenue\n\u2022 Date ranges: Q3 = July 1 to Sept 30\n\u2022 Always verify column headers before formula construction\n\u2022 Write formula, then validate against 2-3 manual spot checks",
+    reasoningTrace: [
+      "> I need to compute total revenue for Q3 in the West region",
+      "> where status is Closed. Let me examine the spreadsheet first.",
+      ">> [Tool: read_cells(\"A1:D1\")] \u2192 Date | Region | Status | Revenue",
+      "> OK, so revenue is column D. Region is B. Status is C.",
+      "> For Q3, I need dates from July 1 to September 30.",
+      "> What year? Let me check the data range.",
+      ">> [Tool: read_cells(\"A2:A5\")] \u2192 2026-01-15, 2026-03-22, ...",
+      "> OK, 2026 data. Q3 = 2026-07-01 to 2026-09-30.",
+      "> I could use SUMIFS or SUMPRODUCT... Let me think.",
+      "> SUMIFS is cleaner. Multiple conditions:",
+      "> sum_range = D:D",
+      "> criteria: B:B = \"West\", C:C = \"Closed\",",
+      "> A:A >= 2026-07-01, A:A <= 2026-09-30",
+      "> Let me write this formula...",
+      ">> [Tool: write_formula] \u2192 $487,250",
+      "> Let me verify with a spot check.",
+      ">> [Tool: read_cells(\"A100:D100\")] \u2192 2026-08-12 | West | Closed | $12,400",
+      "> That row should be included. Looks correct.",
+      ">> Result: $487,250. Task complete."
+    ],
+    skillTrace: [
+      ">> [Tool: read_cells(\"A1:D1\")] \u2192 Date | Region | Status | Revenue",
+      "> Columns confirmed. Using SUMIFS for multi-condition sum.",
+      ">> [Tool: write_formula] \u2192 $487,250",
+      ">> [Tool: read_cells(\"A100:D100\")] \u2192 spot check passes.",
+      ">> Result: $487,250. Task complete."
+    ],
+    reasoningTokens: 2190, skillTokens: 526
+  }
+];
+
+const RESULTS_DATA = [
+  { benchmark: "ALFWorld", noThink: 52, think: 84, skill: 80 },
+  { benchmark: "SSB-Verified", noThink: 38, think: 62, skill: 66 },
+  { benchmark: "\u03C4\u00B2-Telecom", noThink: 48, think: 72, skill: 64 },
+  { benchmark: "\u03C4\u00B2-Retail", noThink: 42, think: 60, skill: 64 }
+];
+
+const TOKEN_DATA = [
+  { benchmark: "ALFWorld", reasoning: 2847, skill: 684, ratio: "4.2x" },
+  { benchmark: "SSB-Verified", reasoning: 2190, skill: 526, ratio: "4.2x" },
+  { benchmark: "\u03C4\u00B2-Telecom", reasoning: 3100, skill: 1068, ratio: "2.9x" },
+  { benchmark: "\u03C4\u00B2-Retail", reasoning: 3214, skill: 891, ratio: "3.6x" }
+];
+
+function AnimatedCounter({ target, running, speed = 30 }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (running && count < target) {
+      const inc = Math.max(1, Math.floor(target / 80));
+      ref.current = setInterval(() => setCount(c => Math.min(c + inc, target)), speed);
+    }
+    return () => clearInterval(ref.current);
+  }, [running, count, target, speed]);
+  useEffect(() => { if (!running) setCount(0); }, [running]);
+  return <span>{count.toLocaleString()}</span>;
+}
+
+function StreamingText({ lines, running, speed = 120, onComplete }) {
+  const [vis, setVis] = useState(0);
+  const cRef = useRef(null);
+  useEffect(() => {
+    if (!running) { setVis(0); return; }
+    if (vis >= lines.length) { if (onComplete) onComplete(); return; }
+    const t = setTimeout(() => setVis(v => v + 1), speed);
+    return () => clearTimeout(t);
+  }, [running, vis, lines.length, speed]);
+  useEffect(() => { if (cRef.current) cRef.current.scrollTop = cRef.current.scrollHeight; }, [vis]);
+  return (
+    <div ref={cRef} className="trace-box">
+      {lines.slice(0, vis).map((line, i) => (
+        <div key={i} className="fade-in" style={{
+          fontSize: 14, fontFamily: "ui-monospace, monospace", marginBottom: 4, lineHeight: 1.6,
+          color: line.startsWith(">>") ? "#34d399" : "#cbd5e1",
+          opacity: line.startsWith(">>") ? 1 : 0.8,
+          paddingLeft: line.startsWith(">>") ? 8 : 0
+        }}>{line}</div>
+      ))}
+      {running && vis < lines.length && (
+        <span style={{ display: "inline-block", width: 8, height: 16, background: "#94a3b8", marginLeft: 4, animation: "fadeIn 0.5s ease-in-out infinite alternate" }} />
+      )}
+    </div>
+  );
+}
+
+/* Pure CSS bar chart */
+function BarChart({ data, bars, maxVal, height = 220 }) {
+  return (
+    <div className="chart-container" style={{ height: height + 40 }}>
+      {data.map((d, di) => (
+        <div key={di} className="benchmark-col">
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height }}>
+            {bars.map((b, bi) => {
+              const val = d[b.key];
+              const h = (val / maxVal) * height;
+              return (
+                <div key={bi} className="bar-wrapper">
+                  <div className="bar-value" style={{ color: b.color }}>{b.format ? b.format(val) : val}</div>
+                  <div className="bar" style={{ height: h, width: 32, background: b.color }} />
+                </div>
+              );
+            })}
+          </div>
+          <div className="benchmark-label">{d.benchmark}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ChartLegend({ items }) {
+  return (
+    <div style={{ display: "flex", gap: 20, justifyContent: "center", marginBottom: 16 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#cbd5e1" }}>
+          <div style={{ width: 10, height: 10, borderRadius: 2, background: it.color }} />
+          {it.label}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DemoView() {
+  const [idx, setIdx] = useState(0);
+  const [running, setRunning] = useState(false);
+  const [rDone, setRDone] = useState(false);
+  const [sDone, setSDone] = useState(false);
+  const [showSkill, setShowSkill] = useState(false);
+  const s = SCENARIOS[idx];
+  const play = () => { setRunning(true); setRDone(false); setSDone(false); setShowSkill(false); setTimeout(() => setShowSkill(true), 600); };
+  const reset = () => { setRunning(false); setRDone(false); setSDone(false); setShowSkill(false); };
+  const pick = i => { reset(); setIdx(i); };
+  const bothDone = rDone && sDone;
+  const savings = (s.reasoningTokens / s.skillTokens).toFixed(1);
+
+  const btnBase = { padding: "6px 14px", borderRadius: 8, fontSize: 14, fontWeight: 600, transition: "all 0.15s" };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      {/* Task bar */}
+      <div style={{ background: "#1e293b", borderRadius: 12, padding: 20, border: "1px solid #334155" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 12 }}>
+          <div style={{ display: "flex", gap: 8 }}>
+            {SCENARIOS.map((sc, i) => (
+              <button key={sc.id} onClick={() => pick(i)} style={{
+                ...btnBase, background: i === idx ? "#4f46e5" : "#334155",
+                color: i === idx ? "#fff" : "#cbd5e1"
+              }}>{sc.benchmark}</button>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={play} disabled={running} style={{
+              ...btnBase, background: running ? "#334155" : "#059669", color: "#fff",
+              opacity: running ? 0.4 : 1, cursor: running ? "not-allowed" : "pointer"
+            }}>▶ Play</button>
+            <button onClick={reset} style={{ ...btnBase, background: "#475569", color: "#fff" }}>↺ Reset</button>
+          </div>
+        </div>
+        <div style={{ color: "#e2e8f0", fontSize: 16 }}>
+          <span style={{ color: "#64748b", fontWeight: 500, marginRight: 8 }}>TASK:</span>{s.task}
+        </div>
+      </div>
+
+      {/* Side by side */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        {/* Reasoning */}
+        <div style={{ background: "#1e293b", borderRadius: 12, border: "2px solid rgba(127,29,29,0.5)", display: "flex", flexDirection: "column" }}>
+          <div style={{ padding: "12px 20px", borderBottom: "1px solid #334155", display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#ef4444" }} />
+            <span style={{ color: "#f87171", fontWeight: 700, fontSize: 14, letterSpacing: "0.05em" }}>REASONING MODE</span>
+            <span style={{ color: "#475569", fontSize: 12, marginLeft: "auto" }}>reasoning_effort: medium</span>
+          </div>
+          <div style={{ padding: 16, display: "flex", flexDirection: "column", flex: 1 }}>
+            <StreamingText lines={s.reasoningTrace} running={running} speed={180} onComplete={() => setRDone(true)} />
+          </div>
+          <div style={{ padding: "12px 20px", borderTop: "1px solid #334155", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ color: "#64748b", fontSize: 12, fontWeight: 500 }}>TOKENS:</span>
+              <span className="tabular-nums" style={{ color: "#f87171", fontWeight: 700, fontSize: 20 }}>
+                <AnimatedCounter target={s.reasoningTokens} running={running} speed={40} />
+              </span>
+            </div>
+            {rDone && <span className="fade-in" style={{ color: "#34d399", fontSize: 14, fontWeight: 500 }}>✓ Correct</span>}
+          </div>
+        </div>
+
+        {/* Skill-Equipped */}
+        <div style={{ background: "#1e293b", borderRadius: 12, border: "2px solid rgba(6,78,59,0.5)", display: "flex", flexDirection: "column" }}>
+          <div style={{ padding: "12px 20px", borderBottom: "1px solid #334155", display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#10b981" }} />
+            <span style={{ color: "#34d399", fontWeight: 700, fontSize: 14, letterSpacing: "0.05em" }}>SKILL-EQUIPPED</span>
+            <span style={{ color: "#475569", fontSize: 12, marginLeft: "auto" }}>reasoning_effort: none + skill</span>
+          </div>
+          <div style={{ padding: 16, display: "flex", flexDirection: "column", flex: 1 }}>
+            {showSkill && (
+              <div className="fade-in" style={{ background: "rgba(6,78,59,0.25)", border: "1px solid rgba(6,78,59,0.4)", borderRadius: 8, padding: 12, marginBottom: 12 }}>
+                <div style={{ color: "#10b981", fontWeight: 600, fontSize: 12, letterSpacing: "0.05em", marginBottom: 6 }}>INJECTED SKILL:</div>
+                <pre style={{ color: "rgba(110,231,183,0.7)", whiteSpace: "pre-wrap", fontSize: 12, lineHeight: 1.6 }}>{s.skill}</pre>
+              </div>
+            )}
+            <StreamingText lines={s.skillTrace} running={running && showSkill} speed={200} onComplete={() => setSDone(true)} />
+          </div>
+          <div style={{ padding: "12px 20px", borderTop: "1px solid #334155", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ color: "#64748b", fontSize: 12, fontWeight: 500 }}>TOKENS:</span>
+              <span className="tabular-nums" style={{ color: "#34d399", fontWeight: 700, fontSize: 20 }}>
+                <AnimatedCounter target={s.skillTokens} running={running && showSkill} speed={60} />
+              </span>
+            </div>
+            {sDone && <span className="fade-in" style={{ color: "#34d399", fontSize: 14, fontWeight: 500 }}>✓ Correct</span>}
+          </div>
+        </div>
+      </div>
+
+      {/* Savings */}
+      {bothDone && (
+        <div className="fade-in-slow" style={{ background: "rgba(49,46,129,0.3)", border: "1px solid rgba(99,102,241,0.4)", borderRadius: 12, padding: 20, textAlign: "center" }}>
+          <div style={{ color: "#a5b4fc", fontSize: 18, fontWeight: 500, marginBottom: 4 }}>Same result. Different cost.</div>
+          <div style={{ color: "#fff", fontSize: 30, fontWeight: 700 }}>{savings}× fewer tokens</div>
+          <div style={{ color: "rgba(129,140,248,0.6)", fontSize: 14, marginTop: 4 }}>
+            {s.reasoningTokens.toLocaleString()} → {s.skillTokens.toLocaleString()} output tokens
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ResultsView() {
+  const [showTokens, setShowTokens] = useState(false);
+  const btnBase = { padding: "8px 16px", borderRadius: 8, fontSize: 14, fontWeight: 600, transition: "all 0.15s" };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+        <button onClick={() => setShowTokens(false)} style={{
+          ...btnBase, background: !showTokens ? "#4f46e5" : "#334155", color: !showTokens ? "#fff" : "#cbd5e1"
+        }}>Accuracy Comparison</button>
+        <button onClick={() => setShowTokens(true)} style={{
+          ...btnBase, background: showTokens ? "#4f46e5" : "#334155", color: showTokens ? "#fff" : "#cbd5e1"
+        }}>Token Savings</button>
+      </div>
+
+      {!showTokens ? (
+        <div style={{ background: "#1e293b", borderRadius: 12, padding: 24, border: "1px solid #334155" }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>Task Accuracy by Benchmark</h3>
+          <p style={{ color: "#94a3b8", fontSize: 14, marginBottom: 20 }}>
+            GPT-5.4-mini: no reasoning vs. reasoning vs. skill-equipped (no reasoning + distilled skill)
+          </p>
+          <ChartLegend items={[
+            { color: "#64748b", label: "No Reasoning" },
+            { color: "#ef4444", label: "Reasoning Mode" },
+            { color: "#10b981", label: "Skill-Equipped" }
+          ]} />
+          <BarChart data={RESULTS_DATA}
+            bars={[
+              { key: "noThink", color: "#64748b", format: v => v + "%" },
+              { key: "think", color: "#ef4444", format: v => v + "%" },
+              { key: "skill", color: "#10b981", format: v => v + "%" }
+            ]}
+            maxVal={100} height={200} />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 16 }}>
+            {RESULTS_DATA.map(d => {
+              const gap = d.think - d.noThink;
+              const rec = d.skill - d.noThink;
+              const pct = Math.round((rec / gap) * 100);
+              const beats = d.skill >= d.think;
+              return (
+                <div key={d.benchmark} style={{ background: "rgba(15,23,42,0.6)", borderRadius: 8, padding: 12 }}>
+                  <div style={{ color: "#94a3b8", fontSize: 12, fontWeight: 500 }}>{d.benchmark}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: beats ? "#34d399" : "#fbbf24" }}>
+                    {pct}% of gap recovered {beats ? "\u2014 beats reasoning" : ""}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div style={{ background: "#1e293b", borderRadius: 12, padding: 24, border: "1px solid #334155" }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>Output Token Usage</h3>
+          <p style={{ color: "#94a3b8", fontSize: 14, marginBottom: 20 }}>
+            Reasoning mode vs. skill-equipped — same tasks, dramatically fewer tokens
+          </p>
+          <ChartLegend items={[
+            { color: "#ef4444", label: "Reasoning" },
+            { color: "#10b981", label: "Skill-Equipped" }
+          ]} />
+          <BarChart data={TOKEN_DATA}
+            bars={[
+              { key: "reasoning", color: "#ef4444" },
+              { key: "skill", color: "#10b981" }
+            ]}
+            maxVal={3500} height={200} />
+          <div style={{ display: "flex", justifyContent: "center", gap: 32, marginTop: 16 }}>
+            {TOKEN_DATA.map(d => (
+              <div key={d.benchmark} style={{ textAlign: "center" }}>
+                <div style={{ color: "#64748b", fontSize: 12 }}>{d.benchmark}</div>
+                <div style={{ color: "#fff", fontSize: 20, fontWeight: 700 }}>{d.ratio}</div>
+                <div style={{ color: "#34d399", fontSize: 12 }}>fewer tokens</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Ablation */}
+      <div style={{ background: "rgba(69,26,3,0.2)", border: "1px solid rgba(180,83,9,0.35)", borderRadius: 12, padding: 20 }}>
+        <div style={{ color: "#fcd34d", fontWeight: 700, fontSize: 16, marginBottom: 8 }}>The Killer Ablation</div>
+        <div style={{ color: "rgba(254,243,199,0.8)", fontSize: 14, lineHeight: 1.7 }}>
+          Skills distilled from <span style={{ color: "#fff", fontWeight: 600 }}>non-reasoning trajectories alone</span> are
+          competitive with skills from reasoning trajectories. You don't need to run the expensive reasoning model
+          to produce the training data. The amortization works even when you never paid the original premium.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState("demo");
+  const btnBase = { padding: "8px 20px", borderRadius: 6, fontSize: 14, fontWeight: 600, transition: "all 0.15s" };
+  return (
+    <div style={{ minHeight: "100vh", padding: 24 }}>
+      <div style={{ maxWidth: 1024, margin: "0 auto 24px" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 4, flexWrap: "wrap" }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em" }}>Reason Wide, Not Deep</h1>
+          <span style={{ color: "#64748b", fontSize: 14 }}>Singh et al. (Microsoft) · arXiv:2608.07885</span>
+        </div>
+        <p style={{ color: "#94a3b8", fontSize: 14 }}>Amortizing the reasoning premium into distilled skills — interactive companion</p>
+      </div>
+      <div style={{ maxWidth: 1024, margin: "0 auto 20px" }}>
+        <div style={{ display: "flex", gap: 4, background: "#1e293b", borderRadius: 8, padding: 4, width: "fit-content" }}>
+          <button onClick={() => setTab("demo")} style={{
+            ...btnBase, background: tab === "demo" ? "#4f46e5" : "transparent",
+            color: tab === "demo" ? "#fff" : "#94a3b8"
+          }}>Live Demo</button>
+          <button onClick={() => setTab("results")} style={{
+            ...btnBase, background: tab === "results" ? "#4f46e5" : "transparent",
+            color: tab === "results" ? "#fff" : "#94a3b8"
+          }}>Results</button>
+        </div>
+      </div>
+      <div style={{ maxWidth: 1024, margin: "0 auto" }}>
+        {tab === "demo" ? <DemoView /> : <ResultsView />}
+      </div>
+      <div style={{ maxWidth: 1024, margin: "24px auto 0", textAlign: "center" }}>
+        <p style={{ color: "#475569", fontSize: 12 }}>Representative illustration based on paper's reported results · Latent Space Paper Club · Sept 2026</p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
