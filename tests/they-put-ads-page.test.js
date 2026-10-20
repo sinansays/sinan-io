@@ -8,12 +8,20 @@ const test = require('node:test');
 
 const dir = path.join(__dirname, '..', 'labs', 'they-put-ads-in-the-intelligence');
 const html = fs.readFileSync(path.join(dir, 'index.html'), 'utf-8');
-const imgs = [...html.matchAll(/<img\b[^>]*>/g)].map(m => m[0]);
+const imgs = [...html.matchAll(/<img\b[^>]*>/g)].map(m => m[0]).filter(t => /src="panels\//.test(t)); // comic panels (the progress rider is decorative)
 const attr = (tag, name) => (tag.match(new RegExp(`\\b${name}="([^"]*)"`)) || [])[1];
 
-test('ten pages of panels', () => {
-  assert.equal((html.match(/<section class="page"/g) || []).length, 10);
+test('one continuous strip: page anchors kept, no page sheets or folios', () => {
+  for (let p = 1; p <= 10; p++) assert.match(html, new RegExp(`<div class="row[^"]*" id="p${p}"`));
+  assert.doesNotMatch(html, /class="page"|class="folio"/);
   assert.ok(imgs.length >= 100, `found ${imgs.length} panels`);
+});
+
+test('progress track: markers point at real beats, rider image exists', () => {
+  const targets = [...html.matchAll(/data-target="([^"]+)"/g)].map(m => m[1]);
+  assert.ok(targets.includes('coda') && targets.length >= 5, `markers: ${targets}`);
+  for (const t of targets) assert.match(html, new RegExp(`id="${t}"`), `no anchor for ${t}`);
+  assert.ok(fs.existsSync(path.join(dir, 'aliens.webp')));
 });
 
 test('every panel exists, has alt text and intrinsic size', () => {
