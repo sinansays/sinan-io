@@ -178,24 +178,35 @@ body {
   letter-spacing: .28em;
 }
 
+/* Nav: flex (no stray inline whitespace), one gap value, separators centred in it.
+   letter-spacing adds trailing space after the last letter, so the right padding
+   is reduced by the same amount to keep each word optically centred in its box. */
+.site-nav {
+  --nav-gap: 1.2rem;
+  --nav-pad: .45rem;
+  --nav-track: .22em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--nav-gap);
+  row-gap: .15rem;
+}
 .site-nav a {
   position: relative;
   color: var(--text);
   text-decoration: none;
-  margin: 0 .45rem;
-  padding: .4rem .45rem;
+  padding: .4rem calc(var(--nav-pad) - var(--nav-track)) .4rem var(--nav-pad);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .22em;
+  letter-spacing: var(--nav-track);
   font-size: .78rem;
 }
 .site-nav a:visited { color: var(--text); }
-/* Adjacent sibling selector - adds vertical separator between nav links
-   Uses ::before pseudo-element positioned absolutely */
+/* Separator between links, exactly halfway across the gap */
 .site-nav a + a::before {
   content: "";
   position: absolute;
-  left: -0.35rem;
+  left: calc(var(--nav-gap) / -2 - .5px);
   top: 25%;        /* Start 1/4 down */
   height: 50%;     /* Take up middle 50% of height */
   width: 1px;
@@ -399,7 +410,7 @@ body {
   /* Stack nav below brand and actions on tablet */
   .site-header { grid-template-columns: 1fr auto; grid-template-areas: "brand actions" "nav nav"; }
   .brand { grid-area: brand; }
-  .site-nav { grid-area: nav; display: flex; flex-wrap: wrap; }
+  .site-nav { grid-area: nav; }
   .actions { grid-area: actions; }
   /* Reduce grid columns on tablet */
   .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -426,7 +437,10 @@ body {
   .site-nav {
     justify-content: center;
     width: 100%;
+    --nav-gap: .9rem;
   }
+  /* The nav wraps on phones; a separator would start the second line, so drop them */
+  .site-nav a + a::before { display: none; }
   .actions { justify-self: center; }
   .site-footer {
     flex-direction: column;
