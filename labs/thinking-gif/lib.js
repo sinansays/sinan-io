@@ -368,6 +368,8 @@
     if (state.steps && state.steps.length) steps = state.steps.slice();
     else if (t.randomVerbs) steps = pickVerbs(state.seed, state.verbCount);
     else steps = t.steps.slice();
+    // Styles that animate their own dots after the text (Grok) would otherwise show "think……".
+    if (t.trailingDots) steps = steps.map(s => s.replace(/\s*(…|\.{2,})$/, ''));
     if (t.ellipsis) {
       const e = typeof t.ellipsis === 'string' ? t.ellipsis : '…';
       steps = steps.map(s => (/[…\.!?]$/.test(s) ? s : s + e));
