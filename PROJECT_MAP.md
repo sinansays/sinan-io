@@ -12,7 +12,9 @@ This document provides a comprehensive map of the website structure, showing pag
 │   ├── who-wakes-at-five.html
 │   ├── reason-wide-demo.html
 │   ├── ai-biology-scale-atlas.html
-│   └── zendo/index.html
+│   ├── zendo/index.html
+│   ├── parksafe/ (index.html + spec.md)
+│   └── thinking-gif/ (index.html, app.js, lib.js)
 ├── /posts/
 │   └── index.html
 └── /projects/
@@ -516,7 +518,7 @@ handles the `©` correctly.)
 3. Add a 720×378 WebP screenshot to `/artifacts/thumbs/<name>.webp`
 4. Add a `.card.lab-card` to `/artifacts/index.html` (newest first) with date, type, one-line description and thumbnail alt text
 5. If a page moves, add a 301 to `/_redirects` so old links keep working
-6. The "sinanLabs" nav link lives in `/includes/header.html` and in every page's `<noscript>` fallback nav
+6. The nav link reads "Labs" (the page itself is titled "sinanLabs"); it lives in `/includes/header.html` and in every page's `<noscript>` fallback nav
 
 ---
 

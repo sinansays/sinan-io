@@ -403,6 +403,7 @@ function App() {
         <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 4, flexWrap: "wrap" }}>
           <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em" }}>Reason Wide, Not Deep</h1>
           <span style={{ color: "#64748b", fontSize: 14 }}>Singh et al. (Microsoft) · arXiv:2608.07885</span>
+          <a href="https://www.youtube.com/watch?v=h1-2YfQCcBs" target="_blank" rel="noopener" style={{ color: "#a5b4fc", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>▶ Watch the talk</a>
         </div>
         <p style={{ color: "#94a3b8", fontSize: 14 }}>Amortizing the reasoning premium into distilled skills — interactive companion</p>
       </div>
@@ -422,7 +423,7 @@ function App() {
         {tab === "demo" ? <DemoView /> : <ResultsView />}
       </div>
       <div style={{ maxWidth: 1024, margin: "24px auto 0", textAlign: "center" }}>
-        <p style={{ color: "#475569", fontSize: 12 }}>Representative illustration based on paper's reported results · Latent Space Paper Club · Sept 2026</p>
+        <p style={{ color: "#475569", fontSize: 12 }}>Representative illustration based on paper's reported results · <a href="https://www.youtube.com/watch?v=h1-2YfQCcBs" target="_blank" rel="noopener" style={{ color: "#94a3b8" }}>Latent Space Paper Club talk</a> · Sept 2026</p>
       </div>
     </div>
   );

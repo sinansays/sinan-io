@@ -6,3 +6,10 @@
 /zendo                          /artifacts/zendo/                  301
 /zendo/                         /artifacts/zendo/                  301
 /zendo/index.html               /artifacts/zendo/                  301
+/projects/thinking-gif/          /artifacts/thinking-gif/           301
+/projects/thinking-gif           /artifacts/thinking-gif/           301
+/projects/thinking-gif/index.html /artifacts/thinking-gif/          301
+/projects/parksafe/              /artifacts/parksafe/               301
+/projects/parksafe               /artifacts/parksafe/               301
+/projects/parksafe/index.html    /artifacts/parksafe/               301
+/parksafe-spec.md                /artifacts/parksafe/spec.md        301

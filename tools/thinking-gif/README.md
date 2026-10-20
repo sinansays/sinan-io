@@ -4,7 +4,7 @@ A lightweight, client-side tool for generating animated “AI assistant status l
 
 ## Usage
 
-1. Open `/projects/thinking-gif/` in a browser.
+1. Open `/artifacts/thinking-gif/` in a browser.
 2. Edit the step list to match the status lines you want.
 3. Adjust timing, visual, and canvas controls in the editor panel.
 4. Click **Export GIF** to download the animation.
@@ -17,6 +17,6 @@ A lightweight, client-side tool for generating animated “AI assistant status l
 
 ## Files
 
-- `projects/thinking-gif/index.html`: Tool UI and layout
-- `thinking-gif/app.js`: UI logic, state, and export orchestration
-- `thinking-gif/lib.js`: Canvas renderer and GIF encoder
+- `artifacts/thinking-gif/index.html`: Tool UI and layout
+- `artifacts/thinking-gif/app.js`: UI logic, state, and export orchestration
+- `artifacts/thinking-gif/lib.js`: Canvas renderer and GIF encoder
