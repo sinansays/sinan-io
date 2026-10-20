@@ -425,14 +425,32 @@ body {
   .intro-with-thumb { flex-direction: column; align-items: center; }
   .profile-link { margin: 0 auto; }
   .profile-thumb { width: min(70vw, 240px); border-radius: 18px; }
+  /* Stacked, centred header: logo, then name and subtitle on one line each,
+     nav below; the theme toggle sits in the top-right corner. */
   .site-header {
+    position: relative;
+    grid-template-columns: 1fr;
+    grid-template-areas: "brand" "nav";
     justify-items: center;
     text-align: center;
+    row-gap: .6rem;
   }
   .brand {
+    flex-direction: column;
     justify-content: center;
     text-align: center;
+    gap: .55rem;
     width: 100%;
+  }
+  .site-title {
+    font-size: clamp(1.1rem, 5.6vw, 1.5rem);
+    letter-spacing: .14em;
+    white-space: nowrap;
+  }
+  .site-subtitle {
+    font-size: clamp(.64rem, 2.9vw, .78rem);
+    letter-spacing: .2em;
+    white-space: nowrap;
   }
   .site-nav {
     justify-content: center;
@@ -441,7 +459,7 @@ body {
   }
   /* The nav wraps on phones; a separator would start the second line, so drop them */
   .site-nav a + a::before { display: none; }
-  .actions { justify-self: center; }
+  .actions { position: absolute; top: 1rem; right: 1rem; }
   .site-footer {
     flex-direction: column;
     align-items: center;
