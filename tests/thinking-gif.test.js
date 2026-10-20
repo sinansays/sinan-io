@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { sanitizeSteps, getStepState, DEFAULT_CONFIG } = require('../thinking-gif/lib.js');
+const { sanitizeSteps, getStepState, DEFAULT_CONFIG } = require('../labs/thinking-gif/lib.js');
 
 test('sanitizeSteps trims and removes empty steps', () => {
   const steps = sanitizeSteps([

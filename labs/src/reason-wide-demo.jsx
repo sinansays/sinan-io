@@ -1,40 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reason Wide, Not Deep — Interactive Demo</title>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0f172a; color: #f8fafc; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(4px) } to { opacity:1; transform:translateY(0) } }
-    .fade-in { animation: fadeIn 0.3s ease-in; }
-    .fade-in-slow { animation: fadeIn 0.5s ease-in; }
-    button { cursor: pointer; border: none; outline: none; }
-    .tabular-nums { font-variant-numeric: tabular-nums; }
-    .trace-box { overflow-y: auto; flex: 1; padding-right: 8px; max-height: 320px; }
-    .trace-box::-webkit-scrollbar { width: 4px; }
-    .trace-box::-webkit-scrollbar-track { background: transparent; }
-    .trace-box::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
-    pre { font-family: ui-monospace, SFMono-Regular, 'Cascadia Code', monospace; }
-
-    /* Bar chart styles */
-    .bar-group { display: flex; align-items: flex-end; gap: 4px; flex: 1; justify-content: center; }
-    .bar-wrapper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .bar { border-radius: 4px 4px 0 0; transition: height 0.6s ease-out; min-width: 28px; }
-    .bar-label { font-size: 11px; color: #94a3b8; }
-    .bar-value { font-size: 11px; font-weight: 600; }
-    .chart-container { display: flex; gap: 24px; align-items: flex-end; padding: 16px 0; }
-    .benchmark-col { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; }
-    .benchmark-label { font-size: 13px; color: #94a3b8; text-align: center; }
-  </style>
-</head>
-<body>
-<div id="root"><div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#94a3b8">Loading demo…</div></div>
-<script type="text/babel">
 const { useState, useEffect, useRef } = React;
 const h = React.createElement;
 
@@ -440,6 +403,7 @@ function App() {
         <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 4, flexWrap: "wrap" }}>
           <h1 style={{ fontSize: 24, fontWeight: 700, letterSpacing: "-0.025em" }}>Reason Wide, Not Deep</h1>
           <span style={{ color: "#64748b", fontSize: 14 }}>Singh et al. (Microsoft) · arXiv:2608.07885</span>
+          <a href="https://www.youtube.com/watch?v=h1-2YfQCcBs" target="_blank" rel="noopener" style={{ color: "#a5b4fc", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>▶ Watch the talk</a>
         </div>
         <p style={{ color: "#94a3b8", fontSize: 14 }}>Amortizing the reasoning premium into distilled skills — interactive companion</p>
       </div>
@@ -459,13 +423,10 @@ function App() {
         {tab === "demo" ? <DemoView /> : <ResultsView />}
       </div>
       <div style={{ maxWidth: 1024, margin: "24px auto 0", textAlign: "center" }}>
-        <p style={{ color: "#475569", fontSize: 12 }}>Representative illustration based on paper's reported results · Latent Space Paper Club · Sept 2026</p>
+        <p style={{ color: "#475569", fontSize: 12 }}>Representative illustration based on paper's reported results · <a href="https://www.youtube.com/watch?v=h1-2YfQCcBs" target="_blank" rel="noopener" style={{ color: "#94a3b8" }}>Latent Space Paper Club talk</a> · Sept 2026</p>
       </div>
     </div>
   );
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-</script>
-</body>
-</html>
