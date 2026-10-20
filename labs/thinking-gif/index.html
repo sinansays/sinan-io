@@ -1,185 +1,424 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Thinking Trace GIF Generator | Michael Sinanian</title>
-  <meta name="description" content="Generate shareable AI-style status GIFs with custom steps, shimmer effects, and GIF export.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sinan.io/labs/thinking-gif/">
-  <meta property="og:title" content="Thinking Trace GIF Generator">
-  <meta property="og:description" content="Generate shareable AI-style status GIFs with custom steps, shimmer effects, and GIF export.">
-  <meta property="og:image" content="https://sinan.io/labs/thinking-gif-og.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/styles.css">
-  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
-  <script src="/assets/js/includes.js" defer></script>
-  <script src="/labs/thinking-gif/lib.js" defer></script>
-  <script src="/labs/thinking-gif/app.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thinking Trace · AI “thinking…” GIF maker</title>
+<meta name="description" content="Make a looping AI-style “thinking…” status animation in the style of Claude Code, Codex, ChatGPT, Claude, Gemini, DeepSeek, Grok and more. Export GIF, MP4 or WebP, with transparent backgrounds, emoji and social sizes, and share links.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sinan.io/labs/thinking-gif/">
+<meta property="og:title" content="Thinking Trace: AI “thinking…” GIF maker">
+<meta property="og:description" content="Type a status line, pick an AI app's style, export a GIF, MP4 or WebP. Unofficial meme generator.">
+<meta property="og:image" content="https://sinan.io/labs/thinking-gif-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="https://sinan.io/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Optional: fonts used inside the animation. Falls back to system fonts. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f5f4;
+  --surface: #ffffff;
+  --line: #e4e4e2;
+  --line-strong: #cfcfcc;
+  --text: #191918;
+  --muted: #6d6d69;
+  --faint: #9b9b97;
+  --invert-bg: #191918;
+  --invert-text: #ffffff;
+  --focus: #2563eb;
+  --check-a: #e9e9e7;
+  --check-b: #f7f7f6;
+  --ok: #15803d;
+  --warn: #b45309;
+  --radius: 12px;
+  --ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111111;
+    --surface: #191919;
+    --line: #2a2a2a;
+    --line-strong: #3a3a3a;
+    --text: #ececea;
+    --muted: #a0a09c;
+    --faint: #73736f;
+    --invert-bg: #ececea;
+    --invert-text: #111111;
+    --focus: #60a5fa;
+    --check-a: #1d1d1d;
+    --check-b: #262626;
+    --ok: #4ade80;
+    --warn: #fbbf24;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 var(--ui);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+[hidden] { display: none !important; }
+
+/* ---- top bar ---- */
+.top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px clamp(16px, 3vw, 28px);
+  max-width: 1280px; margin: 0 auto;
+}
+.top .back { text-decoration: none; color: var(--muted); font-size: 13px; }
+.top .back:hover { color: var(--text); }
+.top .title { font-weight: 600; font-size: 13px; letter-spacing: .01em; }
+.top .title { white-space: nowrap; }
+.top .title span { color: var(--faint); font-weight: 400; }
+@media (max-width: 560px) { .top .title span, .top .title { display: none; } .top { gap: 8px; } }
+.top .spacer { flex: 1; }
+.btn {
+  border: 1px solid var(--line); background: var(--surface);
+  border-radius: 8px; padding: 6px 11px; font-size: 13px; line-height: 1.3;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.btn:hover { border-color: var(--line-strong); }
+.btn.primary { background: var(--invert-bg); color: var(--invert-text); border-color: var(--invert-bg); }
+.btn.primary:disabled { opacity: .55; cursor: progress; }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.ghost:hover { color: var(--text); border-color: var(--line); }
+
+main { max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 28px) 40px; }
+
+/* ---- grid view ---- */
+.intro { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 24px; margin: 18px 0 18px; }
+.intro h1 { font-size: clamp(22px, 3vw, 30px); line-height: 1.15; margin: 0; font-weight: 600; letter-spacing: -.01em; }
+.intro p { margin: 6px 0 0; color: var(--muted); max-width: 52ch; }
+.intro .lead { flex: 1 1 360px; }
+.line-input { flex: 1 1 320px; max-width: 460px; }
+.line-input label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.line-input .row { display: flex; gap: 6px; }
+.field {
+  width: 100%; border: 1px solid var(--line); background: var(--surface);
+  border-radius: 8px; padding: 8px 10px;
+}
+.field:hover { border-color: var(--line-strong); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 14px; }
+.tile {
+  display: block; padding: 0; text-align: left;
+  border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+  background: var(--surface); transition: transform .15s ease, border-color .15s ease;
+}
+.tile:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+.tile canvas { display: block; width: 100%; aspect-ratio: 16 / 9; }
+.tile .cap { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 12px; font-size: 13px; border-top: 1px solid var(--line); }
+.tile .cap span { color: var(--faint); font-size: 12px; }
+.tile.current { border-color: var(--text); }
+
+/* ---- editor ---- */
+.editor { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; margin-top: 10px; }
+@media (max-width: 900px) { .editor { grid-template-columns: minmax(0, 1fr); } }
+.stage-wrap { position: sticky; top: 12px; }
+@media (max-width: 900px) { .stage-wrap { position: static; } }
+.stage {
+  position: relative; border-radius: var(--radius); border: 1px solid var(--line);
+  background: var(--surface); display: grid; place-items: center;
+  height: min(62vh, 560px); min-height: 260px; overflow: hidden; padding: 18px;
+}
+@media (max-width: 900px) { .stage { height: auto; aspect-ratio: 4 / 3; max-height: 60vh; } }
+.stage canvas { display: block; max-width: 100%; max-height: 100%; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.04); }
+.stage.checker canvas {
+  background: repeating-conic-gradient(var(--check-a) 0 25%, var(--check-b) 0 50%) 0 0 / 16px 16px;
+}
+.stage .play { position: absolute; left: 10px; bottom: 10px; }
+.stage .dims { position: absolute; right: 12px; bottom: 10px; font: 12px var(--mono); color: var(--faint); }
+.themes { display: flex; align-items: center; gap: 6px; margin-top: 12px; }
+.themes .scroller { min-width: 0; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 2px; flex: 1; }
+.themes .scroller::-webkit-scrollbar { display: none; }
+.pill {
+  border: 1px solid transparent; background: transparent; color: var(--muted);
+  padding: 5px 11px; border-radius: 999px; font-size: 13px; white-space: nowrap;
+}
+.pill:hover { color: var(--text); }
+.pill[aria-pressed="true"] { background: var(--invert-bg); color: var(--invert-text); }
+.arrow { width: 30px; height: 30px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; flex: none; }
+
+.side { min-width: 0; border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); overflow: hidden; }
+.tabs { display: flex; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+.tabs button {
+  flex: 1; border: 0; background: transparent; padding: 11px 8px; font-size: 13px; color: var(--muted);
+  border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap;
+}
+.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--text); }
+.panel { padding: 14px 16px 18px; }
+.group { margin-bottom: 16px; }
+.group:last-child { margin-bottom: 0; }
+.group > .label, .label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.label output { font: 12px var(--mono); color: var(--text); }
+.seg { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { flex: 1; border: 0; background: transparent; padding: 6px 8px; font-size: 13px; color: var(--muted); border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--invert-bg); color: var(--invert-text); }
+.seg button:disabled { opacity: .4; cursor: not-allowed; }
+input[type="range"] { width: 100%; accent-color: var(--text); }
+.toggle { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; }
+.toggle input { accent-color: var(--text); width: 16px; height: 16px; }
+.hint { font-size: 12px; color: var(--faint); margin: 6px 0 0; }
+
+.steps { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 6px; }
+.steps li { display: flex; gap: 4px; align-items: center; }
+.steps li .n { font: 11px var(--mono); color: var(--faint); width: 16px; text-align: right; flex: none; }
+.steps .field { padding: 6px 8px; }
+.icon-btn { border: 1px solid transparent; background: transparent; width: 28px; height: 28px; border-radius: 6px; color: var(--faint); flex: none; display: grid; place-items: center; font-size: 13px; }
+.icon-btn:hover { color: var(--text); border-color: var(--line); }
+.icon-btn:disabled { opacity: .3; cursor: default; }
+.row-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.sizes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+.size {
+  border: 1px solid var(--line); background: transparent; border-radius: 8px; padding: 8px 10px; text-align: left;
+  display: grid; grid-template-columns: 26px 1fr; gap: 0 10px; align-items: center;
+}
+.size:hover { border-color: var(--line-strong); }
+.size[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
+.size .shape { grid-row: span 2; justify-self: center; border: 1.5px solid currentColor; border-radius: 2px; color: var(--faint); }
+.size b { font-weight: 500; font-size: 13px; }
+.size small { color: var(--faint); font: 11px var(--mono); }
+
+.swatch { width: 34px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: transparent; }
+
+.export-go { width: 100%; justify-content: center; padding: 10px; font-size: 14px; margin-top: 4px; }
+.progress { height: 3px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 10px; }
+.progress div { height: 100%; width: 0; background: var(--text); transition: width .1s linear; }
+.status { font-size: 12px; color: var(--muted); margin-top: 8px; min-height: 18px; }
+.result { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+.result .media { display: grid; place-items: center; background: repeating-conic-gradient(var(--check-a) 0 25%, var(--check-b) 0 50%) 0 0 / 12px 12px; border-radius: 6px; padding: 8px; }
+.result img, .result video { max-width: 100%; max-height: 220px; display: block; }
+.result .meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font: 12px var(--mono); color: var(--muted); margin: 8px 0; }
+.result .meta .ok { color: var(--ok); }
+.result .meta .warn { color: var(--warn); }
+
+footer.foot { max-width: 1280px; margin: 0 auto; padding: 18px clamp(16px, 3vw, 28px) 32px; color: var(--faint); font-size: 12px; display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; }
+.toast {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(20px); opacity: 0;
+  background: var(--invert-bg); color: var(--invert-text); padding: 8px 14px; border-radius: 8px; font-size: 13px;
+  transition: opacity .2s, transform .2s; pointer-events: none; z-index: 10;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.noscript { padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+@media (prefers-reduced-motion: reduce) { .tile, .toast { transition: none; } }
+</style>
 </head>
 <body>
-  <a class="skip-link" href="#content">Skip to content</a>
-  <header class="site-header" id="site-header">
-    <noscript>
-      <div style="padding: 1rem; background: var(--surface-2); border-radius: 0.5rem; margin: 1rem;">
-        <p style="margin: 0 0 0.5rem 0;"><strong>JavaScript Required:</strong> This site uses JavaScript to load navigation. Please enable JavaScript for the full experience.</p>
-        <nav style="margin-top: 0.75rem;">
-          <a href="/" style="margin: 0 0.5rem;">Home</a>
-          <a href="/about.html" style="margin: 0 0.5rem;">About</a>
-          <a href="/posts/" style="margin: 0 0.5rem;">Posts</a>
-          <a href="/projects/" style="margin: 0 0.5rem;">Projects</a>
-          <a href="/labs/" style="margin: 0 0.5rem;">Labs</a>
-          <a href="/contact.html" style="margin: 0 0.5rem;">Contact</a>
-        </nav>
+<header class="top">
+  <a class="back" href="https://sinan.io/labs/">← sinanLabs</a>
+  <span class="title">Thinking Trace <span>· GIF maker</span></span>
+  <span class="spacer"></span>
+  <button class="btn ghost" type="button" id="to-grid" hidden>All styles</button>
+  <button class="btn" type="button" id="share">Copy share link</button>
+</header>
+
+<main id="content">
+  <noscript><div class="noscript">This tool draws and encodes the animation in your browser, so it needs JavaScript.</div></noscript>
+
+  <!-- Grid: every style renders your line -->
+  <section id="grid-view" aria-labelledby="grid-title">
+    <div class="intro">
+      <div class="lead">
+        <h1 id="grid-title">Make a “thinking…” GIF</h1>
+        <p>Pick a style. Every preview below is live. Open one to edit the lines, timing, size and background, then export a GIF, MP4 or WebP.</p>
       </div>
-    </noscript>
-  </header>
-  <main id="content" class="site-main">
-    <section class="page-header">
-      <h1>Thinking Trace GIF Generator</h1>
-    </section>
-
-    <section class="prose">
-      <p>Build a shareable, AI-style status animation. Customize the steps, tweak the shimmer, and export a looping GIF for social posts, chat drops, or product demos.</p>
-      <p class="thinking-gif-disclaimer">Unofficial meme generator.</p>
-    </section>
-
-    <section class="thinking-gif" aria-label="Thinking Trace GIF generator">
-      <noscript>
-        <div class="thinking-gif-noscript">
-          <p>This tool needs JavaScript to render the preview and export GIFs.</p>
-        </div>
-      </noscript>
-
-      <div class="thinking-gif-grid">
-        <div class="thinking-gif-preview" data-theme="dark">
-          <div class="thinking-gif-preview-header">
-            <h2>Preview</h2>
-            <div class="thinking-gif-preview-meta" id="preview-meta">480 × 270 · 20 FPS</div>
-          </div>
-          <div class="thinking-gif-canvas-wrap">
-            <canvas id="thinking-gif-canvas" width="480" height="270"></canvas>
-          </div>
-          <p class="thinking-gif-preview-note">Preview loops continuously. Exported GIF matches the canvas size exactly.</p>
-        </div>
-
-        <div class="thinking-gif-editor">
-          <div class="thinking-gif-panel">
-            <div class="thinking-gif-panel-header">
-              <h2>Steps</h2>
-              <button class="thinking-gif-button" type="button" id="add-step">Add step</button>
-            </div>
-            <ul class="thinking-gif-steps" id="steps-list" aria-live="polite"></ul>
-          </div>
-
-          <div class="thinking-gif-panel">
-            <h2>Timing</h2>
-            <div class="thinking-gif-fields">
-              <label class="thinking-gif-field">
-                <span>Step duration (seconds)</span>
-                <input type="number" id="step-duration" min="0.4" step="0.1" value="1.2">
-              </label>
-              <label class="thinking-gif-field">
-                <span>Transition style</span>
-                <select id="transition-style">
-                  <option value="typewriter">Typewriter</option>
-                  <option value="fade" selected>Fade</option>
-                  <option value="slide">Slide up</option>
-                </select>
-              </label>
-              <label class="thinking-gif-field">
-                <span>Transition length (ms)</span>
-                <input type="number" id="transition-ms" min="120" step="10" value="250">
-              </label>
-              <label class="thinking-gif-field thinking-gif-toggle">
-                <span>Loop animation</span>
-                <input type="checkbox" id="loop-toggle" checked>
-              </label>
-              <label class="thinking-gif-field">
-                <span>Pause between loops (ms)</span>
-                <input type="number" id="loop-pause" min="0" step="50" value="450">
-              </label>
-            </div>
-          </div>
-
-          <div class="thinking-gif-panel">
-            <h2>Visuals</h2>
-            <div class="thinking-gif-fields">
-              <label class="thinking-gif-field">
-                <span>Theme</span>
-                <select id="theme-select">
-                  <option value="dark" selected>Dark</option>
-                  <option value="light">Light</option>
-                </select>
-              </label>
-              <label class="thinking-gif-field">
-                <span>Font size</span>
-                <select id="font-size">
-                  <option value="16">Small</option>
-                  <option value="20" selected>Medium</option>
-                  <option value="24">Large</option>
-                </select>
-              </label>
-              <label class="thinking-gif-field">
-                <span>Canvas size</span>
-                <select id="canvas-size">
-                  <option value="320x240">320 × 240</option>
-                  <option value="480x270" selected>480 × 270</option>
-                  <option value="640x360">640 × 360</option>
-                  <option value="720x720">720 × 720</option>
-                  <option value="1080x1080">1080 × 1080</option>
-                </select>
-              </label>
-              <label class="thinking-gif-field">
-                <span>Shimmer intensity</span>
-                <input type="range" id="shimmer-intensity" min="0" max="1" step="0.05" value="0.6">
-              </label>
-              <label class="thinking-gif-field">
-                <span>Shimmer speed</span>
-                <input type="range" id="shimmer-speed" min="20" max="220" step="10" value="90">
-              </label>
-              <label class="thinking-gif-field">
-                <span>Display mode</span>
-                <select id="display-mode">
-                  <option value="single" selected>Single line</option>
-                  <option value="log">Log mode</option>
-                </select>
-              </label>
-              <label class="thinking-gif-field thinking-gif-toggle">
-                <span>Cursor indicator</span>
-                <input type="checkbox" id="cursor-toggle" checked>
-              </label>
-              <label class="thinking-gif-field">
-                <span>Cursor style</span>
-                <select id="cursor-style">
-                  <option value="bar" selected>Bar</option>
-                  <option value="block">Block</option>
-                </select>
-              </label>
-            </div>
-          </div>
-
-          <div class="thinking-gif-panel">
-            <h2>Export</h2>
-            <div class="thinking-gif-export">
-              <button class="thinking-gif-button thinking-gif-button-primary" type="button" id="export-gif">Export GIF</button>
-              <div class="thinking-gif-export-meta" id="export-status" aria-live="polite">Ready to export.</div>
-              <div class="thinking-gif-export-help">If your download doesn’t start on iOS, tap the generated GIF and choose “Save Image.”</div>
-            </div>
-          </div>
+      <div class="line-input">
+        <label for="quick-line">Your status line (optional)</label>
+        <div class="row">
+          <input class="field" id="quick-line" type="text" maxlength="140" placeholder="Leave blank to use each style's defaults" autocomplete="off">
+          <button class="btn ghost" type="button" id="quick-clear" hidden>Clear</button>
         </div>
       </div>
-    </section>
-  </main>
-  <footer class="site-footer" id="site-footer">
-    <noscript>
-      <div style="padding: 1rem; text-align: center;">
-        <p style="margin: 0;">© 2026 Michael Sinanian | <a href="/colophon.html">Colophon</a> | <a href="/contact.html">Contact</a></p>
+    </div>
+    <div class="grid" id="grid" role="list"></div>
+  </section>
+
+  <!-- Editor: stage + dock -->
+  <section id="editor-view" class="editor" aria-label="Editor" hidden>
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+        <canvas id="preview" width="480" height="270" role="img" aria-label="Animated preview"></canvas>
+        <button class="btn play" type="button" id="play" aria-pressed="true">Pause</button>
+        <span class="dims" id="dims"></span>
       </div>
-    </noscript>
-  </footer>
+      <div class="themes" role="group" aria-label="Style">
+        <button class="arrow" type="button" id="prev-theme" aria-label="Previous style">‹</button>
+        <div class="scroller" id="theme-pills"></div>
+        <button class="arrow" type="button" id="next-theme" aria-label="Next style">›</button>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="tabs" role="tablist" aria-label="Settings">
+        <button role="tab" id="tab-steps" aria-controls="panel-steps" aria-selected="true">Lines</button>
+        <button role="tab" id="tab-motion" aria-controls="panel-motion" aria-selected="false" tabindex="-1">Motion</button>
+        <button role="tab" id="tab-look" aria-controls="panel-look" aria-selected="false" tabindex="-1">Look</button>
+        <button role="tab" id="tab-size" aria-controls="panel-size" aria-selected="false" tabindex="-1">Size</button>
+        <button role="tab" id="tab-export" aria-controls="panel-export" aria-selected="false" tabindex="-1">Export</button>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-steps" aria-labelledby="tab-steps">
+        <div class="group">
+          <div class="label"><span>Lines, in order</span><span id="steps-source"></span></div>
+          <ul class="steps" id="steps"></ul>
+          <div class="row-btns">
+            <button class="btn" type="button" id="add-step">Add line</button>
+            <button class="btn" type="button" id="random-verbs" title="Fill with random Claude Code spinner verbs">Random verbs</button>
+            <button class="btn ghost" type="button" id="reset-steps">Use style defaults</button>
+          </div>
+          <p class="hint" id="verbs-hint">Random verbs come from Claude Code's spinner list. Press R in the editor to reroll.</p>
+        </div>
+        <div class="group">
+          <label class="toggle"><span>End on the “done” line (e.g. “Thought for 9s”)</span><input type="checkbox" id="finish"></label>
+          <label class="toggle"><span>Timer and token count</span><input type="checkbox" id="meta"></label>
+        </div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-motion" aria-labelledby="tab-motion" hidden>
+        <div class="group">
+          <div class="label"><span>Transition</span></div>
+          <div class="seg" id="transition" data-key="transition">
+            <button type="button" data-v="fade">Fade</button><button type="button" data-v="slide">Slide</button><button type="button" data-v="typewriter">Type</button><button type="button" data-v="cut">Cut</button>
+          </div>
+        </div>
+        <div class="group">
+          <div class="label"><span>Layout</span></div>
+          <div class="seg" data-key="display">
+            <button type="button" data-v="auto">Auto</button><button type="button" data-v="single">One line</button><button type="button" data-v="log">Log</button>
+          </div>
+        </div>
+        <div class="group">
+          <label class="label" for="stepMs"><span>Time per line</span><output id="stepMs-out"></output></label>
+          <input type="range" id="stepMs" min="500" max="5000" step="100">
+        </div>
+        <div class="group">
+          <label class="label" for="transMs"><span>Transition length</span><output id="transMs-out"></output></label>
+          <input type="range" id="transMs" min="0" max="1500" step="20">
+        </div>
+        <div class="group">
+          <label class="toggle"><span>Shimmer</span><input type="checkbox" id="shimmer"></label>
+          <label class="label" for="shimmerMs"><span>Shimmer sweep</span><output id="shimmerMs-out"></output></label>
+          <input type="range" id="shimmerMs" min="500" max="5000" step="100">
+          <label class="label" for="shimmerStrength" style="margin-top:8px"><span>Shimmer strength</span><output id="shimmerStrength-out"></output></label>
+          <input type="range" id="shimmerStrength" min="0" max="1" step="0.05">
+        </div>
+        <div class="group">
+          <div class="label"><span>Cursor</span></div>
+          <div class="seg" data-key="cursor">
+            <button type="button" data-v="none">None</button><button type="button" data-v="bar">Bar</button><button type="button" data-v="block">Block</button>
+          </div>
+        </div>
+        <div class="group">
+          <label class="toggle"><span>Loop</span><input type="checkbox" id="loop"></label>
+          <label class="label" for="finishMs"><span>Hold on the “done” line</span><output id="finishMs-out"></output></label>
+          <input type="range" id="finishMs" min="300" max="5000" step="100">
+        </div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-look" aria-labelledby="tab-look" hidden>
+        <div class="group">
+          <div class="label"><span>Mode</span></div>
+          <div class="seg" data-key="scheme">
+            <button type="button" data-v="auto">Style default</button><button type="button" data-v="light">Light</button><button type="button" data-v="dark">Dark</button>
+          </div>
+        </div>
+        <div class="group">
+          <div class="label"><span>Background</span></div>
+          <div class="seg" data-key="bg">
+            <button type="button" data-v="theme">App</button><button type="button" data-v="transparent">Transparent</button><button type="button" data-v="custom">Colour</button>
+          </div>
+          <div id="bg-custom" style="margin-top:8px" hidden>
+            <label class="label" for="bgColor"><span>Background colour</span></label>
+            <input class="swatch" type="color" id="bgColor">
+          </div>
+          <p class="hint" id="bg-hint" hidden>Transparent works in GIF and WebP. GIF transparency is on/off per pixel, so text edges are blended onto an edge colour (Export tab). MP4 can't be transparent, so it uses the style's background.</p>
+        </div>
+        <div class="group">
+          <div class="label"><span>Alignment</span></div>
+          <div class="seg" data-key="align">
+            <button type="button" data-v="center">Centred</button><button type="button" data-v="left">Left</button>
+          </div>
+        </div>
+        <div class="group">
+          <label class="label" for="textScale"><span>Text size</span><output id="textScale-out"></output></label>
+          <input type="range" id="textScale" min="0.5" max="2" step="0.05">
+          <p class="hint">Text shrinks automatically when a line won't fit.</p>
+        </div>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-size" aria-labelledby="tab-size" hidden>
+        <div class="sizes" id="sizes"></div>
+        <p class="hint">Emoji and Sticker sizes drop the timer tail and wrap text to fit.</p>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-export" aria-labelledby="tab-export" hidden>
+        <div class="group">
+          <div class="label"><span>Format</span></div>
+          <div class="seg" data-key="format" id="format">
+            <button type="button" data-v="gif">GIF</button><button type="button" data-v="mp4">MP4</button><button type="button" data-v="webp">WebP</button>
+          </div>
+          <p class="hint" id="format-hint"></p>
+        </div>
+        <div class="group">
+          <div class="label"><span>Frame rate</span></div>
+          <div class="seg" data-key="fps">
+            <button type="button" data-v="15">15</button><button type="button" data-v="20">20</button><button type="button" data-v="25">25</button><button type="button" data-v="30">30</button>
+          </div>
+        </div>
+        <div class="group" id="mp4-opts" hidden>
+          <label class="label" for="mp4Repeats"><span>Loops in the video</span><output id="mp4Repeats-out"></output></label>
+          <input type="range" id="mp4Repeats" min="1" max="10" step="1">
+        </div>
+        <div class="group" id="matte-opts" hidden>
+          <label class="label" for="matte"><span>Edge colour for transparent GIF</span></label>
+          <div class="row-btns">
+            <input class="swatch" type="color" id="matte">
+            <button class="btn ghost" type="button" data-matte="#ffffff">Light chat</button>
+            <button class="btn ghost" type="button" data-matte="#1a1d21">Dark chat</button>
+          </div>
+          <p class="hint">Pick the colour the GIF will sit on, e.g. Slack's dark mode.</p>
+        </div>
+        <button class="btn primary export-go" type="button" id="export">Export GIF</button>
+        <div class="progress" aria-hidden="true"><div id="progress"></div></div>
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+        <div class="result" id="result" hidden>
+          <div class="media" id="result-media"></div>
+          <div class="meta" id="result-meta"></div>
+          <div class="row-btns">
+            <a class="btn primary" id="download" download>Download</a>
+            <button class="btn" type="button" id="copy-alt">Copy alt text</button>
+          </div>
+          <p class="hint">On iPhone, if the download doesn't start, press and hold the preview and choose Save.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>Unofficial meme generator. Not affiliated with or endorsed by Anthropic, OpenAI, Google, DeepSeek, xAI, Meta or Nous Research. Product names only describe a visual style.</span>
+  <span>Everything runs in your browser. Nothing is uploaded. Keys: ← → style · R reroll · E export · Esc all styles</span>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="./lib.js"></script>
+<script src="./vendor/mp4-muxer-5.2.2.min.js" defer></script>
+<script src="./app.js" defer></script>
 </body>
 </html>
