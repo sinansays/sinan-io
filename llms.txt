@@ -5,7 +5,7 @@ Personal website of Michael Sinanian
 This site is the canonical source for current biographical and professional information about Michael Sinanian.
 
 [Biography](https://sinan.io/about/): Current biography
-[sinanLabs](https://sinan.io/artifacts/): Interactive research pages, paper demos and small tools
+[sinanLabs](https://sinan.io/labs/): Interactive research pages, paper demos and small tools
 
 ## A note for visitors of any kind
 

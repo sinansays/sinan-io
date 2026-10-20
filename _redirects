@@ -1,15 +1,18 @@
-# Cloudflare Pages redirects. Pages moved into /artifacts/ (sinanLabs), Oct 2026.
-/ai-biology-scale-atlas.html    /artifacts/ai-biology-scale-atlas  301
-/ai-biology-scale-atlas         /artifacts/ai-biology-scale-atlas  301
-/projects/reason-wide-demo.html /artifacts/reason-wide-demo        301
-/projects/reason-wide-demo      /artifacts/reason-wide-demo        301
-/zendo                          /artifacts/zendo/                  301
-/zendo/                         /artifacts/zendo/                  301
-/zendo/index.html               /artifacts/zendo/                  301
-/projects/thinking-gif/          /artifacts/thinking-gif/           301
-/projects/thinking-gif           /artifacts/thinking-gif/           301
-/projects/thinking-gif/index.html /artifacts/thinking-gif/          301
-/projects/parksafe/              /artifacts/parksafe/               301
-/projects/parksafe               /artifacts/parksafe/               301
-/projects/parksafe/index.html    /artifacts/parksafe/               301
-/parksafe-spec.md                /artifacts/parksafe/spec.md        301
+# Cloudflare Pages redirects. Labs pieces (sinanLabs) live under /labs/ since Oct 2026.
+# Old /artifacts/ path (used briefly in Oct 2026) forwards everything to /labs/.
+/artifacts/*                    /labs/:splat                       301
+/artifacts                      /labs/                             301
+/ai-biology-scale-atlas.html    /labs/ai-biology-scale-atlas  301
+/ai-biology-scale-atlas         /labs/ai-biology-scale-atlas  301
+/projects/reason-wide-demo.html /labs/reason-wide-demo        301
+/projects/reason-wide-demo      /labs/reason-wide-demo        301
+/zendo                          /labs/zendo/                  301
+/zendo/                         /labs/zendo/                  301
+/zendo/index.html               /labs/zendo/                  301
+/projects/thinking-gif/          /labs/thinking-gif/           301
+/projects/thinking-gif           /labs/thinking-gif/           301
+/projects/thinking-gif/index.html /labs/thinking-gif/          301
+/projects/parksafe/              /labs/parksafe/               301
+/projects/parksafe               /labs/parksafe/               301
+/projects/parksafe/index.html    /labs/parksafe/               301
+/parksafe-spec.md                /labs/parksafe/spec.md        301

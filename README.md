@@ -28,6 +28,10 @@ The site doesn't need heavy frameworks because its interactive features are mini
 - **Theme toggle**: CSS-only checkbox pattern (no JavaScript required) presented as an iOS-style control with Lucide Sun and Moon icons
 - **No build process**: Files are served exactly as written (no bundling, transpiling, or preprocessing)
 
+## Page Classes
+
+The site has **core pages** (shared styles, header/footer includes) and **Labs pieces** under `/labs/` (self-contained, own design, no shared site assets). See "Page Classes" in AGENTS.md before adding or editing a page.
+
 ## File Structure
 
 See: PROJECT_MAP.md

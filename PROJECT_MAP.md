@@ -8,7 +8,7 @@ This document provides a comprehensive map of the website structure, showing pag
 / (index.html)
 ├── /about.html
 ├── /contact.html
-├── /artifacts/ (sinanLabs index; also linked in main nav)
+├── /labs/ (sinanLabs index; also linked in main nav)
 │   ├── who-wakes-at-five.html
 │   ├── reason-wide-demo.html
 │   ├── ai-biology-scale-atlas.html
@@ -512,11 +512,12 @@ handles the `©` correctly.)
 3. Update dark mode values in `@media (prefers-color-scheme: dark)`
 4. Update toggled theme values in `:root:has(#theme-toggle:checked)`
 
-### Scenario: Add a sinanLabs piece (`/artifacts/`)
-1. Put a single self-contained HTML file in `/artifacts/` (own `<head>`, inline CSS/JS; no shared header/footer includes)
-2. Optional social preview image beside it (`/artifacts/<name>-og.jpg`, 1200×630) referenced by `og:image`
-3. Add a 720×378 WebP screenshot to `/artifacts/thumbs/<name>.webp`
-4. Add a `.card.lab-card` to `/artifacts/index.html` (newest first) with date, type, one-line description and thumbnail alt text
+### Scenario: Add a Labs piece (`/labs/`)
+Follow the Labs-piece rules in AGENTS.md → "Page Classes".
+1. Put a single self-contained HTML file in `/labs/` (own `<head>`, own design, inline CSS/JS/libraries; no `styles.css`, includes or `/assets/` code). A larger piece may use its own folder `/labs/<name>/` with files no other page uses
+2. Optional social preview image beside it (`/labs/<name>-og.jpg`, 1200×630) referenced by `og:image`; add a "← sinanLabs" back-link to `https://sinan.io/labs/`
+3. Add a 720×378 WebP screenshot to `/labs/thumbs/<name>.webp`
+4. Add a `.card.lab-card` to `/labs/index.html` (newest first) with date, type, one-line description and thumbnail alt text
 5. If a page moves, add a 301 to `/_redirects` so old links keep working
 6. The nav link reads "Labs" (the page itself is titled "sinanLabs"); it lives in `/includes/header.html` and in every page's `<noscript>` fallback nav
 

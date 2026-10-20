@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ParkSafe — UCLA course demo</title>
+  <meta name="description" content="Try ParkSafe, an interactive demo for students in Michael Sinanian's UCLA course that turns parking sign text into a clear, time-aware parking verdict.">
+  <meta property="og:title" content="ParkSafe — UCLA course demo">
+  <meta property="og:description" content="A static, interactive parking sign checker demo for students in Michael Sinanian's UCLA course.">
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+  <style>
+/* ParkSafe is intentionally self-contained; every selector is scoped to the app. */
+.parksafe-app {
+  --ps-navy: #071b34;
+  --ps-navy-raised: #0d2948;
+  --ps-blue: #1769e0;
+  --ps-blue-light: #ddebff;
+  --ps-cream: #f5f7f8;
+  --ps-white: #fff;
+  --ps-ink: #10243b;
+  --ps-muted: #5e7185;
+  --ps-border: #d8e0e7;
+  --ps-green: #087f5b;
+  --ps-green-soft: #e7f7f0;
+  --ps-amber: #a85d00;
+  --ps-amber-soft: #fff3dc;
+  --ps-red: #bd2929;
+  --ps-red-soft: #fff0ef;
+  margin: 0;
+  color: var(--ps-ink);
+  background: var(--ps-cream);
+  font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+.parksafe-app *, .parksafe-app *::before, .parksafe-app *::after { box-sizing: border-box; }
+.parksafe-app button, .parksafe-app input, .parksafe-app select, .parksafe-app textarea { font: inherit; }
+.parksafe-app button, .parksafe-app a { -webkit-tap-highlight-color: transparent; }
+.parksafe-app a { color: inherit; }
+.parksafe-skip { position: fixed; left: 1rem; top: -5rem; z-index: 20; padding: .65rem 1rem; background: var(--ps-white); border-radius: .35rem; }
+.parksafe-skip:focus { top: 1rem; }
+.parksafe-app :focus-visible { outline: 3px solid #6eb0ff; outline-offset: 3px; }
+.parksafe-header, .parksafe-footer { background: var(--ps-navy); color: var(--ps-white); }
+.parksafe-header { min-height: 74px; padding: 0 max(1.25rem, calc((100% - 1120px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,.14); }
+.parksafe-brand { display: inline-flex; align-items: center; gap: .65rem; color: var(--ps-white); text-decoration: none; font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em; }
+.parksafe-brand__mark { display: grid; place-items: center; width: 35px; height: 35px; color: var(--ps-navy); background: var(--ps-white); border-radius: 50%; font-size: 1.15rem; font-weight: 900; }
+.parksafe-nav { display: flex; align-items: center; gap: 1.5rem; font-size: .88rem; font-weight: 700; }
+.parksafe-nav a { text-decoration: none; }
+.parksafe-nav a:hover { text-decoration: underline; }
+.parksafe-nav__portfolio { padding: .55rem .85rem; border: 1px solid rgba(255,255,255,.45); border-radius: .35rem; }
+.parksafe-course-demo { padding: .8rem max(1.25rem, calc((100% - 1120px) / 2)); display: flex; justify-content: center; align-items: center; gap: .65rem; color: #10243b; background: #dbeafe; border-bottom: 1px solid #a9c9f5; font-size: .82rem; text-align: center; }
+.parksafe-course-demo strong { padding: .25rem .5rem; color: var(--ps-white); background: var(--ps-blue); border-radius: .25rem; text-transform: uppercase; letter-spacing: .06em; font-size: .68rem; white-space: nowrap; }
+.parksafe-hero { min-height: 375px; padding: 4.5rem max(1.25rem, calc((100% - 1120px) / 2)) 7.5rem; display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: center; gap: 5rem; overflow: hidden; background: var(--ps-navy); color: var(--ps-white); }
+.parksafe-eyebrow { margin: 0 0 1rem; text-transform: uppercase; letter-spacing: .15em; font-size: .7rem; font-weight: 800; }
+.parksafe-eyebrow span { display: inline-block; width: 20px; height: 3px; margin: 0 .5rem .2rem 0; background: #61a8ff; }
+.parksafe-hero h1 { max-width: 710px; margin: 0; font-family: "Arial Narrow", "Roboto Condensed", sans-serif; font-size: clamp(3.1rem, 7vw, 5.6rem); line-height: .92; text-transform: uppercase; letter-spacing: -.045em; }
+.parksafe-hero h1 em { display: block; color: #66acff; font-style: normal; }
+.parksafe-hero__copy > p:not(.parksafe-eyebrow) { max-width: 620px; margin: 1.5rem 0; color: #c4d2e2; font-size: 1.05rem; }
+.parksafe-trust { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin: 0; padding: 0; list-style: none; color: #dae5f0; font-size: .82rem; font-weight: 700; }
+.parksafe-trust span { color: #77d8b6; }
+.parksafe-sign { transform: rotate(3deg); padding: .8rem; border: 9px solid #d7dadd; outline: 3px solid #8f969b; background: white; color: #10243b; text-align: center; box-shadow: 0 18px 45px rgba(0,0,0,.35); font-family: "Arial Narrow", sans-serif; }
+.parksafe-sign span, .parksafe-sign strong, .parksafe-sign small { display: block; }
+.parksafe-sign span { padding: .5rem; color: #c41f2c; border: 5px solid #c41f2c; font-size: 1.9rem; font-weight: 900; }
+.parksafe-sign strong { margin-top: .65rem; font-size: 1.65rem; }
+.parksafe-sign small { font-size: 1rem; font-weight: 800; }
+.parksafe-sign div { margin: .7rem -.8rem -.8rem; padding: .55rem; color: white; background: #1769e0; font-weight: 900; }
+.parksafe-checker { width: min(1120px, calc(100% - 2.5rem)); margin: -3.5rem auto 0; position: relative; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 1.25rem; align-items: start; }
+.parksafe-panel, .parksafe-verdict { background: var(--ps-white); border: 1px solid var(--ps-border); border-radius: .65rem; box-shadow: 0 10px 30px rgba(13,41,72,.09); }
+.parksafe-input-panel { padding: 1.75rem; }
+.parksafe-step-heading { display: flex; align-items: center; gap: .9rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--ps-border); }
+.parksafe-step-heading > span { display: grid; place-items: center; width: 34px; height: 34px; flex: none; border-radius: 50%; color: var(--ps-white); background: var(--ps-blue); font-weight: 800; }
+.parksafe-step-heading p, .parksafe-step-heading h2 { margin: 0; }
+.parksafe-step-heading p { color: var(--ps-blue); text-transform: uppercase; letter-spacing: .12em; font-size: .65rem; font-weight: 800; }
+.parksafe-step-heading h2 { font-size: 1.25rem; line-height: 1.2; }
+.parksafe-field-label { display: block; margin: 1.35rem 0 .5rem; font-size: .8rem; font-weight: 800; }
+.parksafe-input-panel textarea { width: 100%; min-height: 170px; resize: vertical; padding: 1rem; color: var(--ps-ink); background: #fbfcfd; border: 1px solid #aebdca; border-radius: .35rem; line-height: 1.65; }
+.parksafe-field-meta { display: flex; justify-content: space-between; gap: 1rem; color: var(--ps-muted); font-size: .7rem; }
+.parksafe-examples { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: 1.2rem 0; font-size: .72rem; }
+.parksafe-examples > span { color: var(--ps-muted); }
+.parksafe-examples button, .parksafe-time-fields button { padding: .4rem .65rem; color: var(--ps-blue); background: var(--ps-blue-light); border: 0; border-radius: 999px; cursor: pointer; font-size: .7rem; font-weight: 800; }
+.parksafe-examples button:hover, .parksafe-time-fields button:hover { filter: brightness(.96); }
+.parksafe-primary-button { width: 100%; padding: .9rem 1rem; display: flex; justify-content: center; gap: 1rem; color: var(--ps-white); background: var(--ps-blue); border: 0; border-radius: .35rem; cursor: pointer; font-weight: 800; box-shadow: 0 5px 14px rgba(23,105,224,.25); }
+.parksafe-primary-button:hover { background: #125abc; }
+.parksafe-primary-button:disabled { opacity: .65; cursor: wait; }
+.parksafe-prototype-note { margin: 1rem 0 0; color: var(--ps-muted); font-size: .7rem; text-align: center; }
+.parksafe-results { display: grid; gap: 1.25rem; }
+.parksafe-time-panel { padding: 1.25rem 1.5rem; }
+.parksafe-step-heading--compact { padding-bottom: 1rem; }
+.parksafe-time-fields { display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: .75rem; margin-top: 1rem; }
+.parksafe-time-fields label { color: var(--ps-muted); font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.parksafe-time-fields select, .parksafe-time-fields input { display: block; width: 100%; margin-top: .35rem; padding: .55rem; color: var(--ps-ink); background: #fbfcfd; border: 1px solid #aebdca; border-radius: .3rem; font-size: .82rem; text-transform: none; }
+.parksafe-time-fields button { margin-bottom: .12rem; white-space: nowrap; }
+.parksafe-verdict { position: relative; overflow: hidden; padding: 1.6rem; border-left: 7px solid var(--verdict); background: var(--verdict-soft); transition: background .2s ease, border-color .2s ease; }
+.parksafe-verdict--green { --verdict: var(--ps-green); --verdict-soft: var(--ps-green-soft); }
+.parksafe-verdict--amber { --verdict: var(--ps-amber); --verdict-soft: var(--ps-amber-soft); }
+.parksafe-verdict--red { --verdict: var(--ps-red); --verdict-soft: var(--ps-red-soft); }
+.parksafe-verdict__status { display: flex; align-items: center; gap: .7rem; }
+.parksafe-verdict__icon { display: grid; place-items: center; width: 35px; height: 35px; color: var(--ps-white); background: var(--verdict); border-radius: 50%; font-size: 1.25rem; font-weight: 900; }
+.parksafe-verdict__status div { display: flex; flex-direction: column; }
+.parksafe-verdict__status div > span { color: var(--verdict); text-transform: uppercase; letter-spacing: .1em; font-size: .7rem; font-weight: 900; }
+.parksafe-verdict__status small { color: var(--ps-muted); }
+.parksafe-verdict h2 { margin: 1rem 0 .35rem; color: var(--ps-ink); font-family: "Arial Narrow", sans-serif; font-size: 1.75rem; text-transform: uppercase; }
+.parksafe-verdict > p { margin: 0 0 1rem; color: #43576b; font-size: .88rem; }
+.parksafe-verdict__deadline { display: flex; align-items: center; gap: .65rem; padding: .75rem; background: rgba(255,255,255,.72); border: 1px solid color-mix(in srgb, var(--verdict) 22%, transparent); border-radius: .35rem; }
+.parksafe-verdict__deadline > span { color: var(--verdict); font-size: 1.5rem; }
+.parksafe-verdict__deadline div { display: flex; flex-direction: column; }
+.parksafe-verdict__deadline small { color: var(--ps-muted); font-size: .65rem; text-transform: uppercase; font-weight: 800; }
+.parksafe-verdict__deadline strong { font-size: .9rem; }
+.parksafe-verdict__rule { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid rgba(16,36,59,.12); color: var(--ps-muted); font-size: .66rem; font-weight: 800; }
+.parksafe-rules { padding: 0 1.5rem; }
+.parksafe-rules summary { display: flex; justify-content: space-between; padding: 1.1rem 0; cursor: pointer; list-style: none; font-size: .82rem; font-weight: 800; }
+.parksafe-rules summary::-webkit-details-marker { display: none; }
+.parksafe-rules[open] summary span { transform: rotate(180deg); }
+#rule-list { padding-bottom: 1rem; border-top: 1px solid var(--ps-border); }
+.parksafe-rule-item { display: grid; grid-template-columns: 28px 1fr; gap: .65rem; padding-top: .9rem; }
+.parksafe-rule-item > span { display: grid; place-items: center; width: 26px; height: 26px; color: var(--ps-blue); background: var(--ps-blue-light); border-radius: 50%; font-size: .75rem; font-weight: 900; }
+.parksafe-rule-item strong, .parksafe-rule-item small { display: block; }
+.parksafe-rule-item strong { font-size: .8rem; }
+.parksafe-rule-item small { color: var(--ps-muted); font-size: .72rem; }
+.parksafe-how { width: min(1120px, calc(100% - 2.5rem)); margin: 5.5rem auto; text-align: center; }
+.parksafe-how .parksafe-eyebrow { color: var(--ps-blue); }
+.parksafe-how > h2 { max-width: 620px; margin: 0 auto 2.25rem; font-family: "Arial Narrow", sans-serif; font-size: clamp(2rem, 4vw, 3rem); line-height: 1; text-transform: uppercase; }
+.parksafe-how__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: left; }
+.parksafe-how__grid article { padding: 1.5rem; background: var(--ps-white); border: 1px solid var(--ps-border); border-radius: .5rem; }
+.parksafe-how__grid article > span { display: grid; place-items: center; width: 38px; height: 38px; color: var(--ps-blue); background: var(--ps-blue-light); border-radius: .4rem; font-weight: 900; }
+.parksafe-how__grid h3 { margin: 1rem 0 .35rem; font-size: 1rem; }
+.parksafe-how__grid p { margin: 0; color: var(--ps-muted); font-size: .82rem; }
+.parksafe-footer { padding: 2rem max(1.25rem, calc((100% - 1120px) / 2)); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; color: #c8d6e5; font-size: .72rem; }
+.parksafe-footer > p { text-align: center; }
+.parksafe-footer > a:last-child { justify-self: end; }
+@media (max-width: 820px) {
+  .parksafe-hero { grid-template-columns: 1fr; padding-bottom: 7rem; }
+  .parksafe-sign { display: none; }
+  .parksafe-checker { grid-template-columns: 1fr; }
+  .parksafe-footer { grid-template-columns: 1fr; text-align: center; }
+  .parksafe-footer > p { margin: .5rem 0; }
+  .parksafe-footer > a, .parksafe-footer > a:last-child { justify-self: center; }
+}
+@media (max-width: 560px) {
+  .parksafe-header { min-height: 64px; }
+  .parksafe-course-demo { flex-direction: column; gap: .4rem; }
+  .parksafe-nav > a:first-child { display: none; }
+  .parksafe-nav { font-size: .72rem; }
+  .parksafe-hero { padding-top: 3.5rem; }
+  .parksafe-hero h1 { font-size: 3.2rem; }
+  .parksafe-trust { display: grid; gap: .5rem; }
+  .parksafe-checker { width: calc(100% - 1.5rem); }
+  .parksafe-input-panel, .parksafe-time-panel, .parksafe-verdict { padding: 1.2rem; }
+  .parksafe-time-fields { grid-template-columns: 1fr 1fr; }
+  .parksafe-time-fields button { grid-column: 1 / -1; }
+  .parksafe-how { width: calc(100% - 1.5rem); margin: 4rem auto; }
+  .parksafe-how__grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .parksafe-app *, .parksafe-app *::before, .parksafe-app *::after { scroll-behavior: auto !important; transition: none !important; }
+}
+
+  </style>
+</head>
+<body class="parksafe-app">
+  <a class="parksafe-skip" href="#checker">Skip to checker</a>
+
+  <header class="parksafe-header">
+    <a class="parksafe-brand" href="/labs/parksafe/" aria-label="ParkSafe home">
+      <span class="parksafe-brand__mark" aria-hidden="true">P</span>
+      <span>ParkSafe</span>
+    </a>
+    <nav class="parksafe-nav" aria-label="ParkSafe navigation">
+      <a href="#how-it-works">How it works</a>
+      <a class="parksafe-nav__portfolio" href="/labs/">Back to sinanLabs</a>
+    </nav>
+  </header>
+
+  <main>
+    <aside class="parksafe-course-demo" aria-label="Course demo notice">
+      <strong>UCLA course demo</strong>
+      <span>This interactive prototype was created as a demonstration for students in Michael Sinanian's UCLA course.</span>
+    </aside>
+    <section class="parksafe-hero" aria-labelledby="parksafe-title">
+      <div class="parksafe-hero__copy">
+        <p class="parksafe-eyebrow"><span aria-hidden="true"></span> Interactive product prototype</p>
+        <h1 id="parksafe-title">Can I park here <em>right now?</em></h1>
+        <p>Parking signs shouldn't require a law degree. Type what the sign says, choose a moment, and get a clear answer.</p>
+        <ul class="parksafe-trust" aria-label="Prototype features">
+          <li><span aria-hidden="true">✓</span> Instant answer</li>
+          <li><span aria-hidden="true">✓</span> Plain-language reasoning</li>
+          <li><span aria-hidden="true">✓</span> No account needed</li>
+        </ul>
+      </div>
+      <div class="parksafe-sign" aria-hidden="true">
+        <span>NO PARKING</span>
+        <strong>8AM – 10AM</strong>
+        <small>MON · WED · FRI</small>
+        <div>STREET CLEANING</div>
+      </div>
+    </section>
+
+    <section class="parksafe-checker" id="checker" aria-labelledby="checker-title">
+      <div class="parksafe-panel parksafe-input-panel">
+        <div class="parksafe-step-heading">
+          <span>1</span>
+          <div>
+            <p>Read the sign</p>
+            <h2 id="checker-title">What does it say?</h2>
+          </div>
+        </div>
+
+        <label class="parksafe-field-label" for="sign-text">Parking sign text</label>
+        <textarea id="sign-text" maxlength="2000" rows="6" aria-describedby="sign-hint sign-count">NO PARKING
+8AM TO 10AM
+MON WED FRI
+STREET CLEANING</textarea>
+        <div class="parksafe-field-meta">
+          <span id="sign-hint">Type the wording as it appears, line breaks and all.</span>
+          <span id="sign-count">50 / 2000</span>
+        </div>
+
+        <div class="parksafe-examples">
+          <span>Try an example:</span>
+          <button type="button" data-example="cleaning">Street cleaning</button>
+          <button type="button" data-example="limit">2-hour parking</button>
+          <button type="button" data-example="permit">Permit only</button>
+        </div>
+
+        <button class="parksafe-primary-button" id="check-sign" type="button">
+          Check this sign <span aria-hidden="true">→</span>
+        </button>
+        <p class="parksafe-prototype-note"><span aria-hidden="true">ⓘ</span> This static prototype recognizes the examples above and common parking-sign phrases. No text is uploaded or saved.</p>
+      </div>
+
+      <div class="parksafe-results" aria-live="polite">
+        <div class="parksafe-panel parksafe-time-panel">
+          <div class="parksafe-step-heading parksafe-step-heading--compact">
+            <span>2</span>
+            <div>
+              <p>Set the clock</p>
+              <h2>When are you parking?</h2>
+            </div>
+          </div>
+          <div class="parksafe-time-fields">
+            <label>Day
+              <select id="parking-day">
+                <option value="0">Sunday</option><option value="1">Monday</option>
+                <option value="2">Tuesday</option><option value="3">Wednesday</option>
+                <option value="4">Thursday</option><option value="5">Friday</option>
+                <option value="6">Saturday</option>
+              </select>
+            </label>
+            <label>Time
+              <input id="parking-time" type="time" value="09:00">
+            </label>
+            <button id="back-to-now" type="button">Use current time</button>
+          </div>
+        </div>
+
+        <article class="parksafe-verdict parksafe-verdict--red" id="verdict" tabindex="-1">
+          <div class="parksafe-verdict__status">
+            <span class="parksafe-verdict__icon" id="verdict-icon" aria-hidden="true">×</span>
+            <div><span id="verdict-label">No parking</span><small id="verdict-moment">Right now</small></div>
+          </div>
+          <h2 id="verdict-headline">You can't park here right now.</h2>
+          <p id="verdict-why">Street cleaning is in effect until 10:00 AM.</p>
+          <div class="parksafe-verdict__deadline" id="verdict-deadline">
+            <span aria-hidden="true">◷</span><div><small>Restriction ends</small><strong>10:00 AM today</strong></div>
+          </div>
+          <div class="parksafe-verdict__rule" id="active-rule">NO PARKING · MON, WED, FRI · 8:00–10:00 AM</div>
+        </article>
+
+        <details class="parksafe-panel parksafe-rules" open>
+          <summary>How ParkSafe read this sign <span aria-hidden="true">⌄</span></summary>
+          <div id="rule-list"></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="parksafe-how" id="how-it-works" aria-labelledby="how-title">
+      <p class="parksafe-eyebrow"><span aria-hidden="true"></span> Designed for clarity</p>
+      <h2 id="how-title">From confusing sign to clear next step.</h2>
+      <div class="parksafe-how__grid">
+        <article><span aria-hidden="true">Aa</span><h3>Enter the wording</h3><p>Copy the text from each plate on the parking sign.</p></article>
+        <article><span aria-hidden="true">≡</span><h3>Rules, structured</h3><p>ParkSafe separates days, times, restrictions, and limits.</p></article>
+        <article><span aria-hidden="true">✓</span><h3>Get a verdict</h3><p>See whether it is safe now and when the next rule begins.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="parksafe-footer">
+    <a class="parksafe-brand" href="/labs/parksafe/"><span class="parksafe-brand__mark" aria-hidden="true">P</span><span>ParkSafe</span></a>
+    <p>Guidance only—not legal advice. The posted sign always wins.</p>
+    <a href="/labs/">A sinanLabs prototype by Michael Sinanian ↗</a>
+  </footer>
+<script>
+(function () {
+  'use strict';
+
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const EXAMPLES = {
+    cleaning: 'NO PARKING\n8AM TO 10AM\nMON WED FRI\nSTREET CLEANING',
+    limit: '2 HOUR PARKING\n8AM TO 6PM\nMON THRU SAT',
+    permit: 'NO PARKING\nEXCEPT PERMIT 12\n7AM TO 7PM\nMON THRU FRI'
+  };
+
+  const signText = document.querySelector('#sign-text');
+  const count = document.querySelector('#sign-count');
+  const dayInput = document.querySelector('#parking-day');
+  const timeInput = document.querySelector('#parking-time');
+  const checkButton = document.querySelector('#check-sign');
+  let currentRule = parseSign(signText.value);
+
+  function parseHour(value, meridiem) {
+    let hour = Number(value);
+    if (meridiem === 'PM' && hour !== 12) hour += 12;
+    if (meridiem === 'AM' && hour === 12) hour = 0;
+    return hour * 60;
+  }
+
+  function parseSign(text) {
+    const normalized = text.toUpperCase().replace(/\s+/g, ' ').trim();
+    const timeMatch = normalized.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)\s*(?:TO|–|-|UNTIL)\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/);
+    const start = timeMatch ? parseHour(timeMatch[1], timeMatch[3]) + Number(timeMatch[2] || 0) : 0;
+    const end = timeMatch ? parseHour(timeMatch[4], timeMatch[6]) + Number(timeMatch[5] || 0) : 1440;
+    let days = [0, 1, 2, 3, 4, 5, 6];
+    if (/MON WED FRI/.test(normalized)) days = [1, 3, 5];
+    else if (/MON (?:THRU|TO|-) FRI/.test(normalized)) days = [1, 2, 3, 4, 5];
+    else if (/MON (?:THRU|TO|-) SAT/.test(normalized)) days = [1, 2, 3, 4, 5, 6];
+
+    let type = 'no_parking';
+    let title = 'No parking';
+    let detail = normalized.includes('STREET CLEANING') ? 'Street cleaning restriction' : 'Posted parking restriction';
+    const limitMatch = normalized.match(/(\d+)\s*(?:HOUR|HR)/);
+    if (limitMatch && !normalized.includes('NO PARKING')) {
+      type = 'time_limit';
+      title = `${limitMatch[1]}-hour parking`;
+      detail = `Parking is limited to ${limitMatch[1]} hours during posted times`;
+    } else if (normalized.includes('PERMIT')) {
+      type = 'permit_only';
+      title = 'Permit only';
+      const permit = normalized.match(/PERMIT\s+(\w+)/);
+      detail = `Permit ${permit ? permit[1] : ''} required during posted times`.replace('  ', ' ');
+    }
+    return { type, title, detail, days, start, end, limitMinutes: limitMatch ? Number(limitMatch[1]) * 60 : null };
+  }
+
+  function formatTime(minute) {
+    const hour24 = Math.floor(minute / 60) % 24;
+    const minutePart = minute % 60;
+    const hour = hour24 % 12 || 12;
+    return `${hour}:${String(minutePart).padStart(2, '0')} ${hour24 < 12 ? 'AM' : 'PM'}`;
+  }
+
+  function daysLabel(days) {
+    if (days.length === 7) return 'Every day';
+    return days.map(day => DAYS[day].slice(0, 3)).join(', ');
+  }
+
+  function evaluate(rule, day, minute) {
+    const appliesToday = rule.days.includes(day);
+    const active = appliesToday && minute >= rule.start && minute < rule.end;
+    let minutesUntil = Infinity;
+    for (let offset = 0; offset < 8; offset += 1) {
+      const candidateDay = (day + offset) % 7;
+      if (!rule.days.includes(candidateDay)) continue;
+      const candidate = offset * 1440 + rule.start - minute;
+      if (candidate >= 0) { minutesUntil = candidate; break; }
+    }
+
+    if (rule.type === 'time_limit' && active) {
+      return { status: 'green', label: 'Parking allowed', icon: '✓', headline: `You can park here for up to ${rule.limitMinutes / 60} hours.`, why: `The posted time limit applies until ${formatTime(rule.end)}. Remember when you arrived.`, deadlineLabel: 'Posted hours end', deadline: `${formatTime(rule.end)} today` };
+    }
+    if (active) {
+      return { status: 'red', label: rule.title, icon: '×', headline: "You can't park here right now.", why: `${rule.detail} is in effect until ${formatTime(rule.end)}.`, deadlineLabel: 'Restriction ends', deadline: `${formatTime(rule.end)} today` };
+    }
+    if (minutesUntil <= 30) {
+      return { status: 'amber', label: 'Move soon', icon: '!', headline: 'You can park—but not for long.', why: `${rule.detail} begins in ${minutesUntil} minutes.`, deadlineLabel: 'Move by', deadline: `${formatTime(rule.start)} today` };
+    }
+    const nextDay = minutesUntil < 1440 ? 'today' : DAYS[(day + Math.floor((minute + minutesUntil) / 1440)) % 7];
+    return { status: 'green', label: 'Safe to park', icon: '✓', headline: 'You can park here right now.', why: 'No posted restriction is active at the selected time.', deadlineLabel: 'Next restriction', deadline: `${formatTime(rule.start)} ${nextDay}` };
+  }
+
+  function render() {
+    const [hour, minute] = timeInput.value.split(':').map(Number);
+    const selectedMinute = hour * 60 + minute;
+    const result = evaluate(currentRule, Number(dayInput.value), selectedMinute);
+    const verdict = document.querySelector('#verdict');
+    verdict.className = `parksafe-verdict parksafe-verdict--${result.status}`;
+    document.querySelector('#verdict-icon').textContent = result.icon;
+    document.querySelector('#verdict-label').textContent = result.label;
+    document.querySelector('#verdict-moment').textContent = `${DAYS[dayInput.value]}, ${formatTime(selectedMinute)}`;
+    document.querySelector('#verdict-headline').textContent = result.headline;
+    document.querySelector('#verdict-why').textContent = result.why;
+    document.querySelector('#verdict-deadline small').textContent = result.deadlineLabel;
+    document.querySelector('#verdict-deadline strong').textContent = result.deadline;
+    document.querySelector('#active-rule').textContent = `${currentRule.title.toUpperCase()} · ${daysLabel(currentRule.days).toUpperCase()} · ${formatTime(currentRule.start)}–${formatTime(currentRule.end)}`;
+    document.querySelector('#rule-list').innerHTML = `<div class="parksafe-rule-item"><span>1</span><div><strong>${currentRule.title}</strong><small>${currentRule.detail}</small></div></div><div class="parksafe-rule-item"><span>◷</span><div><strong>${formatTime(currentRule.start)}–${formatTime(currentRule.end)}</strong><small>${daysLabel(currentRule.days)}</small></div></div>`;
+  }
+
+  function setNow() {
+    const now = new Date();
+    dayInput.value = String(now.getDay());
+    timeInput.value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    render();
+  }
+
+  document.querySelectorAll('[data-example]').forEach(button => button.addEventListener('click', () => {
+    signText.value = EXAMPLES[button.dataset.example];
+    count.textContent = `${signText.value.length} / 2000`;
+    currentRule = parseSign(signText.value);
+    render();
+  }));
+  signText.addEventListener('input', () => { count.textContent = `${signText.value.length} / 2000`; });
+  checkButton.addEventListener('click', () => {
+    if (signText.value.trim().length < 3) { signText.focus(); return; }
+    checkButton.disabled = true;
+    checkButton.firstChild.textContent = 'Reading sign… ';
+    window.setTimeout(() => {
+      currentRule = parseSign(signText.value);
+      render();
+      checkButton.disabled = false;
+      checkButton.firstChild.textContent = 'Check this sign ';
+      document.querySelector('#verdict').focus();
+    }, 350);
+  });
+  dayInput.addEventListener('change', render);
+  timeInput.addEventListener('input', render);
+  document.querySelector('#back-to-now').addEventListener('click', setNow);
+  setNow();
+}());
+
+</script>
+</body>
+</html>

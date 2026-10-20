@@ -14,6 +14,25 @@ This document provides detailed technical information for AI coding agents worki
 
 ## Architecture Decisions
 
+### Page Classes: Core Pages vs. Labs Pieces
+
+**Decision**: The site has two kinds of pages with opposite rules. Before touching any page, decide which class it belongs to.
+
+| | **Core pages** | **Labs pieces** |
+|---|---|---|
+| What | Home, About, Projects (and project detail pages), Posts, Contact, Colophon, and the **Labs index** (`/labs/index.html`) | Each interactive item listed on the Labs index: research pages, paper demos, small tools, prototypes |
+| Where | Site root, `/projects/`, `/posts/`, `/labs/index.html` | `/labs/<name>.html`, or `/labs/<name>/` for a piece that needs its own folder |
+| Styling | Shared `/assets/css/styles.css`, header/footer includes, the site's design | Its own distinct design. Must **not** use `styles.css`, `/includes/`, or `/assets/js` / `/assets/css` |
+| Dependencies | Shared site assets are expected | **Self-contained.** Preferred: one HTML file with all CSS, JS and libraries inline (versions pinned), so it works offline and as a file attachment. Allowed: a folder under `/labs/<name>/` with its own files that no other page uses. Allowed external requests: optional extras with fallbacks (e.g. Google Fonts) and the site favicon. No runtime CDNs for code |
+| Required | Skip link, `<main id="content">`, header/footer placeholders, `<noscript>` nav with every nav item | Own `<head>` with title, description and Open Graph tags; a "← sinanLabs" back-link to `https://sinan.io/labs/` (absolute, so it works from a saved copy); a 720×378 WebP thumbnail in `/labs/thumbs/`; a card on the Labs index |
+| Size budget | <200KB raw page weight | Judged by compressed transfer size (<200KB over the wire), since libraries are inlined |
+
+**Rationale**: Core pages share one design system and stay tiny. Labs pieces are distributed on their own (shared links, saved files, attachments) and must survive outside the site, and they are free to look nothing like it.
+
+**Naming**: the section is called **Labs** in the nav, **sinanLabs** as the page title and brand, and lives at `/labs/`. The old `/artifacts/` path redirects (`/_redirects`).
+
+**Known exception (temporary)**: `/labs/thinking-gif/` still uses the core site template and shared `styles.css`. It is scheduled to be rebuilt as a standalone microsite with its own design and its own folder (`/labs/thinking-gif/`). Until then it is the only Labs piece allowed to use core assets. Do not copy its pattern.
+
 ### Why Plain HTML/CSS + Minimal Vanilla JS?
 
 **Decision**: Use vanilla HTML and CSS with minimal vanilla JavaScript for includes. No frameworks or build tooling.
@@ -257,6 +276,9 @@ Then add CSS:
 ## Common Modification Tasks
 
 ### Adding a New Page
+
+> This section is for **core pages**. For a Labs piece, see [Page Classes](#page-classes-core-pages-vs-labs-pieces) and the "Add a Labs piece" scenario in PROJECT_MAP.md.
+
 
 1. **Copy an existing page** as a template:
    ```bash
@@ -564,7 +586,7 @@ Minimum test matrix:
 - Total page weight: <200KB (currently achievable)
 - CSS: <20KB
 - Images: <100KB each after compression
-- Exception: standalone pages in `/artifacts/` are self-contained by design (inline CSS/JS and any charting library, so the single file also works offline or as an attachment). Judge them by compressed transfer size (<200KB over the wire), not raw file size.
+- Labs pieces (`/labs/<name>`) follow their own budget: compressed transfer size <200KB. See [Page Classes](#page-classes-core-pages-vs-labs-pieces).
 
 ### Pre-deployment Checklist
 

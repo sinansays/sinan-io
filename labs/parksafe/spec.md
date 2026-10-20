@@ -2,7 +2,7 @@
 
 _Last updated: 2026-08-27_
 
-> **Portfolio implementation note:** The version hosted at `/artifacts/parksafe/` is a
+> **Portfolio implementation note:** The version hosted at `/labs/parksafe/` is a
 > self-contained, static visual prototype built with plain HTML, CSS, and vanilla
 > JavaScript. It recognizes common sign phrases and the provided examples locally to
 > demonstrate the full checker interaction. It does not call an AI service, create
