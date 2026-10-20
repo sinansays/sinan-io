@@ -13,6 +13,7 @@ This document provides a comprehensive map of the website structure, showing pag
 │   ├── social-medium-ecology/ (index, atlas, quiz, method pages + assets/ and data/; figures in data/platforms.js; tests in /tests/)
 │   ├── who-wakes-at-five.html
 │   ├── reason-wide-demo.html
+│   ├── intelligence-explosion.html (embed piece: Gamma talk deck)
 │   ├── ai-biology-scale-atlas.html
 │   ├── zendo/index.html
 │   ├── parksafe/ (index.html + spec.md)
