@@ -14,6 +14,14 @@ test('has its own head metadata (title, description, Open Graph)', () => {
   for (const prop of ['og:title', 'og:description', 'og:image', 'og:url']) assert.match(html, new RegExp(`property="${prop}"`));
 });
 
+test('is named "Thinking Trace Generator" (no format in the name) on the page and its Labs card', () => {
+  assert.match(html, /<title>Thinking Trace Generator<\/title>/);
+  assert.match(html, /property="og:title" content="Thinking Trace Generator"/);
+  assert.match(html, /class="title">Thinking Trace Generator</);
+  const index = fs.readFileSync(path.join(root, 'labs', 'index.html'), 'utf-8');
+  assert.match(index, /<h3>Thinking Trace Generator<\/h3>/);
+});
+
 test('has the absolute back-link to sinanLabs', () => {
   assert.match(html, /<a[^>]+href="https:\/\/sinan\.io\/labs\/"[^>]*>← sinanLabs<\/a>/);
 });

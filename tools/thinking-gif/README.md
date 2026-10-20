@@ -1,4 +1,4 @@
-# Thinking Trace (Labs piece)
+# Thinking Trace Generator (Labs piece)
 
 A client-side maker for looping AI-style "thinking…" status animations, in the style of Claude Code, Codex CLI, Claude, ChatGPT, DeepSeek, Gemini, Grok, Meta AI, Hermes Agent, a generic agent log, and a plain shimmer. Live at `/labs/thinking-gif/`. It is a standalone Labs piece: its own design, no shared site assets (see AGENTS.md → "Page Classes").
 
