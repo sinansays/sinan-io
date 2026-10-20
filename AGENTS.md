@@ -31,6 +31,8 @@ This document provides detailed technical information for AI coding agents worki
 
 **Naming**: the section is called **Labs** in the nav, **sinanLabs** as the page title and brand, and lives at `/labs/`. The old `/artifacts/` path redirects (`/_redirects`).
 
+**Routing requests**: If you're asked to make an *artifact*, *lab*, *experiment*, *demo*, *interactive*, *tool* or *microsite* for this site, it is a **Labs piece**. Put it under `/labs/` and follow the Labs-piece rules above, plus the "Add a Labs piece" scenario in PROJECT_MAP.md. Never create an `/artifacts/` folder: that path is a legacy redirect to `/labs/` and would silently shadow new files. Portfolio case studies of past work are **core pages** under `/projects/`.
+
 **Known exception (temporary)**: `/labs/thinking-gif/` still uses the core site template and shared `styles.css`. It is scheduled to be rebuilt as a standalone microsite with its own design and its own folder (`/labs/thinking-gif/`). Until then it is the only Labs piece allowed to use core assets. Do not copy its pattern.
 
 ### Why Plain HTML/CSS + Minimal Vanilla JS?
