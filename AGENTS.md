@@ -25,9 +25,9 @@ This document provides detailed technical information for AI coding agents worki
 | Styling | Shared `/assets/css/styles.css`, header/footer includes, the site's design | Its own distinct design. Must **not** use `styles.css`, `/includes/`, or `/assets/js` / `/assets/css` |
 | Dependencies | Shared site assets are expected | **Self-contained.** Preferred: one HTML file with all CSS, JS and libraries inline (versions pinned), so it works offline and as a file attachment. Allowed: a folder under `/labs/<name>/` with its own files that no other page uses. Allowed external requests: optional extras with fallbacks (e.g. Google Fonts) and the site favicon. No runtime CDNs for code |
 | Required | Skip link, `<main id="content">`, header/footer placeholders, `<noscript>` nav with every nav item | Own `<head>` with title, description and Open Graph tags; a "← sinanLabs" back-link to `https://sinan.io/labs/` (absolute, so it works from a saved copy); a 720×378 WebP thumbnail in `/labs/thumbs/`; a card on the Labs index |
-| Size budget | <200KB raw page weight | Judged by compressed transfer size (<200KB over the wire), since libraries are inlined |
+| Size budget | <200KB raw page weight | Initial load <300KB compressed (HTML, inlined CSS/JS/libraries, and the media shown on first paint). Further media must be lazy-loaded (`loading="lazy"`, `width`/`height` set) and optimized (WebP, sized to display), with no hard total cap. Image-heavy pieces such as comics and galleries are expected to exceed 1MB in total |
 
-**Rationale**: Core pages share one design system and stay tiny. Labs pieces are distributed on their own (shared links, saved files, attachments) and must survive outside the site, and they are free to look nothing like it.
+**Rationale**: Core pages share one design system and stay tiny. Labs pieces are distributed on their own (shared links, saved files, attachments) and must survive outside the site, and they are free to look nothing like it. Their size budget protects time-to-first-content, not total weight: a Labs piece is a microsite in its own right, and a comic or gallery is allowed to be large as long as it streams in as the reader scrolls.
 
 **Naming**: the section is called **Labs** in the nav, **sinanLabs** as the page title and brand, and lives at `/labs/`. The old `/artifacts/` path redirects (`/_redirects`).
 
@@ -598,7 +598,7 @@ Minimum test matrix:
 - Total page weight: <200KB (currently achievable)
 - CSS: <20KB
 - Images: <100KB each after compression
-- Labs pieces (`/labs/<name>`) follow their own budget: compressed transfer size <200KB. See [Page Classes](#page-classes-core-pages-vs-labs-pieces).
+- Labs pieces (`/labs/<name>`) follow their own budget: initial load <300KB compressed, lazy-loaded media beyond that. See [Page Classes](#page-classes-core-pages-vs-labs-pieces).
 
 ### Pre-deployment Checklist
 
