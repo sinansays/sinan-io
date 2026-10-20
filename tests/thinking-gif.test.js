@@ -69,6 +69,11 @@ test('random verbs are seeded (share links reproduce them) and unique', () => {
   assert.ok(steps.every(s => s.endsWith('…')));
 });
 
+test('styles with animated trailing dots drop a typed ellipsis (no "think……")', () => {
+  const s = TG.normalizeState({ theme: 'grok', steps: ['Pretending to think…', 'Consulting the vibes...', 'Done'] });
+  assert.deepEqual(TG.resolveSteps(s), ['Pretending to think', 'Consulting the vibes', 'Done']);
+});
+
 test('every theme has light and dark palettes with valid colours and default lines', () => {
   const hex = /^#[0-9a-f]{6}$/i;
   for (const t of TG.THEMES) {
