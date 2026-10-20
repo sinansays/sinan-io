@@ -9,6 +9,7 @@ This document provides a comprehensive map of the website structure, showing pag
 ├── /about.html
 ├── /contact.html
 ├── /labs/ (sinanLabs index; also linked in main nav)
+│   ├── social-medium-ecology/ (index, atlas, quiz, method pages + assets/ and data/; figures in data/platforms.js; tests in /tests/)
 │   ├── who-wakes-at-five.html
 │   ├── reason-wide-demo.html
 │   ├── ai-biology-scale-atlas.html

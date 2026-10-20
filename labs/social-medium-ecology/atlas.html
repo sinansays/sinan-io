@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Atlas · Social Medium Ecology</title>
+<meta name="description" content="Seventeen social platforms read through McLuhan, Innis, Williams, Postman, boyd, Zuboff, Doctorow, Illich and their optimist critics, with interactive maps of how each lens rearranges them.">
+<meta property="og:url" content="https://sinan.io/labs/social-medium-ecology/atlas">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:title" content="The Atlas · Social Medium Ecology">
+<meta property="og:description" content="Seventeen social platforms read through the media theorists. Interactive.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://sinan.io/labs/social-medium-ecology-og.jpg">
+
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="site-nav" aria-label="Site">
+  <span class="brand"><a class="back" href="https://sinan.io/labs/">← sinanLabs</a><a class="home" href="index.html">Social Medium Ecology</a></span>
+  <a class="nav" href="atlas.html" aria-current="page">The Atlas</a>
+  <a class="nav" href="quiz.html">Self-assessment</a>
+  <a class="nav" href="method.html">Methods &amp; sources</a>
+</nav>
+
+<main>
+<header class="page-head">
+  <div class="eyebrow">Part one · 17 platforms · 16 thinkers · Data as of <span data-asof>October 2026</span></div>
+  <h1>The Atlas</h1>
+  <p class="lede">Seventeen platforms read through the media ecologists, the political economists and their optimist critics. One arc runs through all of it. Social media began as a map of people you chose. It became a feed chosen for you. Now social life is splitting into private rooms and open protocols, while the feeds keep growing.</p>
+  <div class="arc" aria-label="The arc">
+    <span class="step">Social graph</span><span class="arrow">→</span>
+    <span class="step">Algorithmic feed</span><span class="arrow">→</span>
+    <span class="step">Retreat and federation</span>
+  </div>
+  <div class="legend" id="legend"></div>
+  <p class="muted small">Placements on these charts are interpretive codings, not measurements. Each one is listed in the <a href="method.html#traits">coding table</a>, with the reasoning.</p>
+</header>
+
+<section id="map">
+  <div class="stack col">
+    <div class="eyebrow">Plate 1</div>
+    <h2>One map, six lenses</h2>
+    <p>Each lens defines a different pair of axes. Switch lenses and the same platforms rearrange. Bubble area tracks monthly users, with a floor so the smallest stay visible. Select a platform for its profile.</p>
+  </div>
+  <div class="plate">
+    <div class="controls" id="lensBtns" role="group" aria-label="Choose a lens"></div>
+    <div class="mapgrid">
+      <div class="svgbox"><svg id="mapSvg" viewBox="0 0 760 520" role="img" aria-label="Platform map under the selected lens. A table version follows."></svg></div>
+      <div class="panel">
+        <div class="lensname" id="lensName"></div>
+        <div id="lensCite"></div>
+        <p id="lensBlurb"></p>
+        <p class="cap plain" id="lensCoded"></p>
+        <div class="detail" id="detail" aria-live="polite"></div>
+      </div>
+    </div>
+    <details class="table"><summary id="lensTableSum">Positions as a table</summary><div class="tablebox" id="lensTable"></div></details>
+  </div>
+</section>
+
+<section id="drift">
+  <div class="stack col">
+    <div class="eyebrow">Plate 2</div>
+    <h2>The drift, 2008 to 2026</h2>
+    <p>Each row estimates how much of what a platform shows you is chosen by you (follows, chronology, your groups) versus chosen for you by a ranking model. Press play. The public platforms slide right together while the messaging apps barely move. That gap is where the retreat goes.</p>
+  </div>
+  <div class="plate">
+    <div class="drift-head">
+      <button class="btn" id="playBtn" aria-pressed="false">▶ Play 2008–2026</button>
+      <div class="year" id="yearOut" aria-live="off">2026</div>
+      <label for="yearRange" class="mono" style="position:absolute;left:-9999px">Year</label>
+      <input type="range" id="yearRange" min="2008" max="2026" step="0.25" value="2026">
+    </div>
+    <p class="small" id="driftEvent" aria-live="polite"></p>
+    <div class="svgbox"><svg id="driftSvg" viewBox="0 0 760 560" role="img" aria-label="Drift from chosen to ranked feeds, by platform. A table version follows."></svg></div>
+    <details class="table"><summary>Drift scores as a table (0 = you choose, 100 = a model chooses)</summary><div class="tablebox" id="driftTable"></div></details>
+    <div class="cap plain">Scores are interpretive estimates anchored to dated product changes; see <a href="method.html#drift">methods</a>.</div>
+  </div>
+</section>
+
+<section id="clusters">
+  <div class="stack col">
+    <div class="eyebrow">Five media, not seventeen apps</div>
+    <h2>The clusters</h2>
+    <p>McLuhan's starting point was that the form of a medium matters more than what is said on it. Grouped by form, the seventeen platforms reduce to five kinds of medium. Each section pairs the thinkers who cut deepest there with a moving diagram of the network's shape.</p>
+  </div>
+  <div id="clusterHost"></div>
+</section>
+
+<section id="tetrads">
+  <div class="stack col">
+    <div class="eyebrow">Plate 3</div>
+    <h2>McLuhan's tetrads</h2>
+    <p>In <i>Laws of Media</i> (1988), Marshall and Eric McLuhan proposed four questions for any medium. What does it enhance? What does it make obsolete? What older thing does it bring back? What does it flip into when pushed to its limit? Pick a platform.</p>
+  </div>
+  <div class="plate">
+    <div class="controls" id="tetBtns" role="group" aria-label="Choose a platform"></div>
+    <div class="tetrad" aria-live="polite">
+      <div class="quad" data-k="e"><div class="q">Enhances</div><p></p></div>
+      <div class="quad" data-k="r"><div class="q">Retrieves</div><p></p></div>
+      <div class="quad" data-k="o"><div class="q">Obsolesces</div><p></p></div>
+      <div class="quad" data-k="v"><div class="q">Reverses into</div><p></p></div>
+      <div class="tet-center" id="tetCenter"></div>
+    </div>
+    <div class="cap plain">The McLuhans meant tetrads as prompts for argument, not answers. These readings are this site's own.</div>
+  </div>
+</section>
+
+<section id="doctorow">
+  <div class="stack col">
+    <div class="eyebrow">Plate 4</div>
+    <h2>Where each platform sits on Doctorow's curve</h2>
+    <p>Cory Doctorow's model has three stages. A platform is first good to its users. Then it squeezes users to serve its business customers. Then it squeezes both for shareholders, until it dies or is replaced. The interesting cases refuse the curve by design: a nonprofit (Signal) and protocols that let you leave with your followers (Mastodon, and in principle Bluesky).</p>
+  </div>
+  <div class="plate">
+    <div class="svgbox"><svg id="docSvg" viewBox="0 0 760 600" role="img" aria-label="Doctorow stage by platform. A table version follows."></svg></div>
+    <details class="table"><summary>Stages and reasoning as a table</summary><div class="tablebox" id="docTable"></div></details>
+    <div class="cap plain">Placement is a reading of public product and policy changes; see <a href="method.html#doctorow">methods</a>.</div>
+  </div>
+</section>
+
+<section id="thinkers">
+  <div class="stack col">
+    <div class="eyebrow">Index</div>
+    <h2>The thinkers</h2>
+    <p>Sixteen voices, tagged by stance and era. The era tag matters: six of them died before the smartphone, so applying them to TikTok is extrapolation, not their own claim.</p>
+  </div>
+  <div class="controls" id="stanceBtns" role="group" aria-label="Filter by stance" style="margin-top:18px"></div>
+  <div class="tgrid" id="tgrid"></div>
+</section>
+
+<section id="limits-sec">
+  <div class="stack col">
+    <div class="eyebrow">Stress test</div>
+    <h2>Where the lenses break</h2>
+    <ol class="limits" id="limits"></ol>
+    <p><a class="btn primary" href="quiz.html">Next: where do your values fit? →</a></p>
+  </div>
+</section>
+</main>
+
+<footer class="site-foot">
+  <div>Social Medium Ecology is a <a href="https://sinan.io/labs/">sinanLabs</a> project by <a href="https://sinan.io/">Michael Sinanian</a>, founder of <a href="https://gencog.io" target="_blank" rel="noopener">GenCog</a>.</div>
+  <div>Figures as of <span data-asof>October 2026</span>. <a href="method.html">Methods, sources and bibliography</a>.</div>
+</footer>
+</div>
+<script src="data/platforms.js"></script>
+<script src="data/refs.js"></script>
+<script src="data/atlas.js"></script>
+<script src="assets/js/common.js"></script>
+<script src="assets/js/atlas.js"></script>
+</body>
+</html>
