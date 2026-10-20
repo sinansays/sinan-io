@@ -14,7 +14,7 @@ This document provides a comprehensive map of the website structure, showing pag
 │   ├── ai-biology-scale-atlas.html
 │   ├── zendo/index.html
 │   ├── parksafe/ (index.html + spec.md)
-│   └── thinking-gif/ (index.html, app.js, lib.js)
+│   └── thinking-gif/ (index.html, app.js, lib.js, vendor/; standalone Labs piece, tests in /tests/)
 ├── /posts/
 │   └── index.html
 └── /projects/
