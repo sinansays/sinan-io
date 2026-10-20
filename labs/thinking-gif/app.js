@@ -17,6 +17,7 @@
   let pausedAt = 0;
   let exporting = false;
   let lastResultUrl = null;
+  let lastResultAlt = '';
   const layoutCache = new Map();
 
   function loadInitialState() {
@@ -761,16 +762,17 @@
     const ext = blob.type === 'video/webm' ? 'webm' : blob.type.split('/')[1];
     const theme = TG.resolveTheme(s);
     const name = `thinking-${theme.id}-${size.w}x${size.h}.${ext}`;
+    lastResultAlt = TG.altText(s); // describe the exported file, not later edits
     const media = $('result-media');
     media.innerHTML = '';
     let el;
     if (blob.type.indexOf('video/') === 0) {
       el = document.createElement('video');
-      el.src = url; el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; el.controls = true;
+      el.src = url; el.setAttribute('aria-label', lastResultAlt); el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; el.controls = true;
     } else {
       el = document.createElement('img');
       el.src = url;
-      el.alt = TG.altText(s);
+      el.alt = lastResultAlt;
     }
     media.appendChild(el);
     const dl = $('download');
@@ -802,10 +804,10 @@
 
   $('copy-alt').addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(TG.altText(state));
+      await navigator.clipboard.writeText(lastResultAlt);
       toast('Alt text copied');
     } catch (e) {
-      window.prompt('Alt text:', TG.altText(state));
+      window.prompt('Alt text:', lastResultAlt);
     }
   });
 

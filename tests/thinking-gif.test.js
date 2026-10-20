@@ -90,6 +90,32 @@ test('wrapText wraps, and truncates with an ellipsis past maxLines', () => {
   assert.ok(r.lines[1].endsWith('…'));
 });
 
+test('wrapText splits a single token wider than the line instead of overflowing', () => {
+  const measure = s => Array.from(s).length * 10;
+  const r = TG.wrapText(measure, 'see https://example.com/a/very/long/path ok', 60, 10);
+  assert.equal(r.fits, false);
+  for (const line of r.lines) assert.ok(measure(line) <= 60, `"${line}" fits`);
+  assert.equal(r.lines.join('').replace(/\s/g, ''), 'seehttps://example.com/a/very/long/pathok');
+});
+
+// Fake 2D context: every character is 0.6em wide.
+function fakeCtx() {
+  return {
+    font: '400 10px sans',
+    measureText(s) { const px = Number(/([\d.]+)px/.exec(this.font)[1]); return { width: Array.from(s).length * px * 0.6 }; }
+  };
+}
+
+test('computeLayout keeps a long URL inside the 128×128 emoji canvas', () => {
+  const ctx = fakeCtx();
+  const state = TG.normalizeState({ theme: 'plain', size: 'emoji', steps: ['https://example.com/an/extremely/long/unbroken/url/that/never/ends'] });
+  const theme = TG.resolveTheme(state);
+  const L = TG.computeLayout(ctx, state, theme, TG.resolveSteps(state, theme), null);
+  ctx.font = `400 ${L.u}px sans`;
+  for (const line of L.rows[0]) assert.ok(ctx.measureText(line).width <= L.W - L.pad * 2 + 0.01, `"${line}" fits`);
+  assert.ok(L.u >= 6);
+});
+
 // Minimal GIF decoder (LZW) so the tests check that the encoder's output really decodes.
 function decodeGif(bytes) {
   let p = 6;

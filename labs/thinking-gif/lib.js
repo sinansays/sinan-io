@@ -422,6 +422,9 @@
   /* Text layout                                                         */
   /* ------------------------------------------------------------------ */
 
+  // Word-wrap to maxWidth. A single token wider than the line (a URL, a long
+  // unbroken word) is split by character so nothing is ever drawn off-canvas;
+  // `fits` is false in that case so the layout tries a smaller font first.
   function wrapText(measure, text, maxWidth, maxLines) {
     const words = String(text).split(/\s+/).filter(Boolean);
     if (!words.length) return { lines: [''], fits: true };
@@ -429,13 +432,18 @@
     let line = '';
     let fits = true;
     for (const word of words) {
-      if (measure(word) > maxWidth) fits = false;
       const test = line ? line + ' ' + word : word;
-      if (!line || measure(test) <= maxWidth) {
+      if (measure(test) <= maxWidth) {
         line = test;
-      } else {
-        lines.push(line);
-        line = word;
+        continue;
+      }
+      if (line) lines.push(line);
+      line = word;
+      if (measure(word) > maxWidth) {
+        fits = false;
+        const chunks = splitWord(measure, word, maxWidth);
+        line = chunks.pop();
+        lines.push(...chunks);
       }
     }
     lines.push(line);
@@ -443,11 +451,26 @@
       fits = false;
       const kept = lines.slice(0, maxLines);
       let last = kept[maxLines - 1];
-      while (last.length > 1 && measure(last + '…') > maxWidth) last = last.slice(0, -1);
+      while (last.length > 1 && measure(last + '…') > maxWidth) last = Array.from(last).slice(0, -1).join('');
       kept[maxLines - 1] = last + '…';
       return { lines: kept, fits };
     }
     return { lines, fits };
+  }
+
+  function splitWord(measure, word, maxWidth) {
+    const chunks = [];
+    let cur = '';
+    for (const ch of Array.from(word)) {
+      if (cur && measure(cur + ch) > maxWidth) {
+        chunks.push(cur);
+        cur = ch;
+      } else {
+        cur += ch;
+      }
+    }
+    chunks.push(cur);
+    return chunks;
   }
 
   function fontFor(theme, px, weight) {
@@ -463,6 +486,7 @@
     const small = W < 400 || H < 200;
     const pad = Math.max(8, Math.round(Math.min(W, H) * (small ? 0.07 : 0.08)));
     let u = state.textScale * (small ? Math.min(H / 5.2, W / 7) : Math.min(H / 9, W / 22));
+    const minU = Math.max(6, u * 0.5);
     const maxLines = small ? 4 : 3;
     const wantTail = state.meta && typeof theme.tail === 'function' && !small;
     const hasDone = state.finish && typeof theme.done === 'function' && steps.length > 0;
@@ -504,8 +528,8 @@
       });
       if (maxH > H - pad * 2) ok = false;
       result = { W, H, pad, u, lh: u * 1.4, rows, prefixW, blockW: Math.min(blockW, avail), showTail: tailMode !== 'none', tailMode, small, maxLines };
-      if (ok || u <= 6) break;
-      u *= 0.93;
+      if (ok || u <= minU) break;
+      u = Math.max(minU, u * 0.93);
     }
     return result;
   }
@@ -1410,7 +1434,7 @@
     THEMES, THEME_MAP, DEFAULT_STATE, CLAUDE_CODE_VERBS, EXTRA_VERBS, VERB_LIST,
     sanitizeSteps, normalizeState, diffState, encodeShareHash, decodeShareHash,
     pickVerbs, mulberry32, resolveTheme, resolveScheme, resolveSize, resolveDisplay, resolveSteps,
-    timeline, getStepState, wrapText, computeLayout, renderFrame, frameTimes,
+    timeline, getStepState, wrapText, splitWord, computeLayout, renderFrame, frameTimes,
     PaletteBuilder, GifEncoder, buildPalette, encodeGif, lzwEncode, hexToRgb, muxAnimatedWebp, readChunks, altText, formatBytes, meta
   };
 
