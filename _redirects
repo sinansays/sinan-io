@@ -1,0 +1,8 @@
+# Cloudflare Pages redirects. Pages moved into /artifacts/ (sinanLabs), Oct 2026.
+/ai-biology-scale-atlas.html    /artifacts/ai-biology-scale-atlas  301
+/ai-biology-scale-atlas         /artifacts/ai-biology-scale-atlas  301
+/projects/reason-wide-demo.html /artifacts/reason-wide-demo        301
+/projects/reason-wide-demo      /artifacts/reason-wide-demo        301
+/zendo                          /artifacts/zendo/                  301
+/zendo/                         /artifacts/zendo/                  301
+/zendo/index.html               /artifacts/zendo/                  301

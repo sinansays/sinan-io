@@ -1218,3 +1218,12 @@ a.timeline-title:hover {
   color: color-mix(in srgb, var(--bg) 97%, var(--text) 3%);
 }
  
+
+/* ========== SINANLABS (/artifacts/) ========== */
+/* Stacked image-first cards; thumbnails are 1.905:1 screenshots of each piece */
+.page-header h1.lab-title { text-transform: none; letter-spacing: 0.02em; }
+.lab-grid { margin-top: 1.25rem; }
+.card.lab-card { grid-template-columns: 1fr; align-content: start; }
+.card.lab-card .thumb { max-width: none; aspect-ratio: 720 / 378; border: 1px solid var(--muted); }
+.card.lab-card h3 { margin-top: .1rem; }
+.card .lab-meta { font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; opacity: .65; margin: 0 0 .15rem; }
