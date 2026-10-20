@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Social Medium Ecology</title>
+<meta name="description" content="An interactive field guide to 17 social platforms through the media theorists, from McLuhan and Innis to boyd, Zuboff and Doctorow, with a self-assessment of where your values fit.">
+<meta property="og:url" content="https://sinan.io/labs/social-medium-ecology/">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:title" content="Social Medium Ecology">
+<meta property="og:description" content="17 social platforms through the media theorists, and a self-assessment of where your values fit.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://sinan.io/labs/social-medium-ecology-og.jpg">
+
+<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="site-nav" aria-label="Site">
+  <span class="brand"><a class="back" href="https://sinan.io/labs/">← sinanLabs</a><a class="home" href="index.html" aria-current="page">Social Medium Ecology</a></span>
+  <a class="nav" href="atlas.html">The Atlas</a>
+  <a class="nav" href="quiz.html">Self-assessment</a>
+  <a class="nav" href="method.html">Methods &amp; sources</a>
+</nav>
+<main>
+<header class="page-head">
+  <div class="eyebrow">A field guide · 17 platforms · 16 thinkers · Data as of <span data-asof>October 2026</span></div>
+  <h1>Social Medium Ecology</h1>
+  <p class="lede">The media theorists argued that the form of a medium shapes us more than anything said on it. This guide applies their ideas to the platforms that dominate social life in 2026, then asks where your own values fit.</p>
+  <canvas class="hero-canvas" id="hero" aria-hidden="true"></canvas>
+  <div class="arc" aria-label="The arc of the argument">
+    <span class="step">Social graph</span><span class="arrow">→</span>
+    <span class="step">Algorithmic feed</span><span class="arrow">→</span>
+    <span class="step">Retreat and federation</span>
+  </div>
+</header>
+
+<div class="doors">
+  <a class="door" href="atlas.html">
+    <div class="eyebrow">Part one</div>
+    <h2>The Atlas</h2>
+    <p>One map read through six lenses, a 2008–2026 chart of the drift from chosen feeds to ranked ones, five clusters of platforms with the thinkers who explain them, McLuhan's tetrads and Doctorow's curve.</p>
+    <span class="go">Explore the Atlas →</span>
+  </a>
+  <a class="door" href="quiz.html#values">
+    <div class="eyebrow">Part two · Mode one</div>
+    <h2>Where do your values fit?</h2>
+    <p>Twelve questions on curation, privacy, permanence, governance and attention. See which platforms align with your values, which pull against them, and how that compares with the ones you use.</p>
+    <span class="go">Take the values assessment →</span>
+  </a>
+  <a class="door" href="quiz.html#presence">
+    <div class="eyebrow">Part two · Mode two</div>
+    <h2>Where should you build a presence?</h2>
+    <p>For a person, an organization or both. A home base, platforms to amplify, an off-platform strategy that fits how you build trust, and what you give up by skipping a platform.</p>
+    <span class="go">Take the presence assessment →</span>
+  </a>
+</div>
+
+<section style="margin-top:56px">
+  <div class="stack col">
+    <div class="eyebrow">How to read this guide</div>
+    <h2>Interpretation, sourced</h2>
+    <p>Every claim about a thinker is cited to a specific work, and every user figure is dated and linked to its source. The placements of platforms on the charts are interpretive codings, published in full on the methods page so you can disagree with them precisely.</p>
+    <p><a href="method.html">Read the methods, data sources and bibliography →</a></p>
+  </div>
+</section>
+</main>
+<footer class="site-foot">
+  <div>Social Medium Ecology is a <a href="https://sinan.io/labs/">sinanLabs</a> project by <a href="https://sinan.io/">Michael Sinanian</a>, founder of <a href="https://gencog.io" target="_blank" rel="noopener">GenCog</a>.</div>
+  <div>Figures as of <span data-asof>October 2026</span>.</div>
+</footer>
+</div>
+<script src="data/platforms.js"></script>
+<script src="assets/js/common.js"></script>
+<script>
+/* Hero: the drift, drawn as particles moving from a web of chosen ties toward a ranked stream. */
+(function(){
+  const c = document.getElementById("hero"); if (!c) return;
+  const g = c.getContext("2d"), reduce = SME.reduce;
+  const cols = ["--feed","--square","--rooms","--back","--aspire"];
+  let W, H, dpr, pts = [];
+  function size(){ dpr = window.devicePixelRatio || 1; W = c.clientWidth; H = c.clientHeight; c.width = W * dpr; c.height = H * dpr; }
+  function seed(){ pts = []; const n = Math.round(Math.min(140, W / 7));
+    for (let i = 0; i < n; i++) pts.push({ x:Math.random() * W, y:Math.random() * H, ph:Math.random() * 6.28, c:cols[i % 5], s:.4 + Math.random() * .8 }); }
+  function frame(t){
+    g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+    const muted = SME.css("--rule");
+    pts.forEach(p => {
+      const k = p.x / W;
+      const ty = H/2 + Math.sin(p.ph + t/1600) * H * .38 * (1 - k) * .9;
+      p.y += (ty - p.y) * .02;
+      if (!reduce) { p.x += p.s * (.4 + k * 1.6); if (p.x > W + 10) { p.x = -10; p.y = Math.random() * H; } }
+    });
+    g.strokeStyle = muted; g.lineWidth = 1;
+    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+      const a = pts[i], b = pts[j]; if (a.x > W * .55 || b.x > W * .55) continue;
+      const d = Math.hypot(a.x - b.x, a.y - b.y); if (d < 60) { g.globalAlpha = (1 - d / 60) * .6; g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); }
+    }
+    g.globalAlpha = 1;
+    pts.forEach(p => { g.fillStyle = SME.css(p.c); g.beginPath(); g.arc(p.x, p.y, 2.4, 0, 6.283); g.fill(); });
+    if (!reduce) requestAnimationFrame(frame);
+  }
+  size(); seed(); requestAnimationFrame(frame);
+  window.addEventListener("resize", () => { size(); seed(); if (reduce) frame(0); });
+})();
+</script>
+</body>
+</html>
