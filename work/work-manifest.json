@@ -8,7 +8,7 @@
     "end": null,
     "role": ["Teaching"],
     "domain": ["Gen AI"],
-    "url": "/projects/ucla-ai-for-pm.html"
+    "url": "/work/ucla-ai-for-pm.html"
   },
   {
     "title": "GenCog",
@@ -19,7 +19,7 @@
     "end": null,
     "role": ["Consulting", "PM"],
     "domain": ["Gen AI", "Platforms & SaaS", "Legal-tech"],
-    "url": "/projects/gencog.html"
+    "url": "/work/gencog.html"
   },
   {
     "title": "Revenue.io",
@@ -30,7 +30,7 @@
     "end": "2024-07",
     "role": ["PM"],
     "domain": ["Gen AI", "Platforms & SaaS"],
-    "url": "/projects/revenue-io.html"
+    "url": "/work/revenue-io.html"
   },
   {
     "title": "Personal AI",
@@ -41,7 +41,7 @@
     "end": "2023-08",
     "role": ["Consulting", "PM"],
     "domain": ["Gen AI", "Consumer", "Startups"],
-    "url": "/projects/personal-ai.html"
+    "url": "/work/personal-ai.html"
   },
   {
     "title": "LynxDx",
@@ -52,7 +52,7 @@
     "end": "2023-03",
     "role": ["PM"],
     "domain": ["Health-tech", "Platforms & SaaS"],
-    "url": "/projects/lynxdx.html"
+    "url": "/work/lynxdx.html"
   },
   {
     "title": "Dealpath",
@@ -63,7 +63,7 @@
     "end": "2021-02",
     "role": ["PM"],
     "domain": ["Platforms & SaaS"],
-    "url": "/projects/dealpath.html"
+    "url": "/work/dealpath.html"
   },
   {
     "title": "Belkin",
@@ -74,7 +74,7 @@
     "end": "2018-10",
     "role": ["UX Research"],
     "domain": ["Consumer", "Smart Home & IoT"],
-    "url": "/projects/belkin.html"
+    "url": "/work/belkin.html"
   },
   {
     "title": "Linksys",
@@ -85,7 +85,7 @@
     "end": "2018-10",
     "role": ["UX Research"],
     "domain": ["Consumer", "Smart Home & IoT"],
-    "url": "/projects/linksys.html"
+    "url": "/work/linksys.html"
   },
   {
     "title": "Wemo",
@@ -96,7 +96,7 @@
     "end": "2018-10",
     "role": ["UX Research"],
     "domain": ["Consumer", "Smart Home & IoT"],
-    "url": "/projects/wemo.html"
+    "url": "/work/wemo.html"
   },
   {
     "title": "Gyroscope",
@@ -107,7 +107,7 @@
     "end": "2016-07",
     "role": ["PM"],
     "domain": ["Consumer", "Health-tech", "Startups"],
-    "url": "/projects/gyroscope-growth.html"
+    "url": "/work/gyroscope-growth.html"
   },
   {
     "title": "Autonomous Vehicles Research Paper",
@@ -118,7 +118,7 @@
     "end": "2017-03",
     "role": ["Legal", "Research"],
     "domain": ["Legal-tech"],
-    "url": "/projects/autonomous-vehicles-law-policy.html"
+    "url": "/work/autonomous-vehicles-law-policy.html"
   },
   {
     "title": "US GDP Analysis Using ML",
@@ -129,7 +129,7 @@
     "end": "2016-12",
     "role": ["Data Science"],
     "domain": null,
-    "url": "/projects/us-gdp-analysis.html"
+    "url": "/work/us-gdp-analysis.html"
   },
   {
     "title": "Crime & Demolitions in Detroit",
@@ -140,7 +140,7 @@
     "end": "2016-12",
     "role": ["Data Science"],
     "domain": null,
-    "url": "/projects/detroit-crime-demolitions.html"
+    "url": "/work/detroit-crime-demolitions.html"
   },
   {
     "title": "UMSI Site Redesign Concept",
@@ -151,7 +151,7 @@
     "end": "2016-12",
     "role": ["UX Design"],
     "domain": ["Platforms & SaaS"],
-    "url": "/projects/umsi-site-redesign.html"
+    "url": "/work/umsi-site-redesign.html"
   },
   {
     "title": "Chëw Personal Informatics Prototype",
@@ -162,7 +162,7 @@
     "end": "2016-12",
     "role": ["UX Research", "UX Design"],
     "domain": ["Health-tech", "Consumer"],
-    "url": "/projects/chew.html"
+    "url": "/work/chew.html"
   },
   {
     "title": "Laws of Accelerating Change InfoViz",
@@ -173,7 +173,7 @@
     "end": "2016-11",
     "role": ["UX Design"],
     "domain": null,
-    "url": "/projects/laws-of-accelerating-change.html"
+    "url": "/work/laws-of-accelerating-change.html"
   },
   {
     "title": "Airline Security Delays Analysis",
@@ -184,7 +184,7 @@
     "end": "2016-12",
     "role": ["Data Science"],
     "domain": null,
-    "url": "/projects/airline-security-delays.html"
+    "url": "/work/airline-security-delays.html"
   },
   {
     "title": "Thomson Reuters Onvio Usability Evaluation",
@@ -195,7 +195,7 @@
     "end": "2016-04",
     "role": ["Consulting", "UX Research"],
     "domain": ["Platforms & SaaS"],
-    "url": "/projects/onvio-usability.html"
+    "url": "/work/onvio-usability.html"
   },
   {
     "title": "UM ARC-TS Flux High-Performance Computing Project",
@@ -206,7 +206,7 @@
     "end": "2016-04",
     "role": ["Consulting", "UX Research"],
     "domain": ["Platforms & SaaS"],
-    "url": "/projects/um-high-performance-computing.html"
+    "url": "/work/um-high-performance-computing.html"
   },
   {
     "title": "UM Law School Entrepreneurship Clinic",
@@ -217,7 +217,7 @@
     "end": "2016-05",
     "role": ["Legal"],
     "domain": ["Startups", "Legal-tech"],
-    "url": "/projects/um-law-entrepreneurship-clinic.html"
+    "url": "/work/um-law-entrepreneurship-clinic.html"
   },
   {
     "title": "Electronic Frontier Foundation",

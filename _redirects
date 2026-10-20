@@ -16,3 +16,9 @@
 /projects/parksafe               /labs/parksafe/               301
 /projects/parksafe/index.html    /labs/parksafe/               301
 /parksafe-spec.md                /labs/parksafe/spec.md        301
+# Projects section renamed to Work (Oct 2026). Specific moves first: first match wins.
+/projects/mt-whitney.html        /life/mt-whitney                   301
+/projects/mt-whitney             /life/mt-whitney                   301
+/projects/projects-manifest.json /work/work-manifest.json           301
+/projects/*                      /work/:splat                       301
+/projects                        /work/                             301

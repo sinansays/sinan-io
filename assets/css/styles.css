@@ -532,6 +532,8 @@ body {
 .card p { margin: 0; opacity: .8; }
 
 .card-list { display: grid; gap: .5rem; }
+/* Row-link lists (Prior Work, Life): same rhythm as .card-list, no bullets */
+.row-links { display: grid; gap: .5rem; list-style: none; padding-left: 0; margin: 1rem 0 0; }
 .row-link {
   display: block; padding: .65rem .8rem; border: 1px solid var(--muted); border-radius: .6rem;
   background: var(--surface-1); color: inherit; text-decoration: none;

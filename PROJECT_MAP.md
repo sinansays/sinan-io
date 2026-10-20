@@ -15,10 +15,13 @@ This document provides a comprehensive map of the website structure, showing pag
 │   ├── zendo/index.html
 │   ├── parksafe/ (index.html + spec.md)
 │   └── thinking-gif/ (index.html, app.js, lib.js, vendor/; standalone Labs piece, tests in /tests/)
+├── /life/ (undated, evergreen personal pages; not in the nav; distinct from dated /posts/, see AGENTS.md)
+│   ├── index.html
+│   └── mt-whitney.html (linked from About)
 ├── /posts/
 │   └── index.html
-└── /projects/
-    ├── index.html (Projects overview)
+└── /work/ ("Work" in the nav; was /projects/, which redirects)
+    ├── index.html (Work overview)
     ├── ai-pm.html (Category page)
     ├── platforms-saas.html (Category page)
     ├── consumer-iot.html (Category page)
@@ -45,24 +48,24 @@ This document provides a comprehensive map of the website structure, showing pag
 - `/about.html` (nav + bio text mention)
 - `/contact.html` (nav)
 - `/posts/` (nav)
-- `/projects/` (nav + section link)
-- `/projects/ai-pm.html` (section heading)
-- `/projects/platforms-saas.html` (section heading)
-- `/projects/consumer-iot.html` (section heading)
-- `/projects/prior/` (section heading)
-- `/projects/ucla-ai-for-pm.html` (card)
-- `/projects/gencog.html` (card)
-- `/projects/revenue-io.html` (card)
-- `/projects/personal-ai.html` (card)
-- `/projects/lynxdx.html` (card)
-- `/projects/dealpath.html` (card)
-- `/projects/belkin.html` (card)
-- `/projects/linksys.html` (card)
-- `/projects/wemo.html` (card)
-- `/projects/prior/autonomous-vehicles-law-policy.html` (row link)
-- `/projects/prior/gyroscope-growth.html` (row link)
-- `/projects/prior/chew.html` (row link)
-- `/projects/prior/onvio-usability.html` (row link)
+- `/work/` (nav + section link)
+- `/work/ai-pm.html` (section heading)
+- `/work/platforms-saas.html` (section heading)
+- `/work/consumer-iot.html` (section heading)
+- `/work/prior/` (section heading)
+- `/work/ucla-ai-for-pm.html` (card)
+- `/work/gencog.html` (card)
+- `/work/revenue-io.html` (card)
+- `/work/personal-ai.html` (card)
+- `/work/lynxdx.html` (card)
+- `/work/dealpath.html` (card)
+- `/work/belkin.html` (card)
+- `/work/linksys.html` (card)
+- `/work/wemo.html` (card)
+- `/work/prior/autonomous-vehicles-law-policy.html` (row link)
+- `/work/prior/gyroscope-growth.html` (row link)
+- `/work/prior/chew.html` (row link)
+- `/work/prior/onvio-usability.html` (row link)
 
 **Linked from:**
 - All pages (via nav "Home" link)
@@ -70,10 +73,10 @@ This document provides a comprehensive map of the website structure, showing pag
 
 ### About Page (`/about.html`)
 **Links to:**
-- Standard nav links (Home, Posts, Projects, Contact)
+- Standard nav links (Home, About, Work, Labs, Contact)
 - External: UCLA Extension course
 - External: Revenue.io, LynxDx, Dealpath, Belkin, Linksys, Wemo
-- `/mt-whitney` (mentioned but likely doesn't exist yet)
+- `/life/mt-whitney.html` (Mt. Whitney notes; the only link to it)
 
 **Linked from:**
 - All pages (via nav)
@@ -87,20 +90,20 @@ This document provides a comprehensive map of the website structure, showing pag
 **Linked from:**
 - All pages (via nav)
 
-### Projects Index (`/projects/index.html`)
+### Work Index (`/work/index.html`)
 **Links to:**
 - Standard nav links
-- `/projects/ai-pm.html`
-- `/projects/platforms-saas.html`
-- `/projects/consumer-iot.html`
-- `/projects/prior/`
+- `/work/ai-pm.html`
+- `/work/platforms-saas.html`
+- `/work/consumer-iot.html`
+- `/work/prior/`
 
 **Linked from:**
 - All pages (via nav)
 - Homepage (multiple section links)
 
 ### Individual Project Pages
-All project pages (e.g., `/projects/gencog.html`, `/projects/revenue-io.html`, etc.) have:
+All project pages (e.g., `/work/gencog.html`, `/work/revenue-io.html`, etc.) have:
 - Standard nav links
 - No internal content links (placeholder pages)
 
@@ -179,7 +182,7 @@ The header structure is **identical** across all pages:
     <a href="/">Home</a>
     <a href="/about.html">About</a>
     <a href="/posts/">Posts</a>
-    <a href="/projects/">Projects</a>
+    <a href="/work/">Work</a>
     <a href="/contact.html">Contact</a>
   </nav>
   <div class="actions">
@@ -243,7 +246,7 @@ scenario below).
 
 ### Pattern 3: Page Header
 
-**Found in**: Content pages (about.html, contact.html, project pages, posts/index.html, projects/index.html)
+**Found in**: Content pages (about.html, contact.html, project pages, posts/index.html, work/index.html)
 
 ```html
 <section class="page-header">
@@ -279,7 +282,7 @@ scenario below).
 **Found in**: Homepage (index.html)
 
 ```html
-<a class="card" href="/projects/project-name.html">
+<a class="card" href="/work/project-name.html">
   <div class="thumb" aria-hidden="true">Label</div>
   <div class="card-body">
     <h3>Project Name</h3>
@@ -299,10 +302,10 @@ scenario below).
 
 ### Pattern 6: Row Link
 
-**Found in**: Homepage "Prior Projects" section
+**Found in**: Homepage "Prior Work" section
 
 ```html
-<a class="row-link" href="/projects/prior/project-name.html">Project Name</a>
+<a class="row-link" href="/work/prior/project-name.html">Project Name</a>
 ```
 
 **Purpose**: Simpler list format for less prominent items
@@ -313,12 +316,12 @@ scenario below).
 
 ### Pattern 7: Simple Grid
 
-**Found in**: `projects/index.html`
+**Found in**: `work/index.html`
 
 ```html
 <ul class="simple-grid">
-  <li><a href="/projects/category.html">Category Name</a></li>
-  <li><a href="/projects/category2.html">Category 2</a></li>
+  <li><a href="/work/category.html">Category Name</a></li>
+  <li><a href="/work/category2.html">Category 2</a></li>
 </ul>
 ```
 
@@ -391,17 +394,17 @@ styles.css
 - **Layout**: Simple single-column text content
 
 ### Type 3: Index/List Page
-- **Files**: `projects/index.html`, `posts/index.html`
+- **Files**: `work/index.html`, `posts/index.html`
 - **Pattern**: `.page-header` + `.simple-grid` or `.card-list`
 - **Layout**: Grid of links to sub-pages
 
 ### Type 4: Project Detail Page
-- **Files**: All individual project pages (e.g., `projects/gencog.html`)
+- **Files**: All individual project pages (e.g., `work/gencog.html`)
 - **Current state**: Placeholder with `.page-header` + `.prose`
 - **Future**: Will contain project case studies, images, etc.
 
 ### Type 5: Category Page
-- **Files**: `projects/ai-pm.html`, `projects/platforms-saas.html`, `projects/consumer-iot.html`
+- **Files**: `work/ai-pm.html`, `work/platforms-saas.html`, `work/consumer-iot.html`
 - **Note**: Structure unknown (not examined in detail)
 - **Likely pattern**: Similar to project detail pages
 
@@ -501,10 +504,10 @@ git ls-files -z '*.html' | xargs -0 perl -CSD -i -pe 's/\x{00A9} 2026 Michael Si
 handles the `©` correctly.)
 
 ### Scenario: Add a new project
-1. Create `/projects/new-project.html` (copy existing project page)
+1. Create `/work/new-project.html` (copy existing project page)
 2. Update content in new file
 3. Add card to `index.html` in appropriate section
-4. Add link to `/projects/index.html`
+4. Add link to `/work/index.html`
 
 ### Scenario: Change site colors
 1. Edit `/assets/css/styles.css`
