@@ -15,7 +15,7 @@ This document provides a comprehensive map of the website structure, showing pag
 │   ├── zendo/index.html
 │   ├── parksafe/ (index.html + spec.md)
 │   └── thinking-gif/ (index.html, app.js, lib.js, vendor/; standalone Labs piece, tests in /tests/)
-├── /life/ (personal pages; not in the nav)
+├── /life/ (undated, evergreen personal pages; not in the nav; distinct from dated /posts/, see AGENTS.md)
 │   ├── index.html
 │   └── mt-whitney.html (linked from About)
 ├── /posts/

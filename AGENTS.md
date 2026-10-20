@@ -31,7 +31,9 @@ This document provides detailed technical information for AI coding agents worki
 
 **Naming**: the section is called **Labs** in the nav, **sinanLabs** as the page title and brand, and lives at `/labs/`. The old `/artifacts/` path redirects (`/_redirects`).
 
-**Routing requests**: If you're asked to make an *artifact*, *lab*, *experiment*, *demo*, *interactive*, *tool* or *microsite* for this site, it is a **Labs piece**. Put it under `/labs/` and follow the Labs-piece rules above, plus the "Add a Labs piece" scenario in PROJECT_MAP.md. Never create an `/artifacts/` folder: that path is a legacy redirect to `/labs/` and would silently shadow new files. Portfolio case studies of past work are **core pages** under `/work/`; personal pages (trip notes, guides) are core pages under `/life/`.
+**Routing requests**: If you're asked to make an *artifact*, *lab*, *experiment*, *demo*, *interactive*, *tool* or *microsite* for this site, it is a **Labs piece**. Put it under `/labs/` and follow the Labs-piece rules above, plus the "Add a Labs piece" scenario in PROJECT_MAP.md. Never create an `/artifacts/` folder: that path is a legacy redirect to `/labs/` and would silently shadow new files. Portfolio case studies of past work are **core pages** under `/work/`; personal pages are core pages under `/life/` (see below).
+
+**Life vs. Posts (don't conflate them)**: `/life/` holds *undated, evergreen* personal pages: freeform reference pages that sit outside any timeline, like the Mt. Whitney planning page. `/posts/` is the blog: *dated* writing tied to when it was published (not currently linked in the nav). The name "Life" was chosen deliberately over "Notes", because "notes" reads as blog-like and the blog may take on a notes flavor. Never rename `/life/` to `/notes/`, and never file dated writing under `/life/`. Rule of thumb: if when it was written matters, it's a Post; if it's a page you'd keep updating or simply point people to, it's Life.
 
 ### Why Plain HTML/CSS + Minimal Vanilla JS?
 
