@@ -21,9 +21,12 @@ def cdf_natural_wake(t,sd=1.45,half=4.0,ages=None):
     ws=ages or W; tot=sum(w for a,w in ws)
     return sum(w*Phi((t-half-mean[a])/sd) for a,w in ws)/tot
 times=[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10]
+# Plausible band: min/max over every corner of the sensitivity ranges
+# (trait SD 1.2-1.8 h, mid-sleep-to-wake offset 3.75-4.25 h).
+CORNERS=[(sd,half) for sd in (1.2,1.8) for half in (3.75,4.25)]
 res={'times':times,'base':[round(100*cdf_natural_wake(t),1) for t in times],
-     'lo':[round(100*min(cdf_natural_wake(t,1.2,4.0),cdf_natural_wake(t,1.8,4.25)),1) for t in times],
-     'hi':[round(100*max(cdf_natural_wake(t,1.8,3.75),cdf_natural_wake(t,1.2,3.75)),1) for t in times]}
+     'lo':[round(100*min(cdf_natural_wake(t,sd,h) for sd,h in CORNERS),1) for t in times],
+     'hi':[round(100*max(cdf_natural_wake(t,sd,h) for sd,h in CORNERS),1) for t in times]}
 # by age band: share whose natural wake <=5:30 and <=7:00
 byage=[]
 for lo,hi,w in bands:
